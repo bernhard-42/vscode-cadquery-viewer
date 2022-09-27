@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { template } from "./display";
+import { CadqueryController} from "./controller";
 
 export class CadqueryViewer {
     /**
@@ -7,14 +8,16 @@ export class CadqueryViewer {
      */
 
     public static currentPanel: CadqueryViewer | undefined;
+    public static controller: CadqueryController | undefined;
 
     public static readonly viewType = 'cadqueryViewer';
 
     private readonly _panel: vscode.WebviewPanel;
     private _disposables: vscode.Disposable[] = [];
 
-    public static createOrShow(extensionUri: vscode.Uri) {
+    public static createOrShow(extensionUri: vscode.Uri, _controller: CadqueryController) {
         // If we already have a panel, show it.
+        this.controller = _controller;
         if (CadqueryViewer.currentPanel) {
             CadqueryViewer.currentPanel._panel.reveal(vscode.ViewColumn.Two);
         } else {
@@ -26,6 +29,7 @@ export class CadqueryViewer {
                 { enableScripts: true },
             );
             CadqueryViewer.currentPanel = new CadqueryViewer(panel, extensionUri);
+
         }
     }
 
@@ -44,7 +48,7 @@ export class CadqueryViewer {
         this._panel.onDidChangeViewState(
             e => {
                 if (this._panel.visible) {
-                    this.update(template(800, 600));
+                    this.update(template({}));
                 }
             },
             null,
@@ -66,8 +70,8 @@ export class CadqueryViewer {
     }
 
     public dispose() {
+        console.log("CadqueryViewer dispose");
         CadqueryViewer.currentPanel = undefined;
-
         // Clean up our resources
         this._panel.dispose();
 
@@ -77,6 +81,7 @@ export class CadqueryViewer {
                 x.dispose();
             }
         }
+        CadqueryViewer.controller?.dispose();
     }
 
     public update(div: string) {

@@ -1,19 +1,6 @@
 "use strict";
 
-export function template(
-    cadWidth: number,
-    height: number,
-    treeWidth: number = 240,
-    theme: string = "light",
-    control: string = "trackball",
-    up: string = "Z",
-    glass: boolean = false,
-    tools: boolean = true,
-    collapse: number = 1,
-    rotateSpeed: number = 1.0,
-    zoomSpeed: number = 1.0,
-    panSpeed: number = 1.0
-) {
+export function template(options: any) {
     return `
 <!DOCTYPE html>
 <html>
@@ -27,18 +14,29 @@ export function template(
         import { Viewer, Timer } from "https://unpkg.com/three-cad-viewer@1.7.0/dist/three-cad-viewer.esm.js";
 
         var viewer = null;
+        var _shapes = null;
+        var _states = null;
 
         function nc(change) {
             console.debug("index.html:", JSON.stringify(change, null, 2));
         }
 
+        function getSize() {
+            return {
+                width: window.innerWidth || document.body.clientWidth,
+                height: window.innerHeight || document.body.clientHeight
+            }
+        }
 
         function showViewer() {
+            const size = getSize()
+            const treeWidth = ${options.glass || true} ? 0: 240;
+
             const displayOptions = {
-                cadWidth: ${cadWidth},
-                height: ${height},
-                treeWidth: ${treeWidth},
-                theme: "${theme}",
+                cadWidth: size.width - treeWidth - 42,
+                height: size.height - 65,
+                treeWidth: treeWidth,
+                theme: "${options.theme || 'light'}",
                 pinning: false,
             };
 
@@ -51,6 +49,9 @@ export function template(
 
 
         function render(shapes, states) {
+            _states = states;
+            _shapes = shapes;
+
             const renderOptions = {
                 ambientIntensity: 0.75,
                 directIntensity: 0.15,
@@ -61,22 +62,14 @@ export function template(
 
             const viewerOptions = {
                 ortho: true,
-                control: "${control}",
-                up: "${up}",
-                glass: ${glass},
-                tools: ${tools},
-                collapse: ${collapse},
-
-                // transparent: true,
-                // blackEdges: true,
-                // axes: true,
-                // axes0: true,
-                // grid: [true, false, true],
-                // ticks: 50,
-
-                rotateSpeed: ${rotateSpeed},
-                zoomSpeed: ${zoomSpeed},
-                panSpeed: ${panSpeed},
+                control: "${options.control || 'trackball'}",
+                up: "${options.up || "Z"}",
+                glass: ${options.glass || true},
+                tools: ${options.tools || true},
+                collapse: ${options.collapse || 1},
+                rotateSpeed: ${options.rotateSpeed || 1.0},
+                zoomSpeed: ${options.zoomSpeed || 1.0},
+                panSpeed: ${options.panSpeed || 1.0},
                 timeit: false,
             };
 
@@ -93,6 +86,14 @@ export function template(
 
         showViewer();
 
+        window.addEventListener('resize', function(event) {
+            console.log();
+            showViewer();
+            if (_states != null) {
+                render(_shapes, _states);
+            }
+        }, true);
+        
         window.addEventListener('message', event => {
             const data = JSON.parse(event.data);
             render(data[0], data[1]);

@@ -13,7 +13,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand('cadquery-viewer.cadqueryViewer', () => {
-			vscode.window.showInformationMessage('Hello from CadQuery Viewer!');
+			console.log("CadQuery initialized");
 		})
 	);
 
@@ -28,4 +28,6 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 }
 
-export function deactivate() { }
+export function deactivate() { 
+	
+}
