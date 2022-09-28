@@ -2,6 +2,16 @@ import * as vscode from 'vscode';
 
 export function template() {
     let options = vscode.workspace.getConfiguration("CadQueryViewer");
+    let treeWidth = options.get("treeWidth");
+    let theme = options.get("theme");
+    let control = options.get("control");
+    let up = options.get("up");
+    let glass = options.get("glass");
+    let tools = options.get("tools");
+    let collapse = options.get("collapse");
+    let rotateSpeed = options.get("rotateSpeed");
+    let zoomSpeed = options.get("zoomSpeed");
+    let panSpeed = options.get("panSpeed");
 
     let html = `
 <!DOCTYPE html>
@@ -14,13 +24,13 @@ export function template() {
 
     <script type="module">
         import { Viewer, Timer } from "https://unpkg.com/three-cad-viewer@1.7.0/dist/three-cad-viewer.esm.js";
-
+        console.log("init");
         var viewer = null;
         var _shapes = null;
         var _states = null;
 
         function nc(change) {
-            console.debug("index.html:", JSON.stringify(change, null, 2));
+            console.debug("Viewer:", JSON.stringify(change, null, 2));
         }
 
         function getSize() {
@@ -31,26 +41,26 @@ export function template() {
         }
 
         function showViewer() {
+            console.log("Viewer: showViewer");
             const size = getSize()
-            const treeWidth = ${options.get("glass")} ? 0: 240;
+            const treeWidth = ${treeWidth} ? 0: 240;
 
             const displayOptions = {
                 cadWidth: size.width - treeWidth - 42,
                 height: size.height - 65,
                 treeWidth: treeWidth,
-                theme: "${options.get("theme")}",
+                theme: '${theme}',
                 pinning: false,
             };
 
             const container = document.getElementById("cad_viewer");
             container.innerHTML = ""
             viewer = new Viewer(container, displayOptions, nc);
-            // viewer.trimUI(["axes", "axes0", "grid", "ortho", "more", "help"])
+            // viewer.trimUI(["axes", "axes0", "grid", "ortho", "more", "help"])           
         }
 
-
-
         function render(shapes, states) {
+            console.log("Viewer: render");
             _states = states;
             _shapes = shapes;
 
@@ -64,14 +74,14 @@ export function template() {
 
             const viewerOptions = {
                 ortho: true,
-                control: "${options.get("control")}",
-                up: "${options.get("up")}",
-                glass: ${options.get("glass")},
-                tools: ${options.get("tools")},
-                collapse: ${options.get("collapse")},
-                rotateSpeed: ${options.get("rotateSpeed")},
-                zoomSpeed: ${options.get("zoomSpeed")},
-                panSpeed: ${options.get("panSpeed")},
+                control: '${control}',
+                up: '${up}',
+                glass: ${glass},
+                tools: ${tools},
+                collapse: ${collapse},
+                rotateSpeed: ${rotateSpeed},
+                zoomSpeed: ${zoomSpeed},
+                panSpeed: ${panSpeed},
                 timeit: false,
             };
 
@@ -86,23 +96,29 @@ export function template() {
             );
         }
 
+        console.log("showViewer 1");
         showViewer();
-
+        if (_states != null) {
+            console.log("Viewer: call render 2");
+            render(_shapes, _states);
+        } 
+        
         window.addEventListener('resize', function(event) {
-            console.log();
+            console.log("Viewer: resize 1", _states);
+            console.log("showViewer 2");
             showViewer();
             if (_states != null) {
+                console.log("Viewer: call render 1");
                 render(_shapes, _states);
-            }
+            } 
         }, true);
-        
+
         window.addEventListener('message', event => {
             const data = JSON.parse(event.data);
             render(data[0], data[1]);
         });
     </script>
 </head>
-
 
 <body>
     <div id="cad_viewer"></div>

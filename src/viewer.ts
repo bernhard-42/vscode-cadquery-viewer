@@ -44,6 +44,7 @@ export class CadqueryViewer {
         this._panel = panel;
 
         this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
+        this._panel.webview.html = "";
 
         // Update the content based on view changes
         this._panel.onDidChangeViewState(
