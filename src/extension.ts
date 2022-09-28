@@ -4,22 +4,15 @@ import { CadqueryController } from "./controller";
 
 export function activate(context: vscode.ExtensionContext) {
 
-	console.log('CadQuery Viewer" is active');
-	let cadqueryController = new CadqueryController(context);
-
-	/*
-	 *	Commands
-	 */
+	//	Commands
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand('cadquery-viewer.cadqueryViewer', () => {
-			console.log("CadQuery initialized");
+			new CadqueryController(context);
 		})
 	);
 
-	/*
-	 *	Register Web view
-	 */
+	//	Register Web view
 
 	vscode.window.registerWebviewPanelSerializer(CadqueryViewer.viewType, {
 		async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
@@ -28,6 +21,4 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 }
 
-export function deactivate() { 
-	
-}
+export function deactivate() { }

@@ -1,7 +1,9 @@
-"use strict";
+import * as vscode from 'vscode';
 
-export function template(options: any) {
-    return `
+export function template() {
+    let options = vscode.workspace.getConfiguration("CadQueryViewer");
+
+    let html = `
 <!DOCTYPE html>
 <html>
 
@@ -30,13 +32,13 @@ export function template(options: any) {
 
         function showViewer() {
             const size = getSize()
-            const treeWidth = ${options.glass || true} ? 0: 240;
+            const treeWidth = ${options.get("glass")} ? 0: 240;
 
             const displayOptions = {
                 cadWidth: size.width - treeWidth - 42,
                 height: size.height - 65,
                 treeWidth: treeWidth,
-                theme: "${options.theme || 'light'}",
+                theme: "${options.get("theme")}",
                 pinning: false,
             };
 
@@ -62,14 +64,14 @@ export function template(options: any) {
 
             const viewerOptions = {
                 ortho: true,
-                control: "${options.control || 'trackball'}",
-                up: "${options.up || "Z"}",
-                glass: ${options.glass || true},
-                tools: ${options.tools || true},
-                collapse: ${options.collapse || 1},
-                rotateSpeed: ${options.rotateSpeed || 1.0},
-                zoomSpeed: ${options.zoomSpeed || 1.0},
-                panSpeed: ${options.panSpeed || 1.0},
+                control: "${options.get("control")}",
+                up: "${options.get("up")}",
+                glass: ${options.get("glass")},
+                tools: ${options.get("tools")},
+                collapse: ${options.get("collapse")},
+                rotateSpeed: ${options.get("rotateSpeed")},
+                zoomSpeed: ${options.get("zoomSpeed")},
+                panSpeed: ${options.get("panSpeed")},
                 timeit: false,
             };
 
@@ -108,4 +110,5 @@ export function template(options: any) {
 
 </html>
 `;
+    return html;
 }

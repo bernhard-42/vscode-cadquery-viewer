@@ -20,30 +20,93 @@
         "command": "cadquery-viewer.cadqueryViewer",
         "title": "Open CadQuery Viewer"
       }
-    ]
-  },
-  "scripts": {
-    "vscode:prepublish": "yarn run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "pretest": "yarn run compile && yarn run lint",
-    "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
-  },
-  "devDependencies": {
-    "@types/glob": "^7.2.0",
-    "@types/mocha": "^9.1.1",
-    "@types/node": "16.x",
-    "@types/vscode": "^1.71.0",
-    "@typescript-eslint/eslint-plugin": "^5.31.0",
-    "@typescript-eslint/parser": "^5.31.0",
-    "@vscode/test-electron": "^2.1.5",
-    "eslint": "^8.20.0",
-    "glob": "^8.0.3",
-    "mocha": "^10.0.0",
-    "typescript": "^4.7.4"
-  },
-  "dependencies": {
-    "three-cad-viewer": "^1.7.0"
+    ],
+    "keybindings": [
+      {
+        "command": "cadquery-viewer.cadqueryViewer",
+        "key": "ctrl+k v",
+        "mac": "cmd+k v",
+        "when": "editorTextFocus && editorLangId=='python'"
+      }
+    ],
+    "configuration": {
+      "title": "CadQuery Viewer",
+      "properties": {
+        "CadQueryViewer.treeWidth": {
+          "type": "integer",
+          "default": 240,
+          "description": "CadQuery Viewer navigation tree width"
+        },
+        "CadQueryViewer.theme": {
+          "type": "string",
+          "default": "light",
+          "description": "The used them of the viewer, 'light' or 'dark'"
+        },
+        "CadQueryViewer.control": {
+          "type": "string",
+          "default": "trackball",
+          "description": "Contolr mode: 'trackball' or 'orbit'"
+        },
+        "CadQueryViewer.up": {
+          "type": "string",
+          "default": "Z",
+          "description": "Provides up direction, 'Z', 'Y' or 'L' (legacy)"
+        },
+        "CadQueryViewer.glass": {
+          "type": "boolean",
+          "default": true,
+          "description": "Use glass mode with transparent navigation tree"
+        },
+        "CadQueryViewer.tools": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show toolbar"
+        },
+        "CadQueryViewer.collapse": {
+          "type": "integer",
+          "default": 1,
+          "description": "Default collapse mode of navigation tree (1: collapse nodes with single leaf, 2: collapse all nodes)"
+        },
+        "CadQueryViewer.rotateSpeed": {
+          "type": "number",
+          "default": 1.0,
+          "description": "Rotation speed"
+        },
+        "CadQueryViewer.zoomSpeed": {
+          "type": "number",
+          "default": 1.0,
+          "description": "Zoom speed"
+        },
+        "CadQueryViewer.panSpeed": {
+          "type": "number",
+          "default": 1.0,
+          "description": "Pan speed"
+        }
+      }
+    },
+    "scripts": {
+      "vscode:prepublish": "yarn run compile",
+      "compile": "tsc -p ./",
+      "watch": "tsc -watch -p ./",
+      "pretest": "yarn run compile && yarn run lint",
+      "lint": "eslint src --ext ts",
+      "test": "node ./out/test/runTest.js"
+    },
+    "devDependencies": {
+      "@types/glob": "^7.2.0",
+      "@types/mocha": "^9.1.1",
+      "@types/node": "16.x",
+      "@types/vscode": "^1.71.0",
+      "@typescript-eslint/eslint-plugin": "^5.31.0",
+      "@typescript-eslint/parser": "^5.31.0",
+      "@vscode/test-electron": "^2.1.5",
+      "eslint": "^8.20.0",
+      "glob": "^8.0.3",
+      "mocha": "^10.0.0",
+      "typescript": "^4.7.4"
+    },
+    "dependencies": {
+      "three-cad-viewer": "^1.7.0"
+    }
   }
 }
