@@ -41,7 +41,7 @@ export function template() {
 
         function showViewer() {
             const size = getSize()
-            const treeWidth = ${treeWidth} ? 0: 240;
+            const treeWidth = ${glass} ? 0: 240;
 
             const displayOptions = {
                 cadWidth: Math.max(665, size.width - treeWidth - 42),
@@ -74,7 +74,7 @@ export function template() {
                 ambientIntensity: preset(config["ambient_intensity"], 0.75),
                 directIntensity: preset(config["direct_intensity"], 0.15),
                 edgeColor: preset(config["edge_color"], 0x707070),
-                defaultOpacity: preset(config["default_opacity"], 0.5):,
+                defaultOpacity: preset(config["default_opacity"], 0.5),
                 normalLen: preset(config["normal_len"], 0),
             };
 
@@ -89,6 +89,7 @@ export function template() {
                 timeit: preset(config["timeit"], false),
                 tools: preset(config["tools"], true),
                 glass: preset(config["glass"], true),
+                up: preset(config["up"], "Z"),
                 transparent: preset(config["transparent"], false),
                 zoom: preset(config["zoom"], 1.0),
                 controls: preset(config["controls"], "trackball"),
