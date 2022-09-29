@@ -24,7 +24,7 @@ export function template() {
 
     <script type="module">
         import { Viewer, Timer } from "https://unpkg.com/three-cad-viewer@1.7.0/dist/three-cad-viewer.esm.js";
-        console.log("init");
+
         var viewer = null;
         var _shapes = null;
         var _states = null;
@@ -41,7 +41,6 @@ export function template() {
         }
 
         function showViewer() {
-            console.log("Viewer: showViewer");
             const size = getSize()
             const treeWidth = ${treeWidth} ? 0: 240;
 
@@ -59,63 +58,71 @@ export function template() {
             // viewer.trimUI(["axes", "axes0", "grid", "ortho", "more", "help"])           
         }
 
-        function render(shapes, states) {
-            console.log("Viewer: render");
+        function preset(config, val) {
+            return (config === undefined) ? val : config;
+        }
+
+        function render(shapes, states, config) {
             _states = states;
             _shapes = shapes;
 
-            const renderOptions = {
-                ambientIntensity: 0.75,
-                directIntensity: 0.15,
-                edgeColor: 0x707070,
-                defaultOpacity: 0.5,
-                normalLen: 0,
+            const tessellationOptions = {
+                ambientIntensity: preset(config["ambient_intensity"], 0.75),
+                directIntensity: preset(config["direct_intensity"], 0.15),
+                edgeColor: preset(config["edge_color"], 0x707070),
+                defaultOpacity: preset(config["default_opacity"], 0.5):,
+                normalLen: preset(config["normal_len"], 0),
             };
 
-            const viewerOptions = {
-                ortho: true,
-                control: '${control}',
-                up: '${up}',
-                glass: ${glass},
-                tools: ${tools},
-                collapse: ${collapse},
-                rotateSpeed: ${rotateSpeed},
-                zoomSpeed: ${zoomSpeed},
-                panSpeed: ${panSpeed},
-                timeit: false,
+
+            const renderOptions = {
+                axes: preset(config["axes"], false),
+                axes0: preset(config["axes0"], false),
+                blackEdges: preset(config["black_edges"], false),
+                grid: preset(config["grid"], [false, false, false]),
+                ortho: preset(config["ortho"], true),
+                ticks: preset(config["ticks"], 10),
+                timeit: preset(config["timeit"], false),
+                tools: preset(config["tools"], true),
+                glass: preset(config["glass"], true),
+                transparent: preset(config["transparent"], false),
+                zoom: preset(config["zoom"], 1.0),
+                controls: preset(config["controls"], "trackball"),
+                panSpeed: preset(config["panSpeed"], 0.5),
+                zoomSpeed: preset(config["zoomSpeed"], 0.5),
+                rotateSpeed: preset(config["rotateSpeed"], 1.0),
             };
 
             viewer?.clear();
 
-            var shapesStates = viewer.renderTessellatedShapes(shapes, states, renderOptions)
+            var shapesStates = viewer.renderTessellatedShapes(shapes, states, tessellationOptions)
 
             viewer.render(
                 ...shapesStates,
                 states,
-                viewerOptions,
+                renderOptions,
             );
         }
 
-        console.log("showViewer 1");
         showViewer();
         if (_states != null) {
-            console.log("Viewer: call render 2");
             render(_shapes, _states);
         } 
         
         window.addEventListener('resize', function(event) {
-            console.log("Viewer: resize 1", _states);
-            console.log("showViewer 2");
             showViewer();
             if (_states != null) {
-                console.log("Viewer: call render 1");
                 render(_shapes, _states);
             } 
         }, true);
 
         window.addEventListener('message', event => {
             const data = JSON.parse(event.data);
-            render(data[0], data[1]);
+            if (data.type === "data") {
+                let meshData = data.data;
+                let config = data.config;
+                render(meshData.shapes, meshData.states, config);
+            }
         });
     </script>
 </head>
