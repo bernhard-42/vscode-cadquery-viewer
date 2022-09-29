@@ -7,3 +7,5 @@ vsc-extension-quickstart.md
 ipc
 cq_vscode.egg-info
 cq_vscode/__pycache__
+build
+dist

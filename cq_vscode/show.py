@@ -34,8 +34,8 @@ def set_port(port):
 
 
 def _send(data):
-    print(data)
     requests.post(f"http://127.0.0.1:{CMD_PORT}", json=data)
+
 
 class Progress:
     def update(self):
@@ -61,14 +61,25 @@ def _convert(*cad_objs, **kwargs):
     config = {
         k: v
         for k, v in get_defaults().items()
-        if not k in ("position", "rotation", "zoom", "cad_width", "tree_width", "height", "glass")
+        if not k
+        in (
+            "position",
+            "rotation",
+            "zoom",
+            "cad_width",
+            "tree_width",
+            "height",
+            "glass",
+        )
     }
 
     for k, v in kwargs.items():
         if v is not None:
             config[k] = v
 
-    shapes, states = _tessellate_group(part_group, kwargs, Progress(), config.get("timeit"))
+    shapes, states = _tessellate_group(
+        part_group, kwargs, Progress(), config.get("timeit")
+    )
 
     config["normal_len"] = get_normal_len(
         preset("render_normals", config.get("render_normals")),
@@ -81,14 +92,14 @@ def _convert(*cad_objs, **kwargs):
     shapes["bb"] = bb
 
     data = {
-        "data": json.loads(numpy_to_json(dict(shapes=shapes, states=states))),  # improve de-numpying
+        "data": json.loads(
+            numpy_to_json(dict(shapes=shapes, states=states))
+        ),  # improve de-numpying
         "type": "data",
         "config": config,
         "count": part_group.count_shapes(),
     }
     return data
-
-
 
 
 def to_array(track):
@@ -154,8 +165,10 @@ def reset():
 
     OBJECTS = []
 
+
 if __name__ == "__main__":
     import cadquery as cq
-    box = cq.Workplane().box(1,1,1)
+
+    box = cq.Workplane().box(1, 1, 1)
     result = show(box)
     print(result)

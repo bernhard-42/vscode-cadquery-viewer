@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 import os
 
 setup_args = {
-    "name": "cq-vscode",
+    "name": "cq_vscode",
     "version": "0.1.0",
     "description": "CadQuery Viewer for VSCode",
     "long_description": "An extension to show cadquery objects in VSCode via pythreejs",
