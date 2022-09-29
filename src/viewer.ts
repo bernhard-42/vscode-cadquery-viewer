@@ -30,7 +30,10 @@ export class CadqueryViewer {
                 CadqueryViewer.viewType,
                 'CadQuery Viewer',
                 vscode.ViewColumn.Two,
-                { enableScripts: true },
+                { 
+                    enableScripts: true,
+                    retainContextWhenHidden: true
+                },
             );
             CadqueryViewer.currentPanel = new CadqueryViewer(panel, extensionUri);
         }

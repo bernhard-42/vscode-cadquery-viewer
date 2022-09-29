@@ -24,7 +24,6 @@ export function template() {
 
     <script type="module">
         import { Viewer, Timer } from "https://unpkg.com/three-cad-viewer@1.7.0/dist/three-cad-viewer.esm.js";
-
         var viewer = null;
         var _shapes = null;
         var _states = null;
@@ -45,7 +44,7 @@ export function template() {
             const treeWidth = ${treeWidth} ? 0: 240;
 
             const displayOptions = {
-                cadWidth: size.width - treeWidth - 42,
+                cadWidth: Math.max(665, size.width - treeWidth - 42),
                 height: size.height - 65,
                 treeWidth: treeWidth,
                 theme: '${theme}',
@@ -55,6 +54,11 @@ export function template() {
             const container = document.getElementById("cad_viewer");
             container.innerHTML = ""
             viewer = new Viewer(container, displayOptions, nc);
+            
+            if (_states != null) {
+                render(_shapes, _states);
+            } 
+            
             // viewer.trimUI(["axes", "axes0", "grid", "ortho", "more", "help"])           
         }
 
@@ -105,15 +109,9 @@ export function template() {
         }
 
         showViewer();
-        if (_states != null) {
-            render(_shapes, _states);
-        } 
         
         window.addEventListener('resize', function(event) {
             showViewer();
-            if (_states != null) {
-                render(_shapes, _states);
-            } 
         }, true);
 
         window.addEventListener('message', event => {
@@ -124,6 +122,7 @@ export function template() {
                 render(meshData.shapes, meshData.states, config);
             }
         });
+        
     </script>
 </head>
 
