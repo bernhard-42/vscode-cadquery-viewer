@@ -69,17 +69,17 @@
         },
         "CadQueryViewer.rotateSpeed": {
           "type": "number",
-          "default": 1.0,
+          "default": 1,
           "description": "Rotation speed"
         },
         "CadQueryViewer.zoomSpeed": {
           "type": "number",
-          "default": 1.0,
+          "default": 1,
           "description": "Zoom speed"
         },
         "CadQueryViewer.panSpeed": {
           "type": "number",
-          "default": 1.0,
+          "default": 1,
           "description": "Pan speed"
         }
       }
@@ -107,6 +107,7 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
-    "three-cad-viewer": "^1.7.0"
+    "three-cad-viewer": "^1.7.0",
+    "vsce": "^2.11.0"
   }
 }

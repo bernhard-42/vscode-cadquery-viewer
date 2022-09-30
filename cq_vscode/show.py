@@ -20,7 +20,7 @@ import requests
 from jupyter_cadquery import PartGroup, Part
 from jupyter_cadquery.cad_objects import to_assembly
 from jupyter_cadquery.base import _tessellate_group, get_normal_len, _combined_bb
-from jupyter_cadquery.defaults import get_default, get_defaults, preset
+from jupyter_cadquery.defaults import get_default, get_defaults, preset, set_defaults
 from jupyter_cadquery.utils import numpy_to_json
 
 CMD_PORT = 3939
@@ -43,6 +43,8 @@ class Progress:
 
 
 def _convert(*cad_objs, **kwargs):
+    set_defaults(reset_camera=False)
+
     color = kwargs.get("default_color")
     if color is None:
         color = get_default("default_color")

@@ -27,9 +27,26 @@ export function template() {
         var viewer = null;
         var _shapes = null;
         var _states = null;
+        var _config = null;
+        var _zoom = null;
+        var _position = null;
+        var _quaternion = null;
+        var _target = null;
 
         function nc(change) {
             console.debug("Viewer:", JSON.stringify(change, null, 2));
+            if (change.zoom !== undefined) {
+                _zoom = change.zoom.new;
+            }
+            if (change.position !== undefined) {
+                _position = change.position.new;
+            }
+            if (change.quaternion !== undefined) {
+                _quaternion = change.quaternion.new;
+            }
+            if (change.target !== undefined) {
+                _target = change.target.new;
+            }
         }
 
         function getSize() {
@@ -56,7 +73,8 @@ export function template() {
             viewer = new Viewer(container, displayOptions, nc);
             
             if (_states != null) {
-                render(_shapes, _states);
+                console.log(viewer);
+                render(_shapes, _states, _config);
             } 
             
             // viewer.trimUI(["axes", "axes0", "grid", "ortho", "more", "help"])           
@@ -67,40 +85,62 @@ export function template() {
         }
 
         function render(shapes, states, config) {
+            console.log(shapes, states, config);
             _states = states;
             _shapes = shapes;
-
+            _config = config;
+            
             const tessellationOptions = {
-                ambientIntensity: preset(config["ambient_intensity"], 0.75),
-                directIntensity: preset(config["direct_intensity"], 0.15),
-                edgeColor: preset(config["edge_color"], 0x707070),
-                defaultOpacity: preset(config["default_opacity"], 0.5),
-                normalLen: preset(config["normal_len"], 0),
+                ambientIntensity: preset(config.ambient_intensity, 0.75),
+                directIntensity: preset(config.direct_intensity, 0.15),
+                edgeColor: preset(config.edge_color, 0x707070),
+                defaultOpacity: preset(config.default_opacity, 0.5),
+                normalLen: preset(config.normal_len, 0),
             };
 
 
             const renderOptions = {
-                axes: preset(config["axes"], false),
-                axes0: preset(config["axes0"], false),
-                blackEdges: preset(config["black_edges"], false),
-                grid: preset(config["grid"], [false, false, false]),
-                ortho: preset(config["ortho"], true),
-                ticks: preset(config["ticks"], 10),
-                timeit: preset(config["timeit"], false),
-                tools: preset(config["tools"], true),
-                glass: preset(config["glass"], true),
-                up: preset(config["up"], "Z"),
-                transparent: preset(config["transparent"], false),
-                zoom: preset(config["zoom"], 1.0),
-                controls: preset(config["controls"], "trackball"),
-                panSpeed: preset(config["panSpeed"], 0.5),
-                zoomSpeed: preset(config["zoomSpeed"], 0.5),
-                rotateSpeed: preset(config["rotateSpeed"], 1.0),
+                axes: preset(config.axes, false),
+                axes0: preset(config.axes0, false),
+                blackEdges: preset(config.black_edges, false),
+                grid: preset(config.grid, [false, false, false]),
+                ortho: preset(config.ortho, true),
+                ticks: preset(config.ticks, 10),
+                timeit: preset(config.timeit, false),
+                tools: preset(config.tools, true),
+                glass: preset(config.glass, true),
+                up: preset(config.up, "Z"),
+                transparent: preset(config.transparent, false),
+                zoom: preset(config.zoom, 1.0),
+                controls: preset(config.controls, "trackball"),
+                panSpeed: preset(config.panSpeed, 0.5),
+                zoomSpeed: preset(config.zoomSpeed, 0.5),
+                rotateSpeed: preset(config.rotateSpeed, 1.0),
             };
 
             viewer?.clear();
 
             var shapesStates = viewer.renderTessellatedShapes(shapes, states, tessellationOptions)
+            
+            if (config.reset_camera) {
+                _zoom = null;
+                _position = null;
+                _quaternion = null;
+                _target = null;                
+            } else {
+                if (_zoom !== null) {
+                    renderOptions["zoom"] = _zoom;
+                }
+                if (_position !== null) {
+                    renderOptions["position"] = _position;
+                }
+                if (_quaternion !== null) {
+                    renderOptions["quaternion"] = _quaternion;
+                }
+                if (_target !== null) {
+                    renderOptions["target"] = _target;
+                }
+            }
 
             viewer.render(
                 ...shapesStates,

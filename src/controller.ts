@@ -9,6 +9,7 @@ export class CadqueryController {
     view: vscode.Webview | undefined;
 
     constructor(private context: vscode.ExtensionContext) {
+        console.log("creating controller")
         CadqueryViewer.createOrShow(this.context.extensionUri, this);
         let panel = CadqueryViewer.currentPanel;
         this.view = panel?.getView();
