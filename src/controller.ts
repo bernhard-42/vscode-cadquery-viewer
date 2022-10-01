@@ -9,7 +9,6 @@ export class CadqueryController {
     view: vscode.Webview | undefined;
 
     constructor(private context: vscode.ExtensionContext) {
-        console.log("creating controller")
         CadqueryViewer.createOrShow(this.context.extensionUri, this);
         let panel = CadqueryViewer.currentPanel;
         this.view = panel?.getView();
@@ -50,7 +49,6 @@ export class CadqueryController {
     }
 
     public dispose() {
-        console.log("CadqueryController dispose");
         if (this.server !== undefined) {
             this.server.close();
             console.log('Server is shut down');

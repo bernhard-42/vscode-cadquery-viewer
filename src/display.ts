@@ -158,9 +158,23 @@ export function template() {
         window.addEventListener('message', event => {
             const data = JSON.parse(event.data);
             if (data.type === "data") {
+
                 let meshData = data.data;
                 let config = data.config;
                 render(meshData.shapes, meshData.states, config);
+
+            } else if (data.type === "animation") {
+                
+                const tracks = data.data;
+                for (var track of tracks) {
+                    viewer.addAnimationTrack(...track);
+                }
+                const duration = Math.max(
+                    ...tracks.map((track) => Math.max(...track[2]))
+                );
+                if (data.config.speed > 0) {
+                      viewer.initAnimation(duration, data.config.speed);
+                }
             }
         });
         

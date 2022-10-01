@@ -15,6 +15,7 @@
 #
 
 import json
+from matplotlib import animation
 import requests
 
 from jupyter_cadquery import PartGroup, Part
@@ -22,6 +23,23 @@ from jupyter_cadquery.cad_objects import to_assembly
 from jupyter_cadquery.base import _tessellate_group, get_normal_len, _combined_bb
 from jupyter_cadquery.defaults import get_default, get_defaults, preset, set_defaults
 from jupyter_cadquery.utils import numpy_to_json
+from jupyter_cadquery.animation import Animation
+
+
+def animate(self, speed):
+    def to_array(track):
+        return [track.path, track.action, track.times, track.values]
+
+    data = {
+        "data": [to_array(track) for track in self.tracks],
+        "type": "animation",
+        "config": {"speed": speed},
+    }
+    _send(json.loads(numpy_to_json(data)))
+
+
+Animation.animate = animate
+
 
 CMD_PORT = 3939
 REQUEST_TIMEOUT = 2000
@@ -102,19 +120,6 @@ def _convert(*cad_objs, **kwargs):
         "count": part_group.count_shapes(),
     }
     return data
-
-
-def to_array(track):
-    return [track.path, track.action, track.times, track.values]
-
-
-def animate(tracks, speed):
-    data = {
-        "data": [to_array(track) for track in tracks],
-        "type": "animation",
-        "config": {"speed": speed},
-    }
-    _send(data)
 
 
 def show(*cad_objs, **kwargs):
