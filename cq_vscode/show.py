@@ -86,15 +86,38 @@ def _convert(*cad_objs, **kwargs):
             "position",
             "rotation",
             "zoom",
+            # controlled by VSCode panel size
             "cad_width",
-            "tree_width",
             "height",
+            # controlled by VSCode settings
+            "tree_width",
+            "theme",
+            "control",
+            "up",
             "glass",
+            "tools",
         )
     }
 
     for k, v in kwargs.items():
-        if v is not None:
+        if k in ["cad_width", "height"]:
+
+            print(
+                f"Setting {k} cannot be set, it is determined by the VSCode panel size"
+            )
+
+        elif k in [
+            "tree_width",
+            "theme",
+            "control",
+            "up",
+            "glass",
+            "tools",
+        ]:
+            print(f"Setting {k} can only be set in VSCode config")
+
+        elif v is not None:
+
             config[k] = v
 
     shapes, states = _tessellate_group(

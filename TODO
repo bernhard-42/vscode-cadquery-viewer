@@ -1,2 +1,4 @@
 - Use global VS Code vonfig
 - Avoid web server restart
+- fix reset_camera
+- fix focus after cmd-k v

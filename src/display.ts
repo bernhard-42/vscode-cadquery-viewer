@@ -2,13 +2,12 @@ import * as vscode from 'vscode';
 
 export function template() {
     let options = vscode.workspace.getConfiguration("CadQueryViewer");
+    let theme = options.get("dark") ? "dark": "light";
     let treeWidth = options.get("treeWidth");
-    let theme = options.get("theme");
-    let control = options.get("control");
+    let control = options.get("orbitControl") ? "orbit" : "trackball";
     let up = options.get("up");
     let glass = options.get("glass");
     let tools = options.get("tools");
-    let collapse = options.get("collapse");
     let rotateSpeed = options.get("rotateSpeed");
     let zoomSpeed = options.get("zoomSpeed");
     let panSpeed = options.get("panSpeed");
@@ -55,37 +54,36 @@ export function template() {
                 height: window.innerHeight || document.body.clientHeight
             }
         }
+        
+        function preset(config, val) {
+            return (config === undefined) ? val : config;
+        }
 
         function showViewer() {
             const size = getSize()
-            const treeWidth = ${glass} ? 0: 240;
-
+            const treeWidth = ${glass} ? 0: ${treeWidth};
+            const minWidth = ${glass} ? 665 : 665 - ${treeWidth};
+            
             const displayOptions = {
-                cadWidth: Math.max(665, size.width - treeWidth - 42),
+                cadWidth: Math.max(minWidth, size.width - treeWidth - 42),
                 height: size.height - 65,
                 treeWidth: treeWidth,
                 theme: '${theme}',
                 pinning: false,
-            };
+            };    
 
             const container = document.getElementById("cad_viewer");
             container.innerHTML = ""
             viewer = new Viewer(container, displayOptions, nc);
             
             if (_states != null) {
-                console.log(viewer);
                 render(_shapes, _states, _config);
-            } 
+            }     
             
             // viewer.trimUI(["axes", "axes0", "grid", "ortho", "more", "help"])           
-        }
-
-        function preset(config, val) {
-            return (config === undefined) ? val : config;
-        }
+        }    
 
         function render(shapes, states, config) {
-            console.log(shapes, states, config);
             _states = states;
             _shapes = shapes;
             _config = config;
@@ -107,15 +105,15 @@ export function template() {
                 ortho: preset(config.ortho, true),
                 ticks: preset(config.ticks, 10),
                 timeit: preset(config.timeit, false),
-                tools: preset(config.tools, true),
-                glass: preset(config.glass, true),
-                up: preset(config.up, "Z"),
+                tools: preset(config.tools, ${tools}),
+                glass: preset(config.glass, ${glass}),
+                up: preset(config.up, '${up}'),
                 transparent: preset(config.transparent, false),
                 zoom: preset(config.zoom, 1.0),
-                controls: preset(config.controls, "trackball"),
-                panSpeed: preset(config.panSpeed, 0.5),
-                zoomSpeed: preset(config.zoomSpeed, 0.5),
-                rotateSpeed: preset(config.rotateSpeed, 1.0),
+                control: preset(config.control, '${control}'),
+                panSpeed: preset(config.panSpeed, ${panSpeed}),
+                zoomSpeed: preset(config.zoomSpeed, ${zoomSpeed}),
+                rotateSpeed: preset(config.rotateSpeed, ${rotateSpeed}),
             };
 
             viewer?.clear();
@@ -141,7 +139,7 @@ export function template() {
                     renderOptions["target"] = _target;
                 }
             }
-
+            console.log(renderOptions);
             viewer.render(
                 ...shapesStates,
                 states,
@@ -164,7 +162,6 @@ export function template() {
                 render(meshData.shapes, meshData.states, config);
 
             } else if (data.type === "animation") {
-                
                 const tracks = data.data;
                 for (var track of tracks) {
                     viewer.addAnimationTrack(...track);

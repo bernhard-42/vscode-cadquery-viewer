@@ -35,52 +35,56 @@
         "CadQueryViewer.treeWidth": {
           "type": "integer",
           "default": 240,
-          "description": "CadQuery Viewer navigation tree width"
+          "description": "CadQuery Viewer navigation tree width",
+          "order": 0
         },
-        "CadQueryViewer.theme": {
-          "type": "string",
-          "default": "light",
-          "description": "The used them of the viewer, 'light' or 'dark'"
+        "CadQueryViewer.dark": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use dark mode",
+          "order": 3
         },
-        "CadQueryViewer.control": {
-          "type": "string",
-          "default": "trackball",
-          "description": "Contolr mode: 'trackball' or 'orbit'"
+        "CadQueryViewer.orbitControl": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use 'orbit' control mode instead of 'trackball'",
+          "order": 4
         },
         "CadQueryViewer.up": {
           "type": "string",
           "default": "Z",
-          "description": "Provides up direction, 'Z', 'Y' or 'L' (legacy)"
+          "description": "Provides up direction, 'Z', 'Y' or 'L' (legacy)",
+          "order": 5
         },
         "CadQueryViewer.glass": {
           "type": "boolean",
           "default": true,
-          "description": "Use glass mode with transparent navigation tree"
+          "description": "Use glass mode with transparent navigation tree",
+          "order": 1
         },
         "CadQueryViewer.tools": {
           "type": "boolean",
           "default": true,
-          "description": "Show toolbar"
-        },
-        "CadQueryViewer.collapse": {
-          "type": "integer",
-          "default": 1,
-          "description": "Default collapse mode of navigation tree (1: collapse nodes with single leaf, 2: collapse all nodes)"
+          "description": "Show toolbar",
+          "order": 2
         },
         "CadQueryViewer.rotateSpeed": {
           "type": "number",
           "default": 1,
-          "description": "Rotation speed"
+          "description": "Rotation speed",
+          "order": 6
         },
         "CadQueryViewer.zoomSpeed": {
           "type": "number",
           "default": 1,
-          "description": "Zoom speed"
+          "description": "Zoom speed",
+          "order": 7
         },
         "CadQueryViewer.panSpeed": {
           "type": "number",
           "default": 1,
-          "description": "Pan speed"
+          "description": "Pan speed",
+          "order": 8
         }
       }
     }
