@@ -17,7 +17,8 @@
 import json
 import requests
 
-from jupyter_cadquery import PartGroup, Part
+from cadquery import Assembly, Color
+from jupyter_cadquery import PartGroup
 from jupyter_cadquery.cad_objects import to_assembly
 from jupyter_cadquery.base import _tessellate_group, get_normal_len, _combined_bb
 from jupyter_cadquery.defaults import get_default, get_defaults, preset, set_defaults
@@ -42,7 +43,7 @@ Animation.animate = animate
 
 CMD_PORT = 3939
 REQUEST_TIMEOUT = 2000
-OBJECTS = []
+ASSEMBLY = Assembly(name="Objects")
 
 
 def set_port(port):
@@ -183,16 +184,38 @@ def show(*cad_objs, **kwargs):
     return _send(data)
 
 
-def show_object(obj, **kwargs):
-    global OBJECTS
-    OBJECTS.append(Part(obj, name=f"obj_{len(OBJECTS)}"))
-    show(PartGroup(OBJECTS), **kwargs)
+def show_object(obj, name=None, options=None, **kwargs):
+    global ASSEMBLY
+
+    if options is not None:
+        if options.get("rgba"):
+            r, g, b, a = options["rgba"]
+        else:
+            a = options["alpha"] if options.get("alpha") is not None else 100
+            r, g, b = (
+                options["color"]
+                if options.get("color") is not None
+                else get_default("default_color")
+            )
+    else:
+        r, g, b = get_default("default_color")
+        a = 1
+
+    color = Color(r / 255, g / 255, b / 255, a)
+
+    ASSEMBLY.add(
+        obj,
+        name=name if name is not None else f"obj_{len(ASSEMBLY.objects)}",
+        color=color,
+    )
+
+    show(ASSEMBLY, **kwargs)
 
 
-def reset():
-    global OBJECTS
+def reset_show():
+    global ASSEMBLY
 
-    OBJECTS = []
+    ASSEMBLY = Assembly(name="Objects")
 
 
 if __name__ == "__main__":
