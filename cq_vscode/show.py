@@ -15,7 +15,6 @@
 #
 
 import json
-from matplotlib import animation
 import requests
 
 from jupyter_cadquery import PartGroup, Part
