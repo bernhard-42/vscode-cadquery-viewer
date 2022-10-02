@@ -8,7 +8,12 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand('cadquery-viewer.cadqueryViewer', () => {
+			const editor = vscode.window?.activeTextEditor?.document;
+			const column = vscode.window?.activeTextEditor?.viewColumn;
 			new CadqueryController(context);
+			if (editor !== undefined){
+				vscode.window.showTextDocument(editor, column);
+			}
 		})
 	);
 
