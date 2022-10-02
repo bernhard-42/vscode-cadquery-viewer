@@ -2,8 +2,8 @@
   "name": "cadquery-viewer",
   "displayName": "CadQuery Viewer",
   "description": "An integrated CadQuery viewer",
-  "version": "0.1.0",
-  "license": "MIT",
+  "version": "0.9.0",
+  "license": "Apache-2.0",
   "engines": {
     "vscode": "^1.71.0"
   },
