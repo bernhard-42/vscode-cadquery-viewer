@@ -5,6 +5,7 @@ import { version as cq_vscode_version } from "./version";
 
 const URL =
     "https://github.com/bernhard-42/vscode-cadquery-viewer/releases/download";
+var terminal: vscode.Terminal;
 
 export function activate(context: vscode.ExtensionContext) {
     //	Commands
@@ -18,6 +19,11 @@ export function activate(context: vscode.ExtensionContext) {
 
                 const controller = new CadqueryController(context);
 
+                // already open terminal to ensure, conda env is selected
+                terminal = vscode.window.createTerminal(
+                    "Cadquery Viewer installation"
+                );
+
                 if (editor !== undefined) {
                     vscode.window.showTextDocument(editor, column);
                 }
@@ -29,10 +35,7 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand(
             "cadquery-viewer.installPythonModule",
             () => {
-                const terminal = vscode.window.createTerminal(
-                    "Cadquery Viewer installation"
-                );
-                terminal.show();
+                terminal.show(true);
                 terminal.sendText(
                     `pip install ${URL}/v${cq_vscode_version}/cq_vscode-${cq_vscode_version}-py3-none-any.whl`
                 );
