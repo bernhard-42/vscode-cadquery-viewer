@@ -10,7 +10,7 @@ An extension to show cadquery objects in VSCode via pythreejs
 ## Usage
 
 -   Select the correct Python environment in VS Code (conda, mamba, ...)
--   Activate CadQuery Viewer via **cmd-k v** / **ctrl-k v** (or the VS Code command `Open CadQuery Viewer`)
+-   Open your Python cadQuery file and activate CadQuery Viewer via **cmd-k v** / **ctrl-k v** (or the VS Code command `Open CadQuery Viewer`)
 -   Use **cmd-shift-P** / **ctrl-shift-P** and run the command `Install CadQuery Viewer Python module 'cq-vscode'` (if not already installed)
 -   Add the Python command `show_object` to your CadQuery Python source file by adding the following import:
 
@@ -51,4 +51,30 @@ Valid keywords `kwargs` are:
 - edge_accuracy:     Edges: Precision of edge discretization (default: mesh quality / 100)
 - ambient_intensity  Intensity of ambient ligth (default=1.0)
 - direct_intensity   Intensity of direct lights (default=0.12)
+```
+
+## Example
+
+```python
+import cadquery as cq
+from cq_vscode import show_object, reset_show, set_defaults
+
+reset_show() # use for reapeated shift-enter execution to clean object buffer
+set_defaults(axes=True, transparent=False, collapse=1, grid=(True, True, True))
+
+box = cq.Workplane().box(1, 2, 1).edges().chamfer(0.4)
+show_object(box, name="box", options={"alpha": 0.5})
+
+sphere = cq.Workplane().sphere(0.6)
+
+show_object(
+    sphere,
+    # show_object args
+    "sphere",
+    {"color": (10, 100, 110)},
+    # three-cad-viewer args
+    collapse="1",
+    reset_camera=False,
+    ortho=False
+)
 ```
