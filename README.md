@@ -4,17 +4,18 @@ An extension to show cadquery objects in VSCode via pythreejs
 
 ## Installation
 
--   Download [cadquery-viewer-0.9.2.vsix](https://github.com/bernhard-42/vscode-cadquery-viewer/releases/download/v0.9.2/cadquery-viewer-0.9.2.vsix)
+-   Download [cadquery-viewer-0.9.3.vsix](https://github.com/bernhard-42/vscode-cadquery-viewer/releases/download/v0.9.3/cadquery-viewer-0.9.3.vsix)
 -   Install it locally in VS Code (_Extensions -> "..." menu -> Install from VSIX..._)
 
 ## Usage
 
 -   Select the correct Python environment in VS Code (conda, mamba, ...)
+-   Activate CadQuery Viewer via **cmd-k v** / **ctrl-k v** (or the VS Code command `Open CadQuery Viewer`)
 -   Use **cmd-shift-P** / **ctrl-shift-P** and run the command `Install CadQuery Viewer Python module 'cq-vscode'` (if not already installed)
--   Add the Python command `show_object` to your Python source file by adding the following import:
+-   Add the Python command `show_object` to your CadQuery Python source file by adding the following import:
 
     ```python
-    from cq-vscode import show_object
+    from cq_vscode import show_object
     ```
 
 -   Use `show_object` as in [CQ-Editor](https://github.com/CadQuery/CQ-editor)
