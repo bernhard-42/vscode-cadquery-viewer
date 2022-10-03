@@ -1,4 +1,4 @@
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 import { template } from "./display";
 import { CadqueryController } from "./controller";
 
@@ -10,32 +10,37 @@ export class CadqueryViewer {
     public static currentPanel: CadqueryViewer | undefined;
     public static controller: CadqueryController | undefined;
 
-    public static readonly viewType = 'cadqueryViewer';
+    public static readonly viewType = "cadqueryViewer";
 
     private readonly _panel: vscode.WebviewPanel;
     private _disposables: vscode.Disposable[] = [];
 
-    public static createOrShow(extensionUri: vscode.Uri, _controller: CadqueryController) {
+    public static createOrShow(
+        extensionUri: vscode.Uri,
+        _controller: CadqueryController
+    ) {
         this.controller = _controller;
 
         if (CadqueryViewer.currentPanel) {
             // If we already have a panel, show it.
 
             CadqueryViewer.currentPanel._panel.reveal(vscode.ViewColumn.Two);
-
         } else {
             // Otherwise, create a new panel.
 
             const panel = vscode.window.createWebviewPanel(
                 CadqueryViewer.viewType,
-                'CadQuery Viewer',
+                "CadQuery Viewer",
                 vscode.ViewColumn.Two,
-                { 
+                {
                     enableScripts: true,
                     retainContextWhenHidden: true
-                },
+                }
             );
-            CadqueryViewer.currentPanel = new CadqueryViewer(panel, extensionUri);
+            CadqueryViewer.currentPanel = new CadqueryViewer(
+                panel,
+                extensionUri
+            );
         }
     }
 
@@ -51,7 +56,7 @@ export class CadqueryViewer {
 
         // Update the content based on view changes
         this._panel.onDidChangeViewState(
-            e => {
+            (e) => {
                 if (this._panel.visible) {
                     this.update(template());
                 }
@@ -62,9 +67,9 @@ export class CadqueryViewer {
 
         // Handle messages from the webview
         this._panel.webview.onDidReceiveMessage(
-            message => {
+            (message) => {
                 switch (message.command) {
-                    case 'alert':
+                    case "alert":
                         vscode.window.showErrorMessage(message.text);
                         return;
                 }

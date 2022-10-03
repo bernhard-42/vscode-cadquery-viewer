@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import * as vscode from 'vscode';
-import { CadqueryViewer } from './viewer';
+import * as vscode from "vscode";
+import { CadqueryViewer } from "./viewer";
 import { template } from "./display";
 import { createServer, IncomingMessage, Server, ServerResponse } from "http";
 
@@ -24,29 +24,30 @@ export class CadqueryController {
     }
 
     public startCommandServer() {
-        this.server = createServer((req: IncomingMessage, res: ServerResponse) => {
-            let response = "";
-            if (req.method === "GET") {
-
-                response = 'Only POST supported\n';
-                res.writeHead(200, { "Content-Length": response.length, "Content-Type": "text/plain" });
-                res.end(response);
-
-            } else if (req.method === "POST") {
-
-                var data = "";
-                req.on("data", (chunk) => {
-                    data += chunk;
-                });
-
-                req.on("end", () => {
-                    this.view?.postMessage(data);
-                    response = data.length.toString();
-
-                    res.writeHead(201, { "Content-Type": "text/plain" });
+        this.server = createServer(
+            (req: IncomingMessage, res: ServerResponse) => {
+                let response = "";
+                if (req.method === "GET") {
+                    response = "Only POST supported\n";
+                    res.writeHead(200, {
+                        "Content-Length": response.length,
+                        "Content-Type": "text/plain"
+                    });
                     res.end(response);
-                });
-            }
+                } else if (req.method === "POST") {
+                    var data = "";
+                    req.on("data", (chunk) => {
+                        data += chunk;
+                    });
+
+                    req.on("end", () => {
+                        this.view?.postMessage(data);
+                        response = data.length.toString();
+
+                        res.writeHead(201, { "Content-Type": "text/plain" });
+                        res.end(response);
+                    });
+                }
             }
         );
         try {
@@ -66,5 +67,4 @@ export class CadqueryController {
         serverStarted = false;
         console.log("Server is shut down");
     }
-}
 }

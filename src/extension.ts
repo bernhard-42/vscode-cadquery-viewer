@@ -1,5 +1,5 @@
-import * as vscode from 'vscode';
-import { CadqueryViewer } from './viewer';
+import * as vscode from "vscode";
+import { CadqueryViewer } from "./viewer";
 import { CadqueryController } from "./controller";
 import { version as cq_vscode_version } from "./version";
 
@@ -7,17 +7,20 @@ const URL =
     "https://github.com/bernhard-42/vscode-cadquery-viewer/releases/download";
 
 export function activate(context: vscode.ExtensionContext) {
+    //	Commands
 
-	//	Commands
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            "cadquery-viewer.cadqueryViewer",
+            () => {
+                const editor = vscode.window?.activeTextEditor?.document;
+                const column = vscode.window?.activeTextEditor?.viewColumn;
 
-	context.subscriptions.push(
-		vscode.commands.registerCommand('cadquery-viewer.cadqueryViewer', () => {
-			const editor = vscode.window?.activeTextEditor?.document;
-			const column = vscode.window?.activeTextEditor?.viewColumn;
-			new CadqueryController(context);
-			if (editor !== undefined){
-				vscode.window.showTextDocument(editor, column);
-			}
+                const controller = new CadqueryController(context);
+
+                if (editor !== undefined) {
+                    vscode.window.showTextDocument(editor, column);
+                }
             }
         )
     );
@@ -37,13 +40,16 @@ export function activate(context: vscode.ExtensionContext) {
         )
     );
 
-	//	Register Web view
+    //	Register Web view
 
-	vscode.window.registerWebviewPanelSerializer(CadqueryViewer.viewType, {
-		async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
-			CadqueryViewer.revive(webviewPanel, context.extensionUri);
-		}
-	});
+    vscode.window.registerWebviewPanelSerializer(CadqueryViewer.viewType, {
+        async deserializeWebviewPanel(
+            webviewPanel: vscode.WebviewPanel,
+            state: any
+        ) {
+            CadqueryViewer.revive(webviewPanel, context.extensionUri);
+        }
+    });
 }
 
-export function deactivate() { }
+export function deactivate() {}
