@@ -4,6 +4,8 @@ import { CadqueryViewer } from './viewer';
 import { template } from "./display";
 import { createServer, IncomingMessage, Server, ServerResponse } from "http";
 
+var serverStarted = false;
+
 export class CadqueryController {
     server: Server | undefined;
     view: vscode.Webview | undefined;
@@ -15,10 +17,11 @@ export class CadqueryController {
 
         CadqueryViewer.currentPanel?.update(template());
 
-        this.startCommandServer();
-
-        console.log('CadQuery Viewer is initialized, command server is running on port 3939');
-    };
+        if (!serverStarted) {
+            this.startCommandServer();
+            serverStarted = true;
+        }
+    }
 
     public startCommandServer() {
         this.server = createServer((req: IncomingMessage, res: ServerResponse) => {
@@ -44,14 +47,24 @@ export class CadqueryController {
                     res.end(response);
                 });
             }
-        });
-        this.server.listen(3939);
+            }
+        );
+        try {
+            this.server.listen(3939);
+            console.log(
+                "CadQuery Viewer is initialized, command server is running on port 3939"
+            );
+        } catch (error: any) {
+            vscode.window.showErrorMessage(error.toString());
+        }
     }
 
     public dispose() {
-        if (this.server !== undefined) {
-            this.server.close();
-            console.log('Server is shut down');
-        }
+        console.log("CadqueryController dispose");
+
+        this.server?.close();
+        serverStarted = false;
+        console.log("Server is shut down");
     }
+}
 }
