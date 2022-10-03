@@ -20,6 +20,10 @@
       {
         "command": "cadquery-viewer.cadqueryViewer",
         "title": "Open CadQuery Viewer"
+      },
+      {
+        "command": "cadquery-viewer.installPythonModule",
+        "title": "Install CadQuery Viewer Python module 'cq-vscode'"
       }
     ],
     "keybindings": [
