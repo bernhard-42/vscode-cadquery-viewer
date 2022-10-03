@@ -151,7 +151,15 @@ export function template() {
         showViewer();
         
         window.addEventListener('resize', function(event) {
+            var reset = false;
+            if (_config !== null) {
+                reset = _config.reset_camera;
+                _config.reset_camera = false;
+            }
             showViewer();
+            if (_config !== null) {
+                _config.reset_camera = reset;
+            }
         }, true);
 
         window.addEventListener('message', event => {

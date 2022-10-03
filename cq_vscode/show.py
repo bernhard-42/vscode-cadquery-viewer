@@ -61,8 +61,6 @@ class Progress:
 
 
 def _convert(*cad_objs, **kwargs):
-    set_defaults(reset_camera=False)
-
     color = kwargs.get("default_color")
     if color is None:
         color = get_default("default_color")
@@ -208,7 +206,6 @@ def show_object(obj, name=None, options=None, **kwargs):
         name=name if name is not None else f"obj_{len(ASSEMBLY.objects)}",
         color=color,
     )
-
     show(ASSEMBLY, **kwargs)
 
 
