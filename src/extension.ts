@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { CadqueryViewer } from './viewer';
 import { CadqueryController } from "./controller";
+import { version as cq_vscode_version } from "./version";
 
 export function activate(context: vscode.ExtensionContext) {
 
