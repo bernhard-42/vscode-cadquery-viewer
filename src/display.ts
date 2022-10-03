@@ -102,6 +102,7 @@ export function template() {
                 axes0: preset(config.axes0, false),
                 blackEdges: preset(config.black_edges, false),
                 grid: preset(config.grid, [false, false, false]),
+                collapse: preset(config.collapse, 1),
                 ortho: preset(config.ortho, true),
                 ticks: preset(config.ticks, 10),
                 timeit: preset(config.timeit, false),
