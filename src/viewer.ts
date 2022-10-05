@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { template } from "./display";
 import { CadqueryController } from "./controller";
+import * as output from './Output';
 
 export class CadqueryViewer {
     /**
@@ -24,9 +25,13 @@ export class CadqueryViewer {
         if (CadqueryViewer.currentPanel) {
             // If we already have a panel, show it.
 
+            output.debug("Revealing existing webview panel");
+
             CadqueryViewer.currentPanel._panel.reveal(vscode.ViewColumn.Two);
         } else {
             // Otherwise, create a new panel.
+
+            output.debug("Creating new webview panel");
 
             const panel = vscode.window.createWebviewPanel(
                 CadqueryViewer.viewType,
@@ -45,6 +50,8 @@ export class CadqueryViewer {
     }
 
     public static revive(panel: vscode.WebviewPanel, extensionUri: vscode.Uri) {
+        output.debug("Reviving webview panel");
+
         CadqueryViewer.currentPanel = new CadqueryViewer(panel, extensionUri);
     }
 
@@ -58,6 +65,7 @@ export class CadqueryViewer {
         this._panel.onDidChangeViewState(
             (e) => {
                 if (this._panel.visible) {
+                    output.debug("Webview panel changed state");
                     this.update(template());
                 }
             },
@@ -68,6 +76,7 @@ export class CadqueryViewer {
         // Handle messages from the webview
         this._panel.webview.onDidReceiveMessage(
             (message) => {
+                output.debug(`Received message ${message} from Webview panel`);
                 switch (message.command) {
                     case "alert":
                         vscode.window.showErrorMessage(message.text);
@@ -80,7 +89,7 @@ export class CadqueryViewer {
     }
 
     public dispose() {
-        console.log("CadqueryViewer dispose");
+        output.debug("CadqueryViewer dispose");
         CadqueryViewer.currentPanel = undefined;
 
         this._panel.dispose();
@@ -96,6 +105,7 @@ export class CadqueryViewer {
 
     public update(div: string) {
         if (div !== "") {
+            output.debug("Updateing webview");
             const webview = this._panel.webview;
             this._panel.title = "CadQuery Viewer";
             webview.html = div;
