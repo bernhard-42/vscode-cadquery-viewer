@@ -42,6 +42,8 @@ release:
 	git tag -a v$(CURRENT_VERSION) -m "Latest release: $(CURRENT_VERSION)"
 	
 create-release:
+	@git push
+	@git push --tags
 	@github-release release -u bernhard-42 -r vscode-cadquery-viewer -t v$(CURRENT_VERSION) -n vscode-cadquery-viewer-$(CURRENT_VERSION)
 	@sleep 2
 	@github-release upload  -u bernhard-42 -r vscode-cadquery-viewer -t v$(CURRENT_VERSION) -n cadquery-viewer-$(CURRENT_VERSION).vsix -f dist/cadquery-viewer-$(CURRENT_VERSION).vsix
