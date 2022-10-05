@@ -18,6 +18,8 @@ export function activate(context: vscode.ExtensionContext) {
 				const editor = vscode.window?.activeTextEditor?.document;
 				const column = vscode.window?.activeTextEditor?.viewColumn;
 
+				output.show();
+				
 				// already open terminal to ensure, conda env is selected
 				terminal = vscode.window.createTerminal(
 					"Cadquery Viewer installation"

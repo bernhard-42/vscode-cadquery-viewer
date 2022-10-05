@@ -71,9 +71,9 @@ export class CadqueryController {
 
         this.server?.close();
         serverStarted = false;
-        output.debug("Server is shut down");
+        output.info("Server is shut down");
 
         this.terminal?.dispose();
-        output.debug("Installation terminal is disposed");
+        output.info("Installation terminal is disposed");
     }
 }
