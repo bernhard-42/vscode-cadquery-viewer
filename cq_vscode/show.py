@@ -17,13 +17,20 @@
 import json
 import requests
 
-from cadquery import Assembly, Color
-from jupyter_cadquery import PartGroup
-from jupyter_cadquery.cad_objects import to_assembly
+from cadquery import Workplane
+from jupyter_cadquery import PartGroup, Part
+from jupyter_cadquery.cad_objects import to_assembly, Color
 from jupyter_cadquery.base import _tessellate_group, get_normal_len, _combined_bb
-from jupyter_cadquery.defaults import get_default, get_defaults, preset, set_defaults
+from jupyter_cadquery.defaults import get_default, get_defaults, preset
 from jupyter_cadquery.utils import numpy_to_json
 from jupyter_cadquery.animation import Animation
+
+try:
+    import build123d as bd
+
+    HAS_BUILD123D = True
+except ImportError:
+    HAS_BUILD123D = False
 
 
 def animate(self, speed):
@@ -43,7 +50,7 @@ Animation.animate = animate
 
 CMD_PORT = 3939
 REQUEST_TIMEOUT = 2000
-ASSEMBLY = Assembly(name="Objects")
+OBJECTS = []
 
 
 def set_port(port):
@@ -100,9 +107,7 @@ def _convert(*cad_objs, **kwargs):
     for k, v in kwargs.items():
         if k in ["cad_width", "height"]:
 
-            print(
-                f"Setting {k} cannot be set, it is determined by the VSCode panel size"
-            )
+            print(f"Setting {k} cannot be set, it is determined by the VSCode panel size")
 
         elif k in [
             "tree_width",
@@ -118,9 +123,7 @@ def _convert(*cad_objs, **kwargs):
 
             config[k] = v
 
-    shapes, states = _tessellate_group(
-        part_group, kwargs, Progress(), config.get("timeit")
-    )
+    shapes, states = _tessellate_group(part_group, kwargs, Progress(), config.get("timeit"))
 
     config["normal_len"] = get_normal_len(
         preset("render_normals", config.get("render_normals")),
@@ -133,9 +136,7 @@ def _convert(*cad_objs, **kwargs):
     shapes["bb"] = bb
 
     data = {
-        "data": json.loads(
-            numpy_to_json(dict(shapes=shapes, states=states))
-        ),  # improve de-numpying
+        "data": json.loads(numpy_to_json(dict(shapes=shapes, states=states))),  # improve de-numpying
         "type": "data",
         "config": config,
         "count": part_group.count_shapes(),
@@ -172,7 +173,13 @@ def show(*cad_objs, **kwargs):
     return _send(data)
 
 
-def show_object(obj, name=None, options=None, **kwargs):
+def bd_to_cq(objs):
+    w = Workplane()
+    w.objects = objs
+    return w
+
+
+def show_object(obj, name=None, options=None, clear=False, **kwargs):
     """Incrementally how CAD objects in Visual Studio Code
 
     Valid keywords:
@@ -197,36 +204,40 @@ def show_object(obj, name=None, options=None, **kwargs):
     - direct_intensity   Intensity of direct lights (default=0.12)
     """
 
-    global ASSEMBLY
+
+def show_object(obj, name=None, options=None, parent=None, clear=False, **kwargs):
+    global OBJECTS
+
+    if clear:
+        reset_show()
+
+    if parent is not None:
+        part = to_assembly(parent, names=["parent"]).objects[0]
+        r, g, b = get_default("default_color")
+        part.color = Color((r, g, b, 0.1))
+        OBJECTS.append(part)
+
+    part = to_assembly(obj, names=[name if name is not None else f"obj_{len(OBJECTS)}"]).objects[0]
 
     if options is not None:
         if options.get("rgba"):
             r, g, b, a = options["rgba"]
         else:
             a = options["alpha"] if options.get("alpha") is not None else 100
-            r, g, b = (
-                options["color"]
-                if options.get("color") is not None
-                else get_default("default_color")
-            )
-    else:
-        r, g, b = get_default("default_color")
-        a = 1
+            r, g, b = options["color"] if options.get("color") is not None else get_default("default_color")
+        part.color = Color((r, g, b, a))
 
-    color = Color(r / 255, g / 255, b / 255, a)
+    # part.name = name if name is not None else f"obj_{len(OBJECTS)}"
+    print(part.color)
+    OBJECTS.append(part)
 
-    ASSEMBLY.add(
-        obj,
-        name=name if name is not None else f"obj_{len(ASSEMBLY.objects)}",
-        color=color,
-    )
-    show(ASSEMBLY, **kwargs)
+    show(*OBJECTS, **kwargs)
 
 
 def reset_show():
-    global ASSEMBLY
+    global OBJECTS
 
-    ASSEMBLY = Assembly(name="Objects")
+    OBJECTS = []
 
 
 if __name__ == "__main__":
