@@ -179,7 +179,7 @@ def bd_to_cq(objs):
     return w
 
 
-def show_object(obj, name=None, options=None, clear=False, **kwargs):
+def show_object(obj, name=None, options=None, parent=None, clear=False, **kwargs):
     """Incrementally how CAD objects in Visual Studio Code
 
     Valid keywords:
@@ -204,8 +204,6 @@ def show_object(obj, name=None, options=None, clear=False, **kwargs):
     - direct_intensity   Intensity of direct lights (default=0.12)
     """
 
-
-def show_object(obj, name=None, options=None, parent=None, clear=False, **kwargs):
     global OBJECTS
 
     if clear:
@@ -214,10 +212,10 @@ def show_object(obj, name=None, options=None, parent=None, clear=False, **kwargs
     if parent is not None:
         part = to_assembly(parent, names=["parent"]).objects[0]
         r, g, b = get_default("default_color")
-        part.color = Color((r, g, b, 0.1))
+        part.color = Color((r, g, b, 0.25))
         OBJECTS.append(part)
 
-    part = to_assembly(obj, names=[name if name is not None else f"obj_{len(OBJECTS)}"]).objects[0]
+    part = to_assembly(obj, names=[name if name is not None else f"obj_{len(OBJECTS)}"]).objects[1]
 
     if options is not None:
         if options.get("rgba"):
@@ -227,8 +225,9 @@ def show_object(obj, name=None, options=None, parent=None, clear=False, **kwargs
             r, g, b = options["color"] if options.get("color") is not None else get_default("default_color")
         part.color = Color((r, g, b, a))
 
-    # part.name = name if name is not None else f"obj_{len(OBJECTS)}"
-    print(part.color)
+    # ensure all objects a transparent to trick webgl renderer order
+    part.color.a = min(part.color.a, 0.99)
+
     OBJECTS.append(part)
 
     show(*OBJECTS, **kwargs)
