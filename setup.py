@@ -2,12 +2,12 @@ from setuptools import setup, find_packages
 
 setup_args = {
     "name": "cq_vscode",
-    "version": "0.9.4",
+    "version": "0.9.5",
     "description": "CadQuery Viewer for VSCode",
     "long_description": "An extension to show cadquery objects in VSCode via pythreejs",
     "include_package_data": True,
-    "python_requires": ">=3.6",
-    "install_requires": ["jupyter_cadquery~=3.3.0"],
+    "python_requires": ">=3.8",
+    "install_requires": ["jupyter_cadquery~=3.4.0"],
     "packages": find_packages(),
     "zip_safe": False,
     "author": "Bernhard Walter",
