@@ -215,7 +215,7 @@ def show_object(obj, name=None, options=None, parent=None, clear=False, **kwargs
         part.color = Color((r, g, b, 0.25))
         OBJECTS.append(part)
 
-    part = to_assembly(obj, names=[name if name is not None else f"obj_{len(OBJECTS)}"]).objects[1]
+    part = to_assembly(obj, names=[name if name is not None else f"obj_{len(OBJECTS)}"]).objects[-1]
 
     if options is not None:
         if options.get("rgba"):
