@@ -249,10 +249,12 @@ def show_object(
     if isinstance(mates, dict):
         pg = PartGroup([], name=f"Mates({name})" if name is not None else f"Mates")
         mate_scale = kwargs.get("mate_scale", get_default("mate_scale"))
-        for n, mate in mates.items():
+        for mate_name, mate in mates.items():
             pg.add(
                 _from_mate(
-                    convert_build123d_massembly(mate), name=n, mate_scale=mate_scale
+                    convert_build123d_massembly(mate),
+                    name=mate_name,
+                    mate_scale=mate_scale,
                 )
             )
 
