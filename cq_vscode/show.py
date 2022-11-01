@@ -19,7 +19,11 @@ import requests
 
 from cadquery import Workplane
 from jupyter_cadquery import PartGroup, Part
-from jupyter_cadquery.cad_objects import to_assembly, Color
+from jupyter_cadquery.cad_objects import (
+    to_assembly,
+    _from_mate,
+    convert_build123d_massembly,
+)
 from jupyter_cadquery.base import _tessellate_group, get_normal_len, _combined_bb
 from jupyter_cadquery.defaults import get_default, get_defaults, preset
 from jupyter_cadquery.utils import numpy_to_json
@@ -50,7 +54,8 @@ Animation.animate = animate
 
 CMD_PORT = 3939
 REQUEST_TIMEOUT = 2000
-OBJECTS = []
+
+OBJECTS = {"objs": [], "names": [], "colors": [], "alphas": []}
 
 
 def set_port(port):
@@ -67,16 +72,16 @@ class Progress:
         print(".", end="", flush=True)
 
 
-def _convert(*cad_objs, **kwargs):
-    color = kwargs.get("default_color")
-    if color is None:
-        color = get_default("default_color")
-
+def _convert(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
     part_group = to_assembly(
         *cad_objs,
-        render_mates=kwargs.get("render_mates"),
-        mate_scale=kwargs.get("mate_scale", 1),
-        default_color=color,
+        names=names,
+        colors=colors,
+        alphas=alphas,
+        render_mates=kwargs.get("render_mates", get_default("render_mates")),
+        mate_scale=kwargs.get("mate_scale", get_default("mate_scale")),
+        default_color=kwargs.get("default_color", get_default("default_color")),
+        show_parent=kwargs.get("show_parent", get_default("show_parent")),
     )
 
     if len(part_group.objects) == 1 and isinstance(part_group.objects[0], PartGroup):
@@ -107,7 +112,9 @@ def _convert(*cad_objs, **kwargs):
     for k, v in kwargs.items():
         if k in ["cad_width", "height"]:
 
-            print(f"Setting {k} cannot be set, it is determined by the VSCode panel size")
+            print(
+                f"Setting {k} cannot be set, it is determined by the VSCode panel size"
+            )
 
         elif k in [
             "tree_width",
@@ -123,7 +130,9 @@ def _convert(*cad_objs, **kwargs):
 
             config[k] = v
 
-    shapes, states = _tessellate_group(part_group, kwargs, Progress(), config.get("timeit"))
+    shapes, states = _tessellate_group(
+        part_group, kwargs, Progress(), config.get("timeit")
+    )
 
     config["normal_len"] = get_normal_len(
         preset("render_normals", config.get("render_normals")),
@@ -136,7 +145,9 @@ def _convert(*cad_objs, **kwargs):
     shapes["bb"] = bb
 
     data = {
-        "data": json.loads(numpy_to_json(dict(shapes=shapes, states=states))),  # improve de-numpying
+        "data": json.loads(
+            numpy_to_json(dict(shapes=shapes, states=states))
+        ),  # improve de-numpying
         "type": "data",
         "config": config,
         "count": part_group.count_shapes(),
@@ -144,7 +155,7 @@ def _convert(*cad_objs, **kwargs):
     return data
 
 
-def show(*cad_objs, **kwargs):
+def show(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
     """Show CAD objects in Visual Studio Code
 
     Valid keywords:
@@ -169,7 +180,7 @@ def show(*cad_objs, **kwargs):
     - direct_intensity   Intensity of direct lights (default=0.12)
     """
 
-    data = _convert(*cad_objs, **kwargs)
+    data = _convert(*cad_objs, names=names, colors=colors, alphas=alphas, **kwargs)
     return _send(data)
 
 
@@ -179,7 +190,15 @@ def bd_to_cq(objs):
     return w
 
 
-def show_object(obj, name=None, options=None, parent=None, clear=False, **kwargs):
+def reset_show():
+    global OBJECTS
+
+    OBJECTS = {"objs": [], "names": [], "colors": [], "alphas": []}
+
+
+def show_object(
+    obj, name=None, options=None, mates=None, parent=None, clear=False, **kwargs
+):
     """Incrementally how CAD objects in Visual Studio Code
 
     Valid keywords:
@@ -210,33 +229,45 @@ def show_object(obj, name=None, options=None, parent=None, clear=False, **kwargs
         reset_show()
 
     if parent is not None:
-        part = to_assembly(parent, names=["parent"]).objects[0]
-        r, g, b = get_default("default_color")
-        part.color = Color((r, g, b, 0.25))
-        OBJECTS.append(part)
+        OBJECTS["objs"].append(parent)
+        OBJECTS["names"].append("parent")
+        OBJECTS["colors"].append(get_default("default_color"))
+        OBJECTS["alphas"].append(0.25)
 
-    part = to_assembly(obj, names=[name if name is not None else f"obj_{len(OBJECTS)}"]).objects[-1]
+    if options is None:
+        color = None
+        alpha = 1.0
+    else:
+        color = options.get("color")
+        alpha = options.get("alpha", 1.0)
 
-    if options is not None:
-        if options.get("rgba"):
-            r, g, b, a = options["rgba"]
-        else:
-            a = options["alpha"] if options.get("alpha") is not None else 100
-            r, g, b = options["color"] if options.get("color") is not None else get_default("default_color")
-        part.color = Color((r, g, b, a))
+    OBJECTS["objs"].append(obj)
+    OBJECTS["names"].append(name)
+    OBJECTS["colors"].append(color)
+    OBJECTS["alphas"].append(alpha)
 
-    # ensure all objects a transparent to trick webgl renderer order
-    part.color.a = min(part.color.a, 0.99)
+    if isinstance(mates, dict):
+        pg = PartGroup([], name=f"Mates({name})" if name is not None else f"Mates")
+        mate_scale = kwargs.get("mate_scale", get_default("mate_scale"))
+        for n, mate in mates.items():
+            pg.add(
+                _from_mate(
+                    convert_build123d_massembly(mate), name=n, mate_scale=mate_scale
+                )
+            )
 
-    OBJECTS.append(part)
+        OBJECTS["objs"].append(pg)
+        OBJECTS["names"].append(None)
+        OBJECTS["colors"].append(None)
+        OBJECTS["alphas"].append(None)
 
-    show(*OBJECTS, **kwargs)
-
-
-def reset_show():
-    global OBJECTS
-
-    OBJECTS = []
+    show(
+        *OBJECTS["objs"],
+        names=OBJECTS["names"],
+        colors=OBJECTS["colors"],
+        alphas=OBJECTS["alphas"],
+        **kwargs,
+    )
 
 
 if __name__ == "__main__":
