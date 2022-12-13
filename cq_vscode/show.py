@@ -18,7 +18,8 @@ import json
 import requests
 
 from cadquery import Workplane
-from jupyter_cadquery import PartGroup, Part
+
+from jupyter_cadquery import PartGroup
 from jupyter_cadquery.cad_objects import (
     to_assembly,
     _from_mate,
@@ -27,29 +28,6 @@ from jupyter_cadquery.cad_objects import (
 from jupyter_cadquery.base import _tessellate_group, get_normal_len, _combined_bb
 from jupyter_cadquery.defaults import get_default, get_defaults, preset
 from jupyter_cadquery.utils import numpy_to_json
-from jupyter_cadquery.animation import Animation
-
-try:
-    import build123d as bd
-
-    HAS_BUILD123D = True
-except ImportError:
-    HAS_BUILD123D = False
-
-
-def animate(self, speed):
-    def to_array(track):
-        return [track.path, track.action, track.times, track.values]
-
-    data = {
-        "data": [to_array(track) for track in self.tracks],
-        "type": "animation",
-        "config": {"speed": speed},
-    }
-    _send(json.loads(numpy_to_json(data)))
-
-
-Animation.animate = animate
 
 
 CMD_PORT = 3939
