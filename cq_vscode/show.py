@@ -20,11 +20,7 @@ import requests
 from cadquery import Workplane
 
 from jupyter_cadquery import PartGroup
-from jupyter_cadquery.cad_objects import (
-    to_assembly,
-    _from_mate,
-    convert_build123d_massembly,
-)
+from jupyter_cadquery.cad_objects import to_assembly
 from jupyter_cadquery.base import _tessellate_group, get_normal_len, _combined_bb
 from jupyter_cadquery.defaults import get_default, get_defaults, preset
 from jupyter_cadquery.utils import numpy_to_json
@@ -223,23 +219,6 @@ def show_object(
     OBJECTS["names"].append(name)
     OBJECTS["colors"].append(color)
     OBJECTS["alphas"].append(alpha)
-
-    if isinstance(mates, dict):
-        pg = PartGroup([], name=f"Mates({name})" if name is not None else f"Mates")
-        mate_scale = kwargs.get("mate_scale", get_default("mate_scale"))
-        for mate_name, mate in mates.items():
-            pg.add(
-                _from_mate(
-                    convert_build123d_massembly(mate),
-                    name=mate_name,
-                    mate_scale=mate_scale,
-                )
-            )
-
-        OBJECTS["objs"].append(pg)
-        OBJECTS["names"].append(None)
-        OBJECTS["colors"].append(None)
-        OBJECTS["alphas"].append(None)
 
     show(
         *OBJECTS["objs"],
