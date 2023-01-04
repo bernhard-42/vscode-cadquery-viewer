@@ -11,14 +11,29 @@ _CadQuery Viewer for VS Code_ is an extension to show CadQuery objects in VS Cod
 
 -   Select the correct Python environment in VS Code (conda, mamba, ...)
 -   Open your Python CadQuery file and activate _CadQuery Viewer_ via **cmd-k v** / **ctrl-k v** (or via the VS Code command `Open CadQuery Viewer`)
--   Use **cmd-shift-P** / **ctrl-shift-P** and run the command `Install CadQuery Viewer Python module 'cq-vscode'` (if not already installed)
--   Add the Python command `show_object` to your CadQuery Python source file by adding the following import:
 
-    ```python
-    from cq_vscode import show_object
-    ```
+    - When port 3939 is free, the viewer starts and in Python one would use 
+        ```python
+        from cq_vscode import show, show_object
+        # ...
+        show_object(box)
+        ```
+
+    - When the port is not free (e.g. blocked by the first viewer or another app), it opens an input box to ask for another port. In this case, in Python one needs to call `set_port` first, e.g. when entering 3940 in VS Code, call:
+        ```python
+        from cq_vscode import show, show_object, set_port
+        set_port(3940)
+        # ...
+        show_object(box)
+        ```
+    All following `show` and `show_object` calls should the use this port in this VS Code Window.
+
+    There can be one Viewer per VS Code window.
+
+-   Use **cmd-shift-P** / **ctrl-shift-P** and run the command `Install CadQuery Viewer Python module 'cq-vscode'` (if not already installed)
 
 -   Use `show_object` as in [CQ-Editor](https://github.com/CadQuery/CQ-editor)
+
 -   Global settings can be set in VS Code under "CadQuery Viewer"
 
 ## show_object
@@ -26,12 +41,13 @@ _CadQuery Viewer for VS Code_ is an extension to show CadQuery objects in VS Cod
 The command support the CQ-Editor parameters `obj`, `name` and `options` plus additional viewer specific args:
 
 ```python
-show_object(obj, name=None, options=None, **kwargs)
+show_object(obj, name=None, options=None, port=None, **kwargs)
 ```
 
 Valid keywords `kwargs` are:
 
 ```text
+- port:              To overwrite the global port setting for the viewer
 - axes:              Show axes (default=False)
 - axes0:             Show axes at (0,0,0) (default=False)
 - grid:              Show grid (default=False)
