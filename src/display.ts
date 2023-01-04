@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 
 export function template() {
     let options = vscode.workspace.getConfiguration("CadQueryViewer");
-    let theme = options.get("dark") ? "dark": "light";
+    let theme = options.get("dark") ? "dark" : "light";
     let treeWidth = options.get("treeWidth");
     let control = options.get("orbitControl") ? "orbit" : "trackball";
     let up = options.get("up");
@@ -140,7 +140,7 @@ export function template() {
                     renderOptions["target"] = _target;
                 }
             }
-            console.log(renderOptions);
+            
             viewer.render(
                 ...shapesStates,
                 states,
@@ -161,6 +161,7 @@ export function template() {
                 _config.reset_camera = reset;
             }
         }, true);
+        console.log("resize listener registered");
 
         window.addEventListener('message', event => {
             const data = JSON.parse(event.data);
@@ -183,6 +184,7 @@ export function template() {
                 }
             }
         });
+        console.log("message listener registered");
         
     </script>
 </head>
