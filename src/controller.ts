@@ -11,23 +11,37 @@ export class CadqueryController {
     server: Server | undefined;
     view: vscode.Webview | undefined;
     terminal: vscode.Terminal | undefined;
+    port: number;
 
-    constructor(private context: vscode.ExtensionContext, terminal: vscode.Terminal) {
-        CadqueryViewer.createOrShow(this.context.extensionUri, this);
-        let panel = CadqueryViewer.currentPanel;
-        this.view = panel?.getView();
-        this.terminal = terminal;
-
-        CadqueryViewer.currentPanel?.update(template());
+    constructor(private context: vscode.ExtensionContext, port: number) {
+        this.port = port;
 
         if (!serverStarted) {
-            output.info("Starting web server ...")
-            this.startCommandServer();
-            serverStarted = true;
+            if (this.startCommandServer(this.port)) {
+                output.info("Starting web server ...");
+                serverStarted = true;
+                CadqueryViewer.createOrShow(this.context.extensionUri, this);
+                CadqueryViewer.currentPanel?.update(template());
+
+                let panel = CadqueryViewer.currentPanel;
+                this.view = panel?.getView();
+            }
         }
     }
 
-    public startCommandServer() {
+    public isStarted(): boolean {
+        return serverStarted;
+    }
+
+    public setTerminal(terminal: vscode.Terminal) {
+        this.terminal = terminal;
+    }
+
+    public logo() {
+        this.view?.postMessage(logo);
+    }
+
+    public startCommandServer(port: number): boolean {
         this.server = createServer(
             (req: IncomingMessage, res: ServerResponse) => {
                 let response = "";
@@ -56,14 +70,21 @@ export class CadqueryController {
                 }
             }
         );
-        try {
-            this.server.listen(3939);
+        this.server.on('error', (error) => {
+            let msg = "";
+            if (error.message.indexOf("EADDRINUSE") > 0) {
+                output.info(`Port ${this.port} alread in use, please choose another port`);
+            } else {
+                vscode.window.showErrorMessage(`${error}`);
+            }
+        });
+        this.server.on('listening', () => {
             output.info(
-                "CadQuery Viewer is initialized, command server is running on port 3939"
+                `CadQuery Viewer is initialized, command server is running on port ${this.port}`
             );
-        } catch (error: any) {
-            vscode.window.showErrorMessage(error.toString());
-        }
+        });
+        this.server.listen(port);
+        return (this.server.address() !== null);
     }
 
     public dispose() {
