@@ -37,8 +37,12 @@ def set_port(port):
     CMD_PORT = port
 
 
-def _send(data):
-    requests.post(f"http://127.0.0.1:{CMD_PORT}", json=data)
+def _send(data, port):
+    if port is None:
+        port = CMD_PORT
+    r = requests.post(f"http://127.0.0.1:{port}", json=data)
+    if r.status_code != 201:
+        print("Error", r.text)
 
 
 class Progress:
@@ -129,7 +133,7 @@ def _convert(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
     return data
 
 
-def show(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
+def show(*cad_objs, names=None, colors=None, alphas=None, port=None, **kwargs):
     """Show CAD objects in Visual Studio Code
 
     Valid keywords:
@@ -155,7 +159,7 @@ def show(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
     """
 
     data = _convert(*cad_objs, names=names, colors=colors, alphas=alphas, **kwargs)
-    return _send(data)
+    return _send(data, port=port)
 
 
 def bd_to_cq(objs):
@@ -171,7 +175,14 @@ def reset_show():
 
 
 def show_object(
-    obj, name=None, options=None, mates=None, parent=None, clear=False, **kwargs
+    obj,
+    name=None,
+    options=None,
+    mates=None,
+    parent=None,
+    clear=False,
+    port=None,
+    **kwargs,
 ):
     """Incrementally how CAD objects in Visual Studio Code
 
@@ -225,6 +236,7 @@ def show_object(
         names=OBJECTS["names"],
         colors=OBJECTS["colors"],
         alphas=OBJECTS["alphas"],
+        port=port,
         **kwargs,
     )
 
