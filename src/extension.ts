@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { CadqueryViewer } from "./viewer";
 import { CadqueryController } from "./controller";
 import { version as cq_vscode_version } from "./version";
-import * as output from './Output';
+import * as output from './output';
 
 const URL =
 	"https://github.com/bernhard-42/vscode-cadquery-viewer/releases/download";

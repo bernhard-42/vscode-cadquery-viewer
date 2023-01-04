@@ -3,7 +3,8 @@ import * as vscode from "vscode";
 import { CadqueryViewer } from "./viewer";
 import { template } from "./display";
 import { createServer, IncomingMessage, Server, ServerResponse } from "http";
-import * as output from './Output';
+import * as output from './output';
+import { logo } from './logo';
 
 var serverStarted = false;
 
