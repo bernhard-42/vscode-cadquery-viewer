@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { template } from "./display";
 import { CadqueryController } from "./controller";
-import * as output from './Output';
+import * as output from './output';
 
 export class CadqueryViewer {
     /**
