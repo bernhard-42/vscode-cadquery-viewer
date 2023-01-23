@@ -1,14 +1,15 @@
 import json
 
-from jupyter_cadquery.utils import numpy_to_json
-
+from ocp_tessellate.utils import numpy_to_json
 from .show import _send
 
 
 class Animation:
     def __init__(self, assembly):
         self.tracks = []
-        self.paths = list(assembly.objects.keys())
+        self.is_cadquery = hasattr(assembly, "mates")
+        if self.is_cadquery:
+            self.paths = list(assembly.objects.keys())
 
     def add_track(self, path, action, times, values):
         """
@@ -66,14 +67,17 @@ class Animation:
 
         """
 
-        if path[0] != "/":
-            path = f"/{path}"
+        # if path[0] != "/":
+        #     path = f"/{path}"
 
         if len(times) != len(values):
             raise ValueError("Parameters 'times' and 'values' need to have same length")
 
-        if path not in self.paths:
-            raise ValueError(f"Path '{path}' does not exist in assembly")
+        if self.is_cadquery:
+            root, _, cq_path = path.strip("/").partition("/")
+
+            if root not in self.paths or cq_path not in self.paths + [""]:
+                raise ValueError(f"Path '{path}' does not exist in assembly")
 
         self.tracks.append((path, action, times, values))
 

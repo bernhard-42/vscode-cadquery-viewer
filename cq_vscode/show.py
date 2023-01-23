@@ -19,11 +19,15 @@ import requests
 
 from cadquery import Workplane
 
-from jupyter_cadquery import PartGroup
-from jupyter_cadquery.cad_objects import to_assembly
-from jupyter_cadquery.base import _tessellate_group, get_normal_len, _combined_bb
-from jupyter_cadquery.defaults import get_default, get_defaults, preset
-from jupyter_cadquery.utils import numpy_to_json
+from ocp_tessellate import PartGroup
+from ocp_tessellate.convert import (
+    tessellate_group,
+    get_normal_len,
+    combined_bb,
+    to_assembly,
+)
+from ocp_tessellate.defaults import get_default, get_defaults, preset
+from ocp_tessellate.utils import numpy_to_json
 
 
 CMD_PORT = 3939
@@ -37,7 +41,7 @@ def set_port(port):
     CMD_PORT = port
 
 
-def _send(data, port):
+def _send(data, port=None):
     if port is None:
         port = CMD_PORT
     r = requests.post(f"http://127.0.0.1:{port}", json=data)
@@ -108,7 +112,7 @@ def _convert(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
 
             config[k] = v
 
-    shapes, states = _tessellate_group(
+    shapes, states = tessellate_group(
         part_group, kwargs, Progress(), config.get("timeit")
     )
 
@@ -118,7 +122,7 @@ def _convert(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
         preset("deviation", config.get("deviation")),
     )
 
-    bb = _combined_bb(shapes).to_dict()
+    bb = combined_bb(shapes).to_dict()
     # add global bounding box
     shapes["bb"] = bb
 
