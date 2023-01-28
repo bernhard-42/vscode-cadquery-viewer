@@ -1,1 +1,44 @@
-nothing
+Python
+- Carve out the tessellation part of jupyter_cadquery
+
+Extension
+  
+- Setup sidebar UI
+
+  VIEWER
+
+    inactive / active: Port: 3939 <paste import + init>
+
+    [Start Viewer]
+    
+  LIBS
+
+  > Viewer
+    > cq_vscode <install/upgrade icon active>  <paste import + init>
+      Installer: NONE
+      Version: NONE
+      Path: /path/to/package
+
+  > CAD Libs
+    > cadquery    <install/upgrade icon active>  <paste import + init>
+      Installer: None
+      Version: NONE
+      Path: /path/to/package
+
+    > build123d   <install/upgrade icon inactive>  <paste import + init>
+      Installer: poetry
+      Version: 0.1
+      Path: /path/to/package
+
+    > alg123d     <install/upgrade icon inactive>  <paste import + init>
+      Installer: pip
+      Version: 0.9
+      Path: /path/to/package
+
+
+- Start Viewer
+  - ask for port if default port is already used
+
+
+
+

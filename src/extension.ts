@@ -3,9 +3,27 @@ import { CadqueryViewer } from "./viewer";
 import { CadqueryController } from "./controller";
 import { version as cq_vscode_version } from "./version";
 import * as output from './output';
+import { createLibraryManager } from "./libraryManager";
+import { inquiry, getEditor, getPythonPath } from "./utils";
+import { pipList } from "./system/shell";
+import { TerminalExecute } from "./system/terminal";
 
-const URL =
-	"https://github.com/bernhard-42/vscode-cadquery-viewer/releases/download";
+import { execSync } from 'child_process';
+
+
+// const URL = "https://github.com/bernhard-42/vscode-cadquery-viewer/releases/download";
+
+// let x = new LibraryManagerProvider();
+
+// let cmds: string[][] = [];
+// x.getInstallLibs().forEach((lib: string) => {
+// 	x.getInstallLibMgrs(lib).forEach((mgr: string) => {
+// 		cmds.push(x.getInstallLibCmds(lib, mgr));
+// 	});
+// });
+
+let libraryManager = createLibraryManager();
+libraryManager.refresh("");
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -95,6 +113,49 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		)
 	);
+
+	context.subscriptions.push(vscode.commands.registerCommand(
+		"cadquery-viewer.installLibrary", async (library) => {
+			let managers = libraryManager.getInstallLibMgrs(library.label);
+			let manager = await inquiry(`Select package manager to install "${library.label}"`, managers);
+			if (manager === "") {
+				return;
+			}
+			let commands = libraryManager.getInstallLibCmds(library.label, manager);
+
+			let python = await getPythonPath();
+			let reply = await vscode.window.showQuickPick(["yes", "no"], {
+				placeHolder: `Use python interpreter "${python}"?`
+			}) || "";
+			if (reply === "") {
+				return;
+			}
+
+			if ((python === "python") || reply === "no") {
+				await vscode.commands.executeCommand("python.setInterpreter");
+				python = await getPythonPath();
+			}
+
+			let terminal = new TerminalExecute("Installing... ");
+			try {
+				await terminal.execute(commands);
+				libraryManager.refresh(manager);
+
+			} catch (e: any) {
+				output.error(e.message);
+			}
+		}
+	));
+
+	context.subscriptions.push(vscode.commands.registerCommand(
+		"cadquery-viewer.paste-imports", (library) => {
+
+		}
+	));
+
+	context.subscriptions.push(vscode.commands.registerCommand(
+		'cadquery-viewer.refresh-libraries', () => libraryManager.refresh("")
+	));
 
 	//	Register Web view
 

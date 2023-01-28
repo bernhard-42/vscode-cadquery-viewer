@@ -6,7 +6,7 @@ setup_args = {
     "description": "CadQuery Viewer for VSCode",
     "long_description": "An extension to show cadquery objects in VSCode via pythreejs",
     "include_package_data": True,
-    "python_requires": ">=3.8",
+    "python_requires": ">=3.9",
     "install_requires": ["ocp-tessellate", "requests"],
     "packages": find_packages(),
     "zip_safe": False,
@@ -21,9 +21,9 @@ setup_args = {
         "Intended Audience :: Science/Research",
         "Topic :: Multimedia :: Graphics",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
     ],
 }
 

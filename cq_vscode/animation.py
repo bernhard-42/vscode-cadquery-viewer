@@ -7,9 +7,11 @@ from .show import _send
 class Animation:
     def __init__(self, assembly):
         self.tracks = []
-        self.is_cadquery = hasattr(assembly, "mates")
-        if self.is_cadquery:
-            self.paths = list(assembly.objects.keys())
+        self.is_cadquery = hasattr(assembly, "mates") and not hasattr(
+            assembly, "fq_name"
+        )
+        self.is_alg123d = hasattr(assembly, "mates") and hasattr(assembly, "fq_name")
+        self.paths = list(assembly.objects.keys())
 
     def add_track(self, path, action, times, values):
         """
@@ -77,6 +79,10 @@ class Animation:
             root, _, cq_path = path.strip("/").partition("/")
 
             if root not in self.paths or cq_path not in self.paths + [""]:
+                raise ValueError(f"Path '{path}' does not exist in assembly")
+
+        elif self.is_alg123d:
+            if path not in self.paths:
                 raise ValueError(f"Path '{path}' does not exist in assembly")
 
         self.tracks.append((path, action, times, values))

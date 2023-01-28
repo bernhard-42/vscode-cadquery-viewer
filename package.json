@@ -24,8 +24,81 @@
       {
         "command": "cadquery-viewer.installPythonModule",
         "title": "Install CadQuery Viewer Python module 'cq-vscode'"
+      },
+      {
+        "command": "cadquery-viewer.installLibrary",
+        "title": "Install library",
+        "icon": {
+          "light": "resources/install.png",
+          "dark": "resources/install.png"
+        }
+      },
+      {
+        "command": "cadquery-viewer.paste-imports",
+        "title": "Paste import command(s)",
+        "icon": {
+          "light": "resources/light/paste.png",
+          "dark": "resources/dark/paste.png"
+        }
+      },
+      {
+        "command": "cadquery-viewer.refresh-libraries",
+        "title": "Refresh libraries list",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
       }
     ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "cadqueryHome",
+          "title": "CadQuery",
+          "icon": "resources/cq-vscode.svg"
+        }
+      ]
+    },
+    "views": {
+      "cadqueryHome": [
+        {
+          "id": "cadqueryStatus",
+          "name": "Status"
+        },
+        {
+          "id": "cadquerySetup",
+          "name": "Setup"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "cadqueryStatus",
+        "contents": "In order to use git features, you can open a folder containing a git repository or clone from a URL.\n[Open Folder](command:vscode.openFolder)\n\nTo learn more about how to use git and source control in VS Code [read our docs](https://aka.ms/vscode-scm).",
+        "when": "config.git.enabled && git.state == initialized && workbenchState == empty"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "cadquery-viewer.refresh-libraries",
+          "when": "view == cadquerySetup",
+          "group": "navigation@1"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "cadquery-viewer.installLibrary",
+          "when": "view == cadquerySetup && viewItem == library",
+          "group": "inline@0"
+        },
+        {
+          "command": "cadquery-viewer.paste-imports",
+          "when": "view == cadquerySetup && viewItem == library",
+          "group": "inline@1"
+        }
+      ]
+    },
     "keybindings": [
       {
         "command": "cadquery-viewer.cadqueryViewer",
@@ -90,6 +163,66 @@
           "default": 1,
           "description": "Pan speed",
           "order": 8
+        },
+        "CadQueryViewer.installCommands": {
+          "type": "object",
+          "default": {
+            "cadquery": {
+              "pip": [
+                "pip install git+https://github.com/cadquery/cadquery.git"
+              ],
+              "conda": [
+                "conda install -c conda-forge -c cadquery cadquery=master"
+              ],
+              "mamba": [
+                "mamba install -c conda-forge -c cadquery cadquery=master"
+              ],
+              "poetry": [
+                "poetry add git+https://github.com/cadquery/cadquery.git"
+              ]
+            },
+            "build123d": {
+              "pip": [
+                "pip install git+https://github.com/gumyr/build123d.git"
+              ],
+              "poetry": [
+                "poetry add git+https://github.com/gumyr/build123d.git"
+              ]
+            },
+            "alg123d": {
+              "pip": [
+                "pip install git+https://github.com/bernhard-42/alg123d.git"
+              ],
+              "poetry": [
+                "poetry add git+https://github.com/bernhard-42/alg123d.git"
+              ]
+            },
+            "cq_vscode": {
+              "pip": [
+                "pip install {cq_vscode_url}"
+              ],
+              "poetry": [
+                "poetry add {cq_vscode_url}"
+              ]
+            }
+          }
+        },
+        "CadQueryViewer.importCommands": {
+          "type": "object",
+          "default": {
+            "cadquery": [
+              "import cadquery as cq"
+            ],
+            "buidl123d": [
+              "from build123d import *"
+            ],
+            "alg123d": [
+              "from alg123d import *"
+            ],
+            "cq_vscode": [
+              "from cq_vscode import show, show_object, reset_show, set_defaults, get_defaults"
+            ]
+          }
         }
       }
     }
