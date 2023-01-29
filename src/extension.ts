@@ -14,7 +14,6 @@
    limitations under the License.
 */
 
-
 import * as vscode from "vscode";
 import * as output from "./output";
 import { CadqueryController } from "./controller";
@@ -186,7 +185,9 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand(
             "cadquery-viewer.pasteImports",
-            (library) => {}
+            (library) => {
+                libraryManager.pasteImport(library.label);
+            }
         )
     );
 

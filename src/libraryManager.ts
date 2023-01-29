@@ -17,7 +17,7 @@
 import * as vscode from "vscode";
 import { version as cq_vscode_version } from "./version";
 import * as output from "./output";
-import { getPythonPath } from "./utils";
+import { getPythonPath, getEditor } from "./utils";
 import { execute } from "./system/shell";
 import * as path from "path";
 import { StatusManagerProvider } from "./statusManager";
@@ -124,6 +124,17 @@ export class LibraryManagerProvider
 
     getImportLibCmds(lib: string) {
         return this.importCommands[lib];
+    }
+
+    pasteImport(library: string) {
+        const editor = getEditor();
+        if (editor !== undefined) {
+            let importCmd = this.importCommands[library];
+            let snippet = new vscode.SnippetString( importCmd.join("\n") + "\n");
+            editor?.insertSnippet(snippet);        
+        } else {
+            vscode.window.showErrorMessage("No editor open");
+        }
     }
 
     getTreeItem(element: Library): vscode.TreeItem {

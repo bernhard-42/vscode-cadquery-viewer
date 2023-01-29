@@ -233,7 +233,7 @@
             "cadquery": [
               "import cadquery as cq"
             ],
-            "buidl123d": [
+            "build123d": [
               "from build123d import *"
             ],
             "alg123d": [
