@@ -58,21 +58,20 @@ async function installLib(
     let terminal = new TerminalExecute("Installing... ");
     try {
         await terminal.execute(commands);
-        libraryManager.refresh(manager);
+        libraryManager.refresh();
     } catch (e: any) {
         output.error(e.message);
     }
 }
 
 export function activate(context: vscode.ExtensionContext) {
-    var terminal: vscode.Terminal;
     let controller: CadqueryController;
 
     let statusManager = createStatusManager();
     statusManager.refresh("");
 
     let libraryManager = createLibraryManager(statusManager);
-    libraryManager.refresh("");
+    libraryManager.refresh();
 
     //	Commands
     context.subscriptions.push(
@@ -122,14 +121,6 @@ export function activate(context: vscode.ExtensionContext) {
                     );
 
                     if (controller.isStarted()) {
-                        if (terminal === undefined) {
-                            // already open terminal to ensure, conda env is selected
-                            terminal = vscode.window.createTerminal({
-                                name: "Cadquery Viewer installation"
-                            });
-                        }
-                        controller.setTerminal(terminal);
-
                         vscode.window.showTextDocument(editor, column);
 
                         if (port !== 3939) {
@@ -194,7 +185,7 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand(
             "cadquery-viewer.refreshLibraries",
-            () => libraryManager.refresh("")
+            () => libraryManager.refresh()
         )
     );
 
@@ -226,7 +217,8 @@ export function activate(context: vscode.ExtensionContext) {
             "python.defaultInterpreterPath"
         );
         if (affected) {
-            libraryManager.refresh("");
+            let pythonPath = vscode.workspace.getConfiguration("python")["defaultInterpreterPath"];
+            libraryManager.refresh(pythonPath);
             controller.dispose();
             CadqueryViewer.currentPanel?.dispose();
         }

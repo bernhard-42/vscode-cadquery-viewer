@@ -23,6 +23,7 @@ const URL =
 
 export class StatusManagerProvider implements vscode.TreeDataProvider<Status> {
     installed: boolean = false;
+    libraries: string[] = [];
     running: boolean = false;
     port: string = "3939";
     version: string = "";
@@ -30,10 +31,11 @@ export class StatusManagerProvider implements vscode.TreeDataProvider<Status> {
     constructor() {
         this.version = cq_vscode_version;
     }
-
+    
     private _onDidChangeTreeData: vscode.EventEmitter<
         Status | undefined | null | void
     > = new vscode.EventEmitter<Status | undefined | null | void>();
+    
     readonly onDidChangeTreeData: vscode.Event<
         Status | undefined | null | void
     > = this._onDidChangeTreeData.event;
@@ -46,6 +48,10 @@ export class StatusManagerProvider implements vscode.TreeDataProvider<Status> {
             this.running = false;
         }
         this._onDidChangeTreeData.fire();
+    }
+    
+    setLibraries(libraries:string[]) {
+        this.libraries = Object.assign([], libraries);
     }
 
     getTreeItem(element: Status): vscode.TreeItem {
@@ -73,11 +79,21 @@ export class StatusManagerProvider implements vscode.TreeDataProvider<Status> {
                 status.push(
                     new Status(
                         "cq_vscode",
-                        this.running ? "running" : "stopped",
+                        this.running ? "RUNNING" : "STOPPED",
                         "",
                         state
                     )
                 );
+                this.libraries.forEach((lib) => {
+                    status.push(
+                        new Status(
+                            lib,
+                            "",
+                            "",
+                            vscode.TreeItemCollapsibleState.None
+                        )
+                    );
+                });
             }
             return Promise.resolve(status);
         }
@@ -101,13 +117,15 @@ export class Status extends vscode.TreeItem {
             this.contextValue = "status";
             this.description = this.running;
             this.tooltip =
-                this.running === "running"
+                this.running === "RUNNING"
                     ? "CadQuery Viewer is running"
                     : "CadQuery Viewer is stopped";
         } else if (port !== "") {
             this.contextValue = "port";
             this.tooltip = this.port;
             this.description = this.port;
+        } else {
+            this.contextValue = "library";
         }
     }
 }

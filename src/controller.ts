@@ -29,7 +29,6 @@ export class CadqueryController {
     server: Server | undefined;
     statusController: StatusManagerProvider;
     view: vscode.Webview | undefined;
-    terminal: vscode.Terminal | undefined;
     port: number;
 
     constructor(
@@ -55,10 +54,6 @@ export class CadqueryController {
 
     public isStarted(): boolean {
         return serverStarted;
-    }
-
-    public setTerminal(terminal: vscode.Terminal) {
-        this.terminal = terminal;
     }
 
     public logo() {
@@ -120,8 +115,5 @@ export class CadqueryController {
         serverStarted = false;
         output.info("Server is shut down");
         this.statusController.refresh("");
-
-        this.terminal?.dispose();
-        output.info("Installation terminal is disposed");
     }
 }

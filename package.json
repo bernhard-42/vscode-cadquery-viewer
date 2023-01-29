@@ -79,11 +79,11 @@
       "cadqueryHome": [
         {
           "id": "cadqueryStatus",
-          "name": "Status"
+          "name": "Viewer Manager"
         },
         {
           "id": "cadquerySetup",
-          "name": "Setup"
+          "name": "Library Manager"
         }
       ]
     },
@@ -109,13 +109,18 @@
         },
         {
           "command": "cadquery-viewer.pasteImports",
-          "when": "view == cadquerySetup && viewItem == library",
+          "when": "view == cadqueryStatus && viewItem == library",
+          "group": "inline@1"
+        },
+        {
+          "command": "cadquery-viewer.pasteImports",
+          "when": "view == cadqueryStatus && viewItem == status",
           "group": "inline@1"
         },
         {
           "command": "cadquery-viewer.openViewer",
           "when": "view == cadqueryStatus && viewItem == status",
-          "group": "inline@1"
+          "group": "inline@0"
         }
       ]
     },
@@ -240,7 +245,7 @@
               "from alg123d import *"
             ],
             "cq_vscode": [
-              "from cq_vscode import show, show_object, reset_show, set_defaults, get_defaults"
+              "from cq_vscode import show, show_object, reset_show, set_port, set_defaults, get_defaults"
             ]
           }
         }

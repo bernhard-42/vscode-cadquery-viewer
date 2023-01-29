@@ -51,12 +51,13 @@ export class LibraryManagerProvider
     private _onDidChangeTreeData: vscode.EventEmitter<
         Library | undefined | null | void
     > = new vscode.EventEmitter<Library | undefined | null | void>();
+
     readonly onDidChangeTreeData: vscode.Event<
         Library | undefined | null | void
     > = this._onDidChangeTreeData.event;
 
-    async refresh(manager: string) {
-        await this.getLibVersions(manager);
+    async refresh(pythonPath: string | undefined=undefined) {
+        await this.findInstalledLibraries(pythonPath);
         this._onDidChangeTreeData.fire();
     }
 
@@ -90,9 +91,14 @@ export class LibraryManagerProvider
         }
     }
 
-    async getLibVersions(manager: string) {
+    async findInstalledLibraries(pythonPath: string | undefined) {
         let installLibs = this.getInstallLibs();
-        let python = await getPythonPath();
+        let python: string;
+        if (pythonPath === undefined) {
+            python = await getPythonPath();
+        } else {
+            python = pythonPath;
+        }
 
         this.installed = {};
 
@@ -130,8 +136,11 @@ export class LibraryManagerProvider
         const editor = getEditor();
         if (editor !== undefined) {
             let importCmd = this.importCommands[library];
-            let snippet = new vscode.SnippetString( importCmd.join("\n") + "\n");
-            editor?.insertSnippet(snippet);        
+            if (library === "cq_vscode") {
+                importCmd.push(`set_port(${this.statusManager.port})`);
+            }
+            let snippet = new vscode.SnippetString(importCmd.join("\n") + "\n");
+            editor?.insertSnippet(snippet);
         } else {
             vscode.window.showErrorMessage("No editor open");
         }
@@ -203,6 +212,9 @@ export class LibraryManagerProvider
                 libs.push(new Library(lib, version, "", "", "", "", state));
                 if (lib === "cq_vscode") {
                     this.statusManager.installed = version !== "n/a";
+                    this.statusManager.setLibraries(
+                        Object.keys(this.installed)
+                    );
                     this.statusManager.refresh("");
                 }
             });
