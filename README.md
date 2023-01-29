@@ -4,7 +4,7 @@ _CadQuery Viewer for VS Code_ is an extension to show CadQuery objects in VS Cod
 
 ## Installation
 
--   Download [cadquery-viewer-0.14.0.vsix](https://github.com/bernhard-42/vscode-cadquery-viewer/releases/download/v0.14.0/cadquery-viewer-0.14.0.vsix)
+-   Download [cadquery-viewer-0.13.0.vsix](https://github.com/bernhard-42/vscode-cadquery-viewer/releases/download/v0.14.0/cadquery-viewer-0.13.0.vsix)
 -   Install it locally in VS Code (_Extensions -> "..." menu -> Install from VSIX..._)
 
 ## Usage
@@ -12,21 +12,22 @@ _CadQuery Viewer for VS Code_ is an extension to show CadQuery objects in VS Cod
 -   Select the correct Python environment in VS Code (conda, mamba, ...)
 -   Open your Python CadQuery file and activate _CadQuery Viewer_ via **cmd-k v** / **ctrl-k v** (or via the VS Code command `Open CadQuery Viewer`)
 
-    - When port 3939 is free, the viewer starts and in Python one would use 
+    -   When port 3939 is free, the viewer starts and in Python one would use
+
         ```python
         from cq_vscode import show, show_object
         # ...
         show_object(box)
         ```
 
-    - When the port is not free (e.g. blocked by the first viewer or another app), it opens an input box to ask for another port. In this case, in Python one needs to call `set_port` first, e.g. when entering 3940 in VS Code, call:
-        ```python
-        from cq_vscode import show, show_object, set_port
-        set_port(3940)
-        # ...
-        show_object(box)
-        ```
-    All following `show` and `show_object` calls should the use this port in this VS Code Window.
+    -   When the port is not free (e.g. blocked by the first viewer or another app), it opens an input box to ask for another port. In this case, in Python one needs to call `set_port` first, e.g. when entering 3940 in VS Code, call:
+        `python
+    from cq_vscode import show, show_object, set_port
+    set_port(3940)
+    # ...
+    show_object(box)
+    `
+        All following `show` and `show_object` calls should the use this port in this VS Code Window.
 
     There can be one Viewer per VS Code window.
 
