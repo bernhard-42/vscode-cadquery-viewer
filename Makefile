@@ -57,5 +57,5 @@ create-release:
 # check_dist:
 # 	@twine check dist/*
 
-# upload:
-# 	@twine upload dist/*
+upload:
+	@twine upload dist/*
