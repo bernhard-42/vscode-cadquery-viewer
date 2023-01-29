@@ -54,6 +54,14 @@
                 }
             },
             {
+                "command": "cadquery-viewer.installPythonModule",
+                "title": "Install cq_vscode library",
+                "icon": {
+                    "light": "resources/install.png",
+                    "dark": "resources/install.png"
+                }
+            },
+            {
                 "command": "cadquery-viewer.pasteSnippet",
                 "title": "Paste code snippet",
                 "icon": {
@@ -94,7 +102,7 @@
         "viewsWelcome": [
             {
                 "view": "cadqueryStatus",
-                "contents": "In order to use CadQuery viewer, the Python library cq_vscode needs to be installed.\n[Install cq_vscode from pypi](command:cadquery-viewer.installPythonModule)\n"
+                "contents": "In order to use CadQuery viewer, the Python library cq_vscode needs to be installed.\n[Install cq_vscode from pypi](command:cadquery-viewer.installPythonModule)\n\nFurther libraries can be installed with the Library Manager below\n"
             }
         ],
         "menus": {

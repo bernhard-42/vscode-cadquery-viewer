@@ -104,7 +104,16 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand(
             "cadquery-viewer.installLibrary",
             async (library) => {
-                await installLib(libraryManager, library);
+                await installLib(libraryManager, library.label);
+            }
+        )
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            "cadquery-viewer.installPythonModule",
+            async () => {
+                await installLib(libraryManager, "cq_vscode");
             }
         )
     );

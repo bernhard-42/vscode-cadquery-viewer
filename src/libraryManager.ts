@@ -33,13 +33,13 @@ function sanitize(lib: string) {
 
 export async function installLib(
     libraryManager: LibraryManagerProvider,
-    library: Library
+    library: string
 ) {
-    let managers = libraryManager.getInstallLibMgrs(library.label);
+    let managers = libraryManager.getInstallLibMgrs(library);
     let manager: string;
     if (managers.length > 1) {
         manager = await inquiry(
-            `Select package manager to install "${library.label}"`,
+            `Select package manager to install "${library}"`,
             managers
         );
         if (manager === "") {
@@ -49,7 +49,7 @@ export async function installLib(
         manager = managers[0];
     }
 
-    let commands = libraryManager.getInstallLibCmds(library.label, manager);
+    let commands = libraryManager.getInstallLibCmds(library, manager);
 
     let python = await getPythonPath();
     let reply =
