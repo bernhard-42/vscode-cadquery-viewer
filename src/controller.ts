@@ -5,17 +5,20 @@ import { template } from "./display";
 import { createServer, IncomingMessage, Server, ServerResponse } from "http";
 import * as output from './output';
 import { logo } from './logo';
+import { StatusManagerProvider } from "./statusManager";
 
 var serverStarted = false;
 
 export class CadqueryController {
     server: Server | undefined;
+    statusController: StatusManagerProvider;
     view: vscode.Webview | undefined;
     terminal: vscode.Terminal | undefined;
     port: number;
 
-    constructor(private context: vscode.ExtensionContext, port: number) {
+    constructor(private context: vscode.ExtensionContext, port: number, statusController: StatusManagerProvider) {
         this.port = port;
+        this.statusController = statusController;
 
         if (!serverStarted) {
             if (this.startCommandServer(this.port)) {
@@ -94,6 +97,7 @@ export class CadqueryController {
         this.server?.close();
         serverStarted = false;
         output.info("Server is shut down");
+        this.statusController.refresh("");
 
         this.terminal?.dispose();
         output.info("Installation terminal is disposed");

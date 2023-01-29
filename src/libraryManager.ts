@@ -4,15 +4,22 @@ import * as output from './output';
 import { getPackageManager, getPythonPath } from './utils';
 import { execute } from "./system/shell";
 import * as path from "path";
+import { StatusManagerProvider } from "./statusManager";
+import { TerminalExecute } from "./system/terminal";
 
 const URL = "https://github.com/bernhard-42/vscode-cadquery-viewer/releases/download";
 
+function sanitize(lib: string) {
+  return lib.replace("-", "_");
+}
 export class LibraryManagerProvider implements vscode.TreeDataProvider<Library> {
+  statusManager: StatusManagerProvider;
   installCommands: any = {};
   importCommands: any = {};
   installed: Record<string, string[]> = {};
 
-  constructor() {
+  constructor(statusManger: StatusManagerProvider) {
+    this.statusManager = statusManger;
     this.installCommands = vscode.workspace.getConfiguration("CadQueryViewer")["installCommands"];
     this.importCommands = vscode.workspace.getConfiguration("CadQueryViewer")["importCommands"];
   }
@@ -56,25 +63,22 @@ export class LibraryManagerProvider implements vscode.TreeDataProvider<Library> 
   async getLibVersions(manager: string) {
     let installLibs = this.getInstallLibs();
     let python = await getPythonPath();
-    let p = python.split(path.sep);
-    if (manager === "") {
-      manager = getPackageManager();
-    }
 
     this.installed = {};
 
     try {
-      let command = "pip list --format json";
-      if (manager === "pip") {
-        command = `${python} -m ${command}`;
-      } else {
-        command = `poetry run ${command}`;
-      }
+      let command = `${python} -m pip list -v --format json`;
       let allLibs = execute(command);
       let libs = JSON.parse(allLibs);
       libs.forEach((lib: any) => {
-        if (installLibs.includes(lib["name"].replace("-", "_"))) {
-          this.installed[lib["name"].replace("-", "_")] = [lib["version"], manager, p[p.length - 3]];
+        if (installLibs.includes(sanitize(lib["name"]))) {
+          let editablePath = lib["editable_project_location"];
+          this.installed[sanitize(lib["name"])] = [
+            lib["version"],
+            lib["installer"],
+            (editablePath === undefined) ? lib["location"] : editablePath,
+            editablePath !== undefined
+          ];
         }
       });
 
@@ -98,14 +102,16 @@ export class LibraryManagerProvider implements vscode.TreeDataProvider<Library> 
   getChildren(element?: Library): Thenable<Library[]> {
     if (element) {
       if (Object.keys(this.installed).includes(element.label)) {
-        let version = this.installed[element.label][0];
-        let manager = this.installed[element.label][1];
-        let path = this.installed[element.label][2];
+        let editable = this.installed[element.label][3];
+        let manager = editable ? "n/a" : this.installed[element.label][1];
+        let location = this.installed[element.label][2];
+        let p = location.split(path.sep);
+        let env = editable ? location : p[p.length - 4];
 
         let libs: Library[] = [];
-        libs.push(new Library("version", "", version, "", "", vscode.TreeItemCollapsibleState.None));
-        libs.push(new Library("manager", "", "", manager, "", vscode.TreeItemCollapsibleState.None));
-        libs.push(new Library("path", "", "", "", path, vscode.TreeItemCollapsibleState.None));
+        libs.push(new Library("installer", "", manager, "", "", "", vscode.TreeItemCollapsibleState.None));
+        libs.push(new Library("environment", "", "", location, env, "", vscode.TreeItemCollapsibleState.None));
+        libs.push(new Library("editable", "", "", "", "", editable, vscode.TreeItemCollapsibleState.None));
         return Promise.resolve(libs);
 
       } else {
@@ -115,9 +121,14 @@ export class LibraryManagerProvider implements vscode.TreeDataProvider<Library> 
     } else {
       let libs: Library[] = [];
       this.getInstallLibs().forEach((lib: string) => {
-        let flag = (Object.keys(this.installed).includes(lib)) ? "installed" : "n/a";
-        let state = (flag === "n/a") ? vscode.TreeItemCollapsibleState.None : vscode.TreeItemCollapsibleState.Expanded;
-        libs.push(new Library(lib, flag, "", "", "", state));
+        let installed = Object.keys(this.installed).includes(lib);
+        let version = installed ? this.installed[sanitize(lib)][0] : "n/a";
+        let state = installed ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.None;
+        libs.push(new Library(lib, version, "", "", "", "", state));
+        if ((lib === "cq_vscode")) {
+          this.statusManager.installed = (version !== "n/a");
+          this.statusManager.refresh("");
+        }
       });
 
       return Promise.resolve(libs);
@@ -128,36 +139,38 @@ export class LibraryManagerProvider implements vscode.TreeDataProvider<Library> 
 export class Library extends vscode.TreeItem {
   constructor(
     public readonly label: string,
-    private flag: string,
     private version: string,
-    private manager: string,
-    private path: string,
+    private installer: string,
+    private location: string,
+    private env: string,
+    private editable: string,
     public readonly collapsibleState: vscode.TreeItemCollapsibleState
   ) {
     super(label, collapsibleState);
-    this.contextValue = "info";
+
     if (version !== "") {
       this.tooltip = `${this.label}-${this.version}`;
       this.description = this.version;
-
-    } else if (manager !== "") {
-      this.tooltip = this.manager;
-      this.description = this.manager;
-
-    } else if (path !== "") {
-      this.tooltip = this.path;
-      this.description = this.path;
-
-    } else {
-      this.tooltip = `${this.label} is ${this.flag}`;
-      this.description = this.flag;
       this.contextValue = "library";
+
+    } else if (installer !== "") {
+      this.tooltip = this.installer;
+      this.description = this.installer;
+
+    } else if (location !== "") {
+      this.tooltip = this.location;
+      this.description = env;
+
+    } else if (editable !== "") {
+      this.tooltip = editable ? "editable" : "non-editable";
+      this.description = this.editable.toString();
+
     }
   }
 }
 
-export function createLibraryManager() {
-  const libraryManager = new LibraryManagerProvider();
+export function createLibraryManager(statusManager: StatusManagerProvider) {
+  const libraryManager = new LibraryManagerProvider(statusManager);
   vscode.window.registerTreeDataProvider('cadquerySetup', libraryManager);
   vscode.window.createTreeView('cadquerySetup', { treeDataProvider: libraryManager });
 

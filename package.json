@@ -2,7 +2,7 @@
   "name": "cadquery-viewer",
   "displayName": "CadQuery Viewer",
   "description": "An integrated CadQuery viewer",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "license": "Apache-2.0",
   "repository": "https://github.com/bernhard-42/vscode-cadquery-viewer",
   "engines": {
@@ -26,6 +26,14 @@
         "title": "Install CadQuery Viewer Python module 'cq-vscode'"
       },
       {
+        "command": "cadquery-viewer.openViewer",
+        "title": "Open CadQuery Viewer",
+        "icon": {
+          "light": "resources/open.png",
+          "dark": "resources/open.png"
+        }
+      },
+      {
         "command": "cadquery-viewer.installLibrary",
         "title": "Install library",
         "icon": {
@@ -34,7 +42,7 @@
         }
       },
       {
-        "command": "cadquery-viewer.paste-imports",
+        "command": "cadquery-viewer.pasteImports",
         "title": "Paste import command(s)",
         "icon": {
           "light": "resources/light/paste.png",
@@ -42,8 +50,16 @@
         }
       },
       {
-        "command": "cadquery-viewer.refresh-libraries",
+        "command": "cadquery-viewer.refreshLibraries",
         "title": "Refresh libraries list",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "cadquery-viewer.refreshStatus",
+        "title": "Refresh Cadquery Viewer status",
         "icon": {
           "light": "resources/light/refresh.svg",
           "dark": "resources/dark/refresh.svg"
@@ -74,14 +90,13 @@
     "viewsWelcome": [
       {
         "view": "cadqueryStatus",
-        "contents": "In order to use git features, you can open a folder containing a git repository or clone from a URL.\n[Open Folder](command:vscode.openFolder)\n\nTo learn more about how to use git and source control in VS Code [read our docs](https://aka.ms/vscode-scm).",
-        "when": "config.git.enabled && git.state == initialized && workbenchState == empty"
+        "contents": "In order to use CadQuery viewer, the Python library cq_vscode needs to be installed.\n[Install vscode from pypi](command:cadquery-viewer.installPythonModule)\n"
       }
     ],
     "menus": {
       "view/title": [
         {
-          "command": "cadquery-viewer.refresh-libraries",
+          "command": "cadquery-viewer.refreshLibraries",
           "when": "view == cadquerySetup",
           "group": "navigation@1"
         }
@@ -93,8 +108,13 @@
           "group": "inline@0"
         },
         {
-          "command": "cadquery-viewer.paste-imports",
+          "command": "cadquery-viewer.pasteImports",
           "when": "view == cadquerySetup && viewItem == library",
+          "group": "inline@1"
+        },
+        {
+          "command": "cadquery-viewer.openViewer",
+          "when": "view == cadqueryStatus && viewItem == status",
           "group": "inline@1"
         }
       ]

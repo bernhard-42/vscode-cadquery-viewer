@@ -8,6 +8,7 @@ export class TerminalExecute {
     terminal: vscode.Terminal;
     workspaceFolder: string | undefined;
     errorMsg: string = "";
+    stdout: string = "";
 
     constructor(msg: string) {
         let pty = {
@@ -16,12 +17,12 @@ export class TerminalExecute {
             close: () => { /* noop*/ },
         };
         this.terminal = vscode.window.createTerminal({ name: "CadQuery Viewer Terminal", pty });
-
         this.workspaceFolder = getWorkspaceRoot() || ".";
     }
 
-    async execute(commands: string[]): Promise<void> {
+    async execute(commands: string[]): Promise<string> {
         this.terminal.show();
+        this.stdout = "";
         return new Promise((resolve, reject) => {
 
             let command = commands.join("; ");
@@ -29,7 +30,8 @@ export class TerminalExecute {
                 stdio: 'pipe', shell: true, cwd: this.workspaceFolder
             });
             child.stdout?.on('data', data => {
-                this.print(data.toString());
+                this.stdout += data.toString();
+                // this.print(data.toString());
             });
             child.stderr?.on('data', data => {
                 this.errorMsg = data.toString();
@@ -39,7 +41,7 @@ export class TerminalExecute {
                 if (code === 0) {
                     this.print(`Successfully executed '${command}`);
                     vscode.window.showInformationMessage(`Successfully executed '${command}`);
-                    resolve();
+                    resolve(this.stdout);
                 } else {
                     vscode.window.showErrorMessage(`Failed to execute '${command}(${code})`);
                     vscode.window.showErrorMessage(this.errorMsg);
