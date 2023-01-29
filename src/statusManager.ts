@@ -35,7 +35,7 @@ export class StatusManagerProvider implements vscode.TreeDataProvider<Status> {
     private _onDidChangeTreeData: vscode.EventEmitter<
         Status | undefined | null | void
     > = new vscode.EventEmitter<Status | undefined | null | void>();
-    
+
     readonly onDidChangeTreeData: vscode.Event<
         Status | undefined | null | void
     > = this._onDidChangeTreeData.event;
@@ -49,8 +49,8 @@ export class StatusManagerProvider implements vscode.TreeDataProvider<Status> {
         }
         this._onDidChangeTreeData.fire();
     }
-    
-    setLibraries(libraries:string[]) {
+
+    setLibraries(libraries: string[]) {
         this.libraries = Object.assign([], libraries);
     }
 
@@ -85,14 +85,16 @@ export class StatusManagerProvider implements vscode.TreeDataProvider<Status> {
                     )
                 );
                 this.libraries.sort().forEach((lib) => {
-                    status.push(
-                        new Status(
-                            lib,
-                            "",
-                            "",
-                            vscode.TreeItemCollapsibleState.None
-                        )
-                    );
+                    if (lib !== "cq_vscode") {
+                        status.push(
+                            new Status(
+                                lib,
+                                "",
+                                "",
+                                vscode.TreeItemCollapsibleState.None
+                            )
+                        );
+                    }
                 });
             }
             return Promise.resolve(status);
@@ -112,9 +114,14 @@ export class Status extends vscode.TreeItem {
         public readonly collapsibleState: vscode.TreeItemCollapsibleState
     ) {
         super(label, collapsibleState);
-
-        if (running !== "") {
+        if (label === "cq_vscode") {
             this.contextValue = "status";
+        } else if (label === "ipython") {
+            this.contextValue = "open";
+        } else {
+            this.contextValue = "library";
+        }
+        if (running !== "") {
             this.description = this.running;
             this.tooltip =
                 this.running === "RUNNING"
@@ -124,8 +131,6 @@ export class Status extends vscode.TreeItem {
             this.contextValue = "port";
             this.tooltip = this.port;
             this.description = this.port;
-        } else {
-            this.contextValue = "library";
         }
     }
 }

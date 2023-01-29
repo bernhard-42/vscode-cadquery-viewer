@@ -1,294 +1,316 @@
 {
-  "name": "cadquery-viewer",
-  "displayName": "CadQuery Viewer",
-  "description": "An integrated CadQuery viewer",
-  "version": "0.14.0",
-  "license": "Apache-2.0",
-  "repository": "https://github.com/bernhard-42/vscode-cadquery-viewer",
-  "engines": {
-    "vscode": "^1.71.0"
-  },
-  "categories": [
-    "Other"
-  ],
-  "activationEvents": [
-    "onCommand:cadquery-viewer.cadqueryViewer"
-  ],
-  "main": "./out/extension.js",
-  "contributes": {
-    "commands": [
-      {
-        "command": "cadquery-viewer.cadqueryViewer",
-        "title": "Open CadQuery Viewer"
-      },
-      {
-        "command": "cadquery-viewer.installPythonModule",
-        "title": "Install CadQuery Viewer Python module 'cq-vscode'"
-      },
-      {
-        "command": "cadquery-viewer.openViewer",
-        "title": "Open CadQuery Viewer",
-        "icon": {
-          "light": "resources/open.png",
-          "dark": "resources/open.png"
-        }
-      },
-      {
-        "command": "cadquery-viewer.installLibrary",
-        "title": "Install library",
-        "icon": {
-          "light": "resources/install.png",
-          "dark": "resources/install.png"
-        }
-      },
-      {
-        "command": "cadquery-viewer.pasteImports",
-        "title": "Paste import command(s)",
-        "icon": {
-          "light": "resources/light/paste.png",
-          "dark": "resources/dark/paste.png"
-        }
-      },
-      {
-        "command": "cadquery-viewer.refreshLibraries",
-        "title": "Refresh libraries list",
-        "icon": {
-          "light": "resources/light/refresh.svg",
-          "dark": "resources/dark/refresh.svg"
-        }
-      },
-      {
-        "command": "cadquery-viewer.refreshStatus",
-        "title": "Refresh Cadquery Viewer status",
-        "icon": {
-          "light": "resources/light/refresh.svg",
-          "dark": "resources/dark/refresh.svg"
-        }
-      }
-    ],
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "cadqueryHome",
-          "title": "CadQuery",
-          "icon": "resources/cq-vscode.svg"
-        }
-      ]
+    "name": "cadquery-viewer",
+    "displayName": "CadQuery Viewer",
+    "description": "An integrated CadQuery viewer",
+    "version": "0.14.0",
+    "license": "Apache-2.0",
+    "repository": "https://github.com/bernhard-42/vscode-cadquery-viewer",
+    "engines": {
+        "vscode": "^1.71.0"
     },
-    "views": {
-      "cadqueryHome": [
-        {
-          "id": "cadqueryStatus",
-          "name": "Viewer Manager"
-        },
-        {
-          "id": "cadquerySetup",
-          "name": "Library Manager"
-        }
-      ]
-    },
-    "viewsWelcome": [
-      {
-        "view": "cadqueryStatus",
-        "contents": "In order to use CadQuery viewer, the Python library cq_vscode needs to be installed.\n[Install cq_vscode from pypi](command:cadquery-viewer.installPythonModule)\n"
-      }
+    "categories": [
+        "Other"
     ],
-    "menus": {
-      "view/title": [
-        {
-          "command": "cadquery-viewer.refreshLibraries",
-          "when": "view == cadquerySetup",
-          "group": "navigation@1"
-        }
-      ],
-      "view/item/context": [
-        {
-          "command": "cadquery-viewer.installLibrary",
-          "when": "view == cadquerySetup && viewItem == library",
-          "group": "inline@0"
-        },
-        {
-          "command": "cadquery-viewer.pasteImports",
-          "when": "view == cadqueryStatus && viewItem == library",
-          "group": "inline@1"
-        },
-        {
-          "command": "cadquery-viewer.pasteImports",
-          "when": "view == cadqueryStatus && viewItem == status",
-          "group": "inline@1"
-        },
-        {
-          "command": "cadquery-viewer.openViewer",
-          "when": "view == cadqueryStatus && viewItem == status",
-          "group": "inline@0"
-        }
-      ]
-    },
-    "keybindings": [
-      {
-        "command": "cadquery-viewer.cadqueryViewer",
-        "key": "ctrl+k v",
-        "mac": "cmd+k v",
-        "when": "editorTextFocus && editorLangId=='python'"
-      }
+    "activationEvents": [
+        "onCommand:cadquery-viewer.cadqueryViewer"
     ],
-    "configuration": {
-      "title": "CadQuery Viewer",
-      "properties": {
-        "CadQueryViewer.treeWidth": {
-          "type": "integer",
-          "default": 240,
-          "description": "CadQuery Viewer navigation tree width",
-          "order": 0
-        },
-        "CadQueryViewer.dark": {
-          "type": "boolean",
-          "default": false,
-          "description": "Use dark mode",
-          "order": 3
-        },
-        "CadQueryViewer.orbitControl": {
-          "type": "boolean",
-          "default": false,
-          "description": "Use 'orbit' control mode instead of 'trackball'",
-          "order": 4
-        },
-        "CadQueryViewer.up": {
-          "type": "string",
-          "default": "Z",
-          "description": "Provides up direction, 'Z', 'Y' or 'L' (legacy)",
-          "order": 5
-        },
-        "CadQueryViewer.glass": {
-          "type": "boolean",
-          "default": true,
-          "description": "Use glass mode with transparent navigation tree",
-          "order": 1
-        },
-        "CadQueryViewer.tools": {
-          "type": "boolean",
-          "default": true,
-          "description": "Show toolbar",
-          "order": 2
-        },
-        "CadQueryViewer.rotateSpeed": {
-          "type": "number",
-          "default": 1,
-          "description": "Rotation speed",
-          "order": 6
-        },
-        "CadQueryViewer.zoomSpeed": {
-          "type": "number",
-          "default": 1,
-          "description": "Zoom speed",
-          "order": 7
-        },
-        "CadQueryViewer.panSpeed": {
-          "type": "number",
-          "default": 1,
-          "description": "Pan speed",
-          "order": 8
-        },
-        "CadQueryViewer.installCommands": {
-          "type": "object",
-          "default": {
-            "cadquery": {
-              "pip": [
-                "env -u CONDA_PREFIX_1 pip install git+https://github.com/cadquery/cadquery.git"
-              ],
-              "conda": [
-                "conda install -c conda-forge -c cadquery cadquery=master"
-              ],
-              "mamba": [
-                "mamba install -c conda-forge -c cadquery cadquery=master"
-              ],
-              "poetry": [
-                "poetry add git+https://github.com/cadquery/cadquery.git"
-              ]
+    "main": "./out/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "cadquery-viewer.cadqueryViewer",
+                "title": "Open CadQuery Viewer"
             },
-            "build123d": {
-              "pip": [
-                "pip install git+https://github.com/gumyr/build123d.git"
-              ],
-              "poetry": [
-                "poetry add git+https://github.com/gumyr/build123d.git"
-              ]
+            {
+                "command": "cadquery-viewer.openViewer",
+                "title": "Open CadQuery Viewer",
+                "icon": {
+                    "light": "resources/open.png",
+                    "dark": "resources/open.png"
+                }
             },
-            "alg123d": {
-              "pip": [
-                "pip install git+https://github.com/bernhard-42/alg123d.git"
-              ],
-              "poetry": [
-                "poetry add git+https://github.com/bernhard-42/alg123d.git"
-              ]
+            {
+                "command": "cadquery-viewer.restartIpython",
+                "title": "Restart IPython terminal",
+                "icon": {
+                    "light": "resources/restart.png",
+                    "dark": "resources/restart.png"
+                }
             },
-            "cq_vscode": {
-              "pip": [
-                "pip install cq_vscode=={version}"
-              ],
-              "poetry": [
-                "poetry add cq_vscode=={version}"
-              ]
+            {
+                "command": "cadquery-viewer.ipythonRunCell",
+                "title": "Run IPython cell (delimited by '# %%')",
+                "icon": {
+                    "light": "resources/start.png",
+                    "dark": "resources/start.png"
+                }
             },
-            "ipython": {
-              "pip": [
-                "pip install ipython"
-              ],
-              "conda": [
-                "conda install -c conda-forge ipython"
-              ],
-              "mamba": [
-                "mamba install -c conda-forge ipython"
-              ],
-              "poetry": [
-                "poetry add ipython"
-              ]
-            }      
-          }
-        },
-        "CadQueryViewer.importCommands": {
-          "type": "object",
-          "default": {
-            "cadquery": [
-              "import cadquery as cq"
-            ],
-            "build123d": [
-              "from build123d import *"
-            ],
-            "alg123d": [
-              "from alg123d import *"
-            ],
-            "cq_vscode": [
-              "from cq_vscode import show, show_object, reset_show, set_port, set_defaults, get_defaults"
+            {
+                "command": "cadquery-viewer.installLibrary",
+                "title": "Install library",
+                "icon": {
+                    "light": "resources/install.png",
+                    "dark": "resources/install.png"
+                }
+            },
+            {
+                "command": "cadquery-viewer.pasteSnippet",
+                "title": "Paste code snippet",
+                "icon": {
+                    "light": "resources/light/paste.png",
+                    "dark": "resources/dark/paste.png"
+                }
+            },
+            {
+                "command": "cadquery-viewer.refreshLibraries",
+                "title": "Refresh libraries list",
+                "icon": {
+                    "light": "resources/light/refresh.svg",
+                    "dark": "resources/dark/refresh.svg"
+                }
+            }
+        ],
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "cadqueryHome",
+                    "title": "CadQuery",
+                    "icon": "resources/cq-vscode.svg"
+                }
             ]
-          }
+        },
+        "views": {
+            "cadqueryHome": [
+                {
+                    "id": "cadqueryStatus",
+                    "name": "Viewer Manager"
+                },
+                {
+                    "id": "cadquerySetup",
+                    "name": "Library Manager"
+                }
+            ]
+        },
+        "viewsWelcome": [
+            {
+                "view": "cadqueryStatus",
+                "contents": "In order to use CadQuery viewer, the Python library cq_vscode needs to be installed.\n[Install cq_vscode from pypi](command:cadquery-viewer.installPythonModule)\n"
+            }
+        ],
+        "menus": {
+            "view/title": [
+                {
+                    "command": "cadquery-viewer.refreshLibraries",
+                    "when": "view == cadquerySetup",
+                    "group": "navigation@1"
+                }
+            ],
+            "view/item/context": [
+                {
+                    "command": "cadquery-viewer.installLibrary",
+                    "when": "view == cadquerySetup && viewItem == library",
+                    "group": "inline@0"
+                },
+                {
+                    "command": "cadquery-viewer.pasteSnippet",
+                    "when": "view == cadqueryStatus && viewItem == library",
+                    "group": "inline@1"
+                },
+                {
+                    "command": "cadquery-viewer.pasteSnippet",
+                    "when": "view == cadqueryStatus && viewItem == status",
+                    "group": "inline@1"
+                },
+                {
+                    "command": "cadquery-viewer.pasteSnippet",
+                    "when": "view == cadqueryStatus && viewItem == open",
+                    "group": "inline@1"
+                },
+                {
+                    "command": "cadquery-viewer.openViewer",
+                    "when": "view == cadqueryStatus && viewItem == status",
+                    "group": "inline@0"
+                },
+                {
+                    "command": "cadquery-viewer.ipythonRunCell",
+                    "when": "view == cadqueryStatus && viewItem == open",
+                    "group": "inline@2"
+                },
+                {
+                    "command": "cadquery-viewer.restartIpython",
+                    "when": "view == cadqueryStatus && viewItem == open",
+                    "group": "inline@0"
+                }
+            ]
+        },
+        "keybindings": [
+            {
+                "command": "cadquery-viewer.cadqueryViewer",
+                "key": "ctrl+k v",
+                "mac": "cmd+k v",
+                "when": "editorTextFocus && editorLangId=='python'"
+            }
+        ],
+        "configuration": {
+            "title": "CadQuery Viewer",
+            "properties": {
+                "CadQueryViewer.treeWidth": {
+                    "type": "integer",
+                    "default": 240,
+                    "description": "CadQuery Viewer navigation tree width",
+                    "order": 0
+                },
+                "CadQueryViewer.dark": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Use dark mode",
+                    "order": 3
+                },
+                "CadQueryViewer.orbitControl": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Use 'orbit' control mode instead of 'trackball'",
+                    "order": 4
+                },
+                "CadQueryViewer.up": {
+                    "type": "string",
+                    "default": "Z",
+                    "description": "Provides up direction, 'Z', 'Y' or 'L' (legacy)",
+                    "order": 5
+                },
+                "CadQueryViewer.glass": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Use glass mode with transparent navigation tree",
+                    "order": 1
+                },
+                "CadQueryViewer.tools": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show toolbar",
+                    "order": 2
+                },
+                "CadQueryViewer.rotateSpeed": {
+                    "type": "number",
+                    "default": 1,
+                    "description": "Rotation speed",
+                    "order": 6
+                },
+                "CadQueryViewer.zoomSpeed": {
+                    "type": "number",
+                    "default": 1,
+                    "description": "Zoom speed",
+                    "order": 7
+                },
+                "CadQueryViewer.panSpeed": {
+                    "type": "number",
+                    "default": 1,
+                    "description": "Pan speed",
+                    "order": 8
+                },
+                "CadQueryViewer.installCommands": {
+                    "type": "object",
+                    "default": {
+                        "cadquery": {
+                            "pip": [
+                                "env -u CONDA_PREFIX_1 pip install git+https://github.com/cadquery/cadquery.git"
+                            ],
+                            "conda": [
+                                "conda install -c conda-forge -c cadquery cadquery=master"
+                            ],
+                            "mamba": [
+                                "mamba install -c conda-forge -c cadquery cadquery=master"
+                            ],
+                            "poetry": [
+                                "poetry add git+https://github.com/cadquery/cadquery.git"
+                            ]
+                        },
+                        "build123d": {
+                            "pip": [
+                                "pip install git+https://github.com/gumyr/build123d.git"
+                            ],
+                            "poetry": [
+                                "poetry add git+https://github.com/gumyr/build123d.git"
+                            ]
+                        },
+                        "alg123d": {
+                            "pip": [
+                                "pip install git+https://github.com/bernhard-42/alg123d.git"
+                            ],
+                            "poetry": [
+                                "poetry add git+https://github.com/bernhard-42/alg123d.git"
+                            ]
+                        },
+                        "cq_vscode": {
+                            "pip": [
+                                "pip install cq_vscode=={version}"
+                            ],
+                            "poetry": [
+                                "poetry add cq_vscode=={version}"
+                            ]
+                        },
+                        "ipython": {
+                            "pip": [
+                                "pip install ipython"
+                            ],
+                            "conda": [
+                                "conda install -c conda-forge ipython"
+                            ],
+                            "mamba": [
+                                "mamba install -c conda-forge ipython"
+                            ],
+                            "poetry": [
+                                "poetry add ipython"
+                            ]
+                        }
+                    }
+                },
+                "CadQueryViewer.codeSnippets": {
+                    "type": "object",
+                    "default": {
+                        "cadquery": [
+                            "import cadquery as cq"
+                        ],
+                        "build123d": [
+                            "from build123d import *"
+                        ],
+                        "alg123d": [
+                            "from alg123d import *"
+                        ],
+                        "cq_vscode": [
+                            "from cq_vscode import show, show_object, reset_show, set_port, set_defaults, get_defaults"
+                        ],
+                        "ipython": [
+                            "\n# %%\n"
+                        ]
+                    }
+                }
+            }
         }
-      }
+    },
+    "scripts": {
+        "vscode:prepublish": "yarn run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "yarn run compile && yarn run lint",
+        "lint": "eslint src --ext ts",
+        "test": "node ./out/test/runTest.js"
+    },
+    "devDependencies": {
+        "@types/glob": "^7.2.0",
+        "@types/mocha": "^9.1.1",
+        "@types/node": "16.x",
+        "@types/vscode": "^1.71.0",
+        "@typescript-eslint/eslint-plugin": "^5.31.0",
+        "@typescript-eslint/parser": "^5.31.0",
+        "@vscode/test-electron": "^2.1.5",
+        "eslint": "^8.20.0",
+        "glob": "^8.0.3",
+        "mocha": "^10.0.0",
+        "typescript": "^4.7.4"
+    },
+    "dependencies": {
+        "three-cad-viewer": "^1.7.0",
+        "vsce": "^2.11.0"
     }
-  },
-  "scripts": {
-    "vscode:prepublish": "yarn run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "pretest": "yarn run compile && yarn run lint",
-    "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
-  },
-  "devDependencies": {
-    "@types/glob": "^7.2.0",
-    "@types/mocha": "^9.1.1",
-    "@types/node": "16.x",
-    "@types/vscode": "^1.71.0",
-    "@typescript-eslint/eslint-plugin": "^5.31.0",
-    "@typescript-eslint/parser": "^5.31.0",
-    "@vscode/test-electron": "^2.1.5",
-    "eslint": "^8.20.0",
-    "glob": "^8.0.3",
-    "mocha": "^10.0.0",
-    "typescript": "^4.7.4"
-  },
-  "dependencies": {
-    "three-cad-viewer": "^1.7.0",
-    "vsce": "^2.11.0"
-  }
 }

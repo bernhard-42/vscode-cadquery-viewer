@@ -18,13 +18,8 @@ import * as vscode from "vscode";
 import * as output from "./output";
 import { CadqueryController } from "./controller";
 import { CadqueryViewer } from "./viewer";
-import {
-    createLibraryManager,
-    Library,
-    installLib
-} from "./libraryManager";
+import { createLibraryManager, Library, installLib } from "./libraryManager";
 import { createStatusManager } from "./statusManager";
-
 
 export function activate(context: vscode.ExtensionContext) {
     let controller: CadqueryController;
@@ -107,27 +102,6 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(
         vscode.commands.registerCommand(
-            "cadquery-viewer.installPythonModule",
-            async () => {
-                let library = new Library(
-                    "cq_vscode",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    vscode.TreeItemCollapsibleState.None
-                );
-                await installLib(libraryManager, library);
-                statusManager.installed = true;
-                statusManager.refresh("");
-                output.debug("Command installPythonModule registered");
-            }
-        )
-    );
-
-    context.subscriptions.push(
-        vscode.commands.registerCommand(
             "cadquery-viewer.installLibrary",
             async (library) => {
                 await installLib(libraryManager, library);
@@ -137,9 +111,18 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(
         vscode.commands.registerCommand(
-            "cadquery-viewer.pasteImports",
+            "cadquery-viewer.pasteSnippet",
             (library) => {
                 libraryManager.pasteImport(library.label);
+            }
+        )
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            "cadquery-viewer.ipythonRunCell",
+            () => {
+                vscode.commands.executeCommand("ipython.runCellAndMoveToNext");
             }
         )
     );
@@ -158,8 +141,47 @@ export function activate(context: vscode.ExtensionContext) {
     );
 
     context.subscriptions.push(
-        vscode.commands.registerCommand("cadquery-viewer.openViewer", () =>
-            statusManager.openViewer()
+        vscode.commands.registerCommand("cadquery-viewer.openViewer", async () => {
+            statusManager.openViewer();
+        })
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            "cadquery-viewer.restartIpython",
+            async () => {
+                let terminals = vscode.window.terminals;
+                terminals.forEach((terminal) => {
+                    if (terminal.name === "IPython") {
+                        terminal.dispose();
+                    }
+                });
+
+                let commands = await vscode.commands.getCommands(true);
+                if (!commands.includes("ipython.createTerminal")) {
+                    vscode.window.showErrorMessage(
+                        "Extension 'HoangKimLai.ipython' not installed"
+                    );
+                    let reply =
+                        (await vscode.window.showQuickPick(["yes", "no"], {
+                            placeHolder: `Install the IPython extension "HoangKimLai.ipython"?`
+                        })) || "";
+                    if (reply === "" || reply === "no") {
+                        return;
+                    }
+
+                    await vscode.commands.executeCommand(
+                        "workbench.extensions.installExtension",
+                        "HoangKimLai.ipython"
+                    );
+
+                    vscode.window.showInformationMessage(
+                        "Extension 'HoangKimLai.ipython' installed"
+                    );
+                } else {
+                    vscode.commands.executeCommand("ipython.createTerminal");
+                }
+            }
         )
     );
 

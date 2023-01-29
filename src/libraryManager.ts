@@ -14,15 +14,15 @@
    limitations under the License.
 */
 
+import * as fs from "fs";
+import * as path from "path";
 import * as vscode from "vscode";
 import { version as cq_vscode_version } from "./version";
 import * as output from "./output";
-import { getPythonPath, getEditor, inquiry } from "./utils";
+import { getPythonPath, getEditor, inquiry, getWorkspaceRoot } from "./utils";
 import { execute } from "./system/shell";
-import * as path from "path";
 import { StatusManagerProvider } from "./statusManager";
 import { TerminalExecute } from "./system/terminal";
-
 
 const URL =
     "https://github.com/bernhard-42/vscode-cadquery-viewer/releases/download";
@@ -36,13 +36,19 @@ export async function installLib(
     library: Library
 ) {
     let managers = libraryManager.getInstallLibMgrs(library.label);
-    let manager = await inquiry(
-        `Select package manager to install "${library.label}"`,
-        managers
-    );
-    if (manager === "") {
-        return;
+    let manager: string;
+    if (managers.length > 1) {
+        manager = await inquiry(
+            `Select package manager to install "${library.label}"`,
+            managers
+        );
+        if (manager === "") {
+            return;
+        }
+    } else {
+        manager = managers[0];
     }
+
     let commands = libraryManager.getInstallLibCmds(library.label, manager);
 
     let python = await getPythonPath();
@@ -74,18 +80,19 @@ export async function installLib(
         }
     });
 
-    let terminal = new TerminalExecute(`Installing ${patchedCommands.join(";")} ... `);
+    let terminal = new TerminalExecute(
+        `Installing ${patchedCommands.join(";")} ... `
+    );
     await terminal.execute(patchedCommands);
     libraryManager.refresh();
 }
-
 
 export class LibraryManagerProvider
     implements vscode.TreeDataProvider<Library>
 {
     statusManager: StatusManagerProvider;
     installCommands: any = {};
-    importCommands: any = {};
+    codeSnippets: any = {};
     installed: Record<string, string[]> = {};
 
     constructor(statusManger: StatusManagerProvider) {
@@ -94,9 +101,9 @@ export class LibraryManagerProvider
             vscode.workspace.getConfiguration("CadQueryViewer")[
                 "installCommands"
             ];
-        this.importCommands =
+        this.codeSnippets =
             vscode.workspace.getConfiguration("CadQueryViewer")[
-                "importCommands"
+                "codeSnippets"
             ];
     }
 
@@ -122,7 +129,19 @@ export class LibraryManagerProvider
     }
 
     getInstallLibMgrs(lib: string) {
-        return Object.keys(this.installCommands[lib]);
+        let managers = Object.keys(this.installCommands[lib]);
+        let filteredManagers: string[] = [];
+
+        managers.forEach((manager: string) => {
+            const cwd = getWorkspaceRoot() || ".";
+            const poetryLock = fs.existsSync(path.join(cwd, "poetry.lock"));
+            if (manager === "poetry" && !poetryLock) {
+                // ignore
+            } else {
+                filteredManagers.push(manager);
+            }
+        });
+        return filteredManagers;
     }
 
     getInstallLibCmds(lib: string, mgr: string) {
@@ -172,17 +191,17 @@ export class LibraryManagerProvider
     }
 
     getImportLibs() {
-        return Object.keys(this.importCommands);
+        return Object.keys(this.codeSnippets);
     }
 
     getImportLibCmds(lib: string) {
-        return this.importCommands[lib];
+        return this.codeSnippets[lib];
     }
 
     pasteImport(library: string) {
         const editor = getEditor();
         if (editor !== undefined) {
-            let importCmd = Object.assign([], this.importCommands[library]);
+            let importCmd = Object.assign([], this.codeSnippets[library]);
             if (library === "cq_vscode") {
                 importCmd.push(`set_port(${this.statusManager.port})`);
             }
