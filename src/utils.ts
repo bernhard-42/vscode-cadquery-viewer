@@ -1,4 +1,20 @@
-import * as vscode from 'vscode';
+/*
+   Copyright 2023 Bernhard Walter
+  
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+  
+      http://www.apache.org/licenses/LICENSE-2.0
+  
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
+import * as vscode from "vscode";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -21,7 +37,8 @@ export function getCurrentFilename() {
 export function getWorkspaceRoot() {
     let filename = getCurrentFilename();
     if (filename) {
-        return vscode.workspace.getWorkspaceFolder(vscode.Uri.file(filename))?.uri.fsPath;
+        return vscode.workspace.getWorkspaceFolder(vscode.Uri.file(filename))
+            ?.uri.fsPath;
     }
     return;
 }
@@ -34,28 +51,41 @@ export async function inquiry(placeholder: string, options: string[]) {
 }
 
 class PythonPath {
-    public static async getPythonPath(document?: vscode.TextDocument): Promise<string> {
+    public static async getPythonPath(
+        document?: vscode.TextDocument
+    ): Promise<string> {
         try {
-            const extension = vscode.extensions.getExtension("ms-python.python");
+            const extension =
+                vscode.extensions.getExtension("ms-python.python");
             if (!extension) {
                 return "python";
             }
-            const usingNewInterpreterStorage = extension.packageJSON?.featureFlags?.usingNewInterpreterStorage;
+            const usingNewInterpreterStorage =
+                extension.packageJSON?.featureFlags?.usingNewInterpreterStorage;
             if (usingNewInterpreterStorage) {
                 if (!extension.isActive) {
                     await extension.activate();
                 }
-                const pythonPath = extension.exports.settings.getExecutionDetails().execCommand[0];
+                const pythonPath =
+                    extension.exports.settings.getExecutionDetails()
+                        .execCommand[0];
                 return pythonPath;
             } else {
-                return this.getConfiguration("python", document).get<string>("pythonPath") || "";
+                return (
+                    this.getConfiguration("python", document).get<string>(
+                        "pythonPath"
+                    ) || ""
+                );
             }
         } catch (error) {
             return "python";
         }
     }
 
-    public static getConfiguration(section?: string, document?: vscode.TextDocument): vscode.WorkspaceConfiguration {
+    public static getConfiguration(
+        section?: string,
+        document?: vscode.TextDocument
+    ): vscode.WorkspaceConfiguration {
         if (document) {
             return vscode.workspace.getConfiguration(section, document.uri);
         } else {

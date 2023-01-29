@@ -1,10 +1,26 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+/*
+   Copyright 2023 Bernhard Walter
+  
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+  
+      http://www.apache.org/licenses/LICENSE-2.0
+  
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
 import * as vscode from "vscode";
 import { CadqueryViewer } from "./viewer";
 import { template } from "./display";
 import { createServer, IncomingMessage, Server, ServerResponse } from "http";
-import * as output from './output';
-import { logo } from './logo';
+import * as output from "./output";
+import { logo } from "./logo";
 import { StatusManagerProvider } from "./statusManager";
 
 var serverStarted = false;
@@ -16,7 +32,11 @@ export class CadqueryController {
     terminal: vscode.Terminal | undefined;
     port: number;
 
-    constructor(private context: vscode.ExtensionContext, port: number, statusController: StatusManagerProvider) {
+    constructor(
+        private context: vscode.ExtensionContext,
+        port: number,
+        statusController: StatusManagerProvider
+    ) {
         this.port = port;
         this.statusController = statusController;
 
@@ -74,21 +94,23 @@ export class CadqueryController {
                 }
             }
         );
-        this.server.on('error', (error) => {
+        this.server.on("error", (error) => {
             let msg = "";
             if (error.message.indexOf("EADDRINUSE") > 0) {
-                output.info(`Port ${this.port} alread in use, please choose another port`);
+                output.info(
+                    `Port ${this.port} alread in use, please choose another port`
+                );
             } else {
                 vscode.window.showErrorMessage(`${error}`);
             }
         });
-        this.server.on('listening', () => {
+        this.server.on("listening", () => {
             output.info(
                 `CadQuery Viewer is initialized, command server is running on port ${this.port}`
             );
         });
         this.server.listen(port);
-        return (this.server.address() !== null);
+        return this.server.address() !== null;
     }
 
     public dispose() {
