@@ -172,6 +172,17 @@ export function activate(context: vscode.ExtensionContext) {
 			CadqueryViewer.revive(webviewPanel, context.extensionUri);
 		}
 	});
+
+    vscode.workspace.onDidChangeConfiguration((event) => {
+        let affected = event.affectsConfiguration(
+            "python.defaultInterpreterPath"
+        );
+        if (affected) {
+            libraryManager.refresh("");
+            controller.dispose();
+            CadqueryViewer.currentPanel?.dispose();
+        }
+    });
 }
 
 export function deactivate() {
