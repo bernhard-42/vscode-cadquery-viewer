@@ -17,10 +17,12 @@
 import * as vscode from "vscode";
 import { version as cq_vscode_version } from "./version";
 import * as output from "./output";
-import { getPythonPath, getEditor } from "./utils";
+import { getPythonPath, getEditor, inquiry } from "./utils";
 import { execute } from "./system/shell";
 import * as path from "path";
 import { StatusManagerProvider } from "./statusManager";
+import { TerminalExecute } from "./system/terminal";
+
 
 const URL =
     "https://github.com/bernhard-42/vscode-cadquery-viewer/releases/download";
@@ -28,6 +30,56 @@ const URL =
 function sanitize(lib: string) {
     return lib.replace("-", "_");
 }
+
+export async function installLib(
+    libraryManager: LibraryManagerProvider,
+    library: Library
+) {
+    let managers = libraryManager.getInstallLibMgrs(library.label);
+    let manager = await inquiry(
+        `Select package manager to install "${library.label}"`,
+        managers
+    );
+    if (manager === "") {
+        return;
+    }
+    let commands = libraryManager.getInstallLibCmds(library.label, manager);
+
+    let python = await getPythonPath();
+    let reply =
+        (await vscode.window.showQuickPick(["yes", "no"], {
+            placeHolder: `Use python interpreter "${python}"?`
+        })) || "";
+    if (reply === "") {
+        return;
+    }
+
+    if (python === "python" || reply === "no") {
+        vscode.window.showErrorMessage("Select Python Interpreter first!");
+        return;
+    }
+
+    let patchedCommands: string[] = [];
+    commands.forEach((command) => {
+        if (manager === "pip") {
+            patchedCommands.push(
+                command.replace("pip install ", `${python} -m pip install `)
+            );
+        } else if (manager === "conda" || manager === "mamba") {
+            let paths = python.split(path.sep);
+            let env = paths[paths.length - 3];
+            patchedCommands.push(
+                command.replace(` install `, ` install -y -n ${env} `)
+            );
+        }
+    });
+
+    let terminal = new TerminalExecute(`Installing ${patchedCommands.join(";")} ... `);
+    await terminal.execute(patchedCommands);
+    libraryManager.refresh();
+}
+
+
 export class LibraryManagerProvider
     implements vscode.TreeDataProvider<Library>
 {
@@ -56,7 +108,7 @@ export class LibraryManagerProvider
         Library | undefined | null | void
     > = this._onDidChangeTreeData.event;
 
-    async refresh(pythonPath: string | undefined=undefined) {
+    async refresh(pythonPath: string | undefined = undefined) {
         await this.findInstalledLibraries(pythonPath);
         this._onDidChangeTreeData.fire();
     }
@@ -66,7 +118,7 @@ export class LibraryManagerProvider
     }
 
     getInstallLibs() {
-        return Object.keys(this.installCommands);
+        return Object.keys(this.installCommands).sort();
     }
 
     getInstallLibMgrs(lib: string) {
@@ -78,12 +130,7 @@ export class LibraryManagerProvider
         if (lib === "cq_vscode") {
             let substCmds: string[] = [];
             cmds.forEach((cmd: string) => {
-                substCmds.push(
-                    cmd.replace(
-                        "{cq_vscode_url}",
-                        `${URL}/v${cq_vscode_version}/cq_vscode-${cq_vscode_version}-py3-none-any.whl`
-                    )
-                );
+                substCmds.push(cmd.replace("{version}", cq_vscode_version));
             });
             return substCmds;
         } else {
@@ -135,7 +182,7 @@ export class LibraryManagerProvider
     pasteImport(library: string) {
         const editor = getEditor();
         if (editor !== undefined) {
-            let importCmd = this.importCommands[library];
+            let importCmd = Object.assign([], this.importCommands[library]);
             if (library === "cq_vscode") {
                 importCmd.push(`set_port(${this.statusManager.port})`);
             }

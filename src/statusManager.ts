@@ -31,7 +31,7 @@ export class StatusManagerProvider implements vscode.TreeDataProvider<Status> {
     constructor() {
         this.version = cq_vscode_version;
     }
-    
+
     private _onDidChangeTreeData: vscode.EventEmitter<
         Status | undefined | null | void
     > = new vscode.EventEmitter<Status | undefined | null | void>();
@@ -84,7 +84,7 @@ export class StatusManagerProvider implements vscode.TreeDataProvider<Status> {
                         state
                     )
                 );
-                this.libraries.forEach((lib) => {
+                this.libraries.sort().forEach((lib) => {
                     status.push(
                         new Status(
                             lib,

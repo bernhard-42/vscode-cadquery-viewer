@@ -21,48 +21,10 @@ import { CadqueryViewer } from "./viewer";
 import {
     createLibraryManager,
     Library,
-    LibraryManagerProvider
+    installLib
 } from "./libraryManager";
 import { createStatusManager } from "./statusManager";
-import { TerminalExecute } from "./system/terminal";
-import { getPythonPath, inquiry } from "./utils";
 
-async function installLib(
-    libraryManager: LibraryManagerProvider,
-    library: Library
-) {
-    let managers = libraryManager.getInstallLibMgrs(library.label);
-    let manager = await inquiry(
-        `Select package manager to install "${library.label}"`,
-        managers
-    );
-    if (manager === "") {
-        return;
-    }
-    let commands = libraryManager.getInstallLibCmds(library.label, manager);
-
-    let python = await getPythonPath();
-    let reply =
-        (await vscode.window.showQuickPick(["yes", "no"], {
-            placeHolder: `Use python interpreter "${python}"?`
-        })) || "";
-    if (reply === "") {
-        return;
-    }
-
-    if (python === "python" || reply === "no") {
-        await vscode.commands.executeCommand("python.pythonPath");
-        python = await getPythonPath();
-    }
-
-    let terminal = new TerminalExecute("Installing... ");
-    try {
-        await terminal.execute(commands);
-        libraryManager.refresh();
-    } catch (e: any) {
-        output.error(e.message);
-    }
-}
 
 export function activate(context: vscode.ExtensionContext) {
     let controller: CadqueryController;
@@ -217,7 +179,10 @@ export function activate(context: vscode.ExtensionContext) {
             "python.defaultInterpreterPath"
         );
         if (affected) {
-            let pythonPath = vscode.workspace.getConfiguration("python")["defaultInterpreterPath"];
+            let pythonPath =
+                vscode.workspace.getConfiguration("python")[
+                    "defaultInterpreterPath"
+                ];
             libraryManager.refresh(pythonPath);
             controller.dispose();
             CadqueryViewer.currentPanel?.dispose();

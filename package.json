@@ -90,7 +90,7 @@
     "viewsWelcome": [
       {
         "view": "cadqueryStatus",
-        "contents": "In order to use CadQuery viewer, the Python library cq_vscode needs to be installed.\n[Install vscode from pypi](command:cadquery-viewer.installPythonModule)\n"
+        "contents": "In order to use CadQuery viewer, the Python library cq_vscode needs to be installed.\n[Install cq_vscode from pypi](command:cadquery-viewer.installPythonModule)\n"
       }
     ],
     "menus": {
@@ -194,7 +194,7 @@
           "default": {
             "cadquery": {
               "pip": [
-                "pip install git+https://github.com/cadquery/cadquery.git"
+                "env -u CONDA_PREFIX_1 pip install git+https://github.com/cadquery/cadquery.git"
               ],
               "conda": [
                 "conda install -c conda-forge -c cadquery cadquery=master"
@@ -224,12 +224,26 @@
             },
             "cq_vscode": {
               "pip": [
-                "pip install {cq_vscode_url}"
+                "pip install cq_vscode=={version}"
               ],
               "poetry": [
-                "poetry add {cq_vscode_url}"
+                "poetry add cq_vscode=={version}"
               ]
-            }
+            },
+            "ipython": {
+              "pip": [
+                "pip install ipython"
+              ],
+              "conda": [
+                "conda install -c conda-forge ipython"
+              ],
+              "mamba": [
+                "mamba install -c conda-forge ipython"
+              ],
+              "poetry": [
+                "poetry add ipython"
+              ]
+            }      
           }
         },
         "CadQueryViewer.importCommands": {
