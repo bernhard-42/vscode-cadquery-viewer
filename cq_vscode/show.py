@@ -17,17 +17,17 @@
 import json
 import requests
 
-from cadquery import Workplane
-
 from ocp_tessellate import PartGroup
 from ocp_tessellate.convert import (
     tessellate_group,
     get_normal_len,
     combined_bb,
     to_assembly,
+    mp_get_results,
 )
 from ocp_tessellate.defaults import get_default, get_defaults, preset
 from ocp_tessellate.utils import numpy_to_json
+from ocp_tessellate.mp_tessellator import init_pool, keymap, close_pool
 
 
 CMD_PORT = 3939
@@ -50,6 +50,9 @@ def _send(data, port=None):
 
 
 class Progress:
+    def __init__(self, length=None):
+        self.length = length  # ignored
+
     def update(self):
         print(".", end="", flush=True)
 
@@ -112,9 +115,27 @@ def _convert(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
 
             config[k] = v
 
+    parallel = preset("parallel", config.get("parallel"))
+
+    if parallel:
+        print("Warning: parallel currently not supported!")
+        parallel = False
+
+    num_shapes = part_group.count_shapes()
+    progress_len = 2 * num_shapes if parallel else num_shapes
+    progress = None if num_shapes < 2 else Progress(progress_len)
+
+    if parallel:
+        init_pool()
+        keymap.reset()
+
     shapes, states = tessellate_group(
-        part_group, kwargs, Progress(), config.get("timeit")
+        part_group, kwargs, progress, config.get("timeit")
     )
+
+    if parallel:
+        mp_get_results(shapes, progress)
+        close_pool()
 
     config["normal_len"] = get_normal_len(
         preset("render_normals", config.get("render_normals")),
