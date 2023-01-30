@@ -49,8 +49,6 @@ export async function installLib(
         manager = managers[0];
     }
 
-    let commands = libraryManager.getInstallLibCmds(library, manager);
-
     let python = await getPythonPath();
     let reply =
         (await vscode.window.showQuickPick(["yes", "no"], {
@@ -65,25 +63,12 @@ export async function installLib(
         return;
     }
 
-    let patchedCommands: string[] = [];
-    commands.forEach((command) => {
-        if (manager === "pip") {
-            patchedCommands.push(
-                command.replace("pip install ", `${python} -m pip install `)
-            );
-        } else if (manager === "conda" || manager === "mamba") {
-            let paths = python.split(path.sep);
-            let env = paths[paths.length - 3];
-            patchedCommands.push(
-                command.replace(` install `, ` install -y -n ${env} `)
-            );
-        }
-    });
+    let commands = await libraryManager.getInstallLibCmds(library, manager);
 
     let terminal = new TerminalExecute(
-        `Installing ${patchedCommands.join(";")} ... `
+        `Installing ${commands.join(";")} ... `
     );
-    await terminal.execute(patchedCommands);
+    await terminal.execute(commands);
     libraryManager.refresh();
 }
 
@@ -99,11 +84,11 @@ export class LibraryManagerProvider
         this.statusManager = statusManger;
         this.installCommands =
             vscode.workspace.getConfiguration("CadQueryViewer")[
-                "installCommands"
+            "installCommands"
             ];
         this.codeSnippets =
             vscode.workspace.getConfiguration("CadQueryViewer")[
-                "codeSnippets"
+            "codeSnippets"
             ];
     }
 
@@ -144,17 +129,29 @@ export class LibraryManagerProvider
         return filteredManagers;
     }
 
-    getInstallLibCmds(lib: string, mgr: string) {
-        let cmds: string[] = this.installCommands[lib][mgr];
-        if (lib === "cq_vscode") {
-            let substCmds: string[] = [];
-            cmds.forEach((cmd: string) => {
-                substCmds.push(cmd.replace("{version}", cq_vscode_version));
-            });
-            return substCmds;
-        } else {
-            return cmds;
-        }
+    async getInstallLibCmds(lib: string, manager: string) {
+        let commands: string[] = this.installCommands[lib][manager];
+        let python = await getPythonPath();
+        let substCmds: string[] = [];
+        commands.forEach((command: string) => {
+            if (lib === "cq_vscode") {
+                command = command.replace("{cq_vscode_version}", cq_vscode_version);
+            };
+
+            if (manager === "pip") {
+                substCmds.push(
+                    command.replace("{python}", python)
+                );
+
+            } else if (manager === "conda" || manager === "mamba") {
+                let paths = python.split(path.sep);
+                let env = paths[paths.length - 3];
+                substCmds.push(
+                    command.replace("{conda_env}", env)
+                );
+            }
+        });
+        return substCmds;
     }
 
     async findInstalledLibraries(pythonPath: string | undefined) {
