@@ -187,12 +187,6 @@ def show(*cad_objs, names=None, colors=None, alphas=None, port=None, **kwargs):
     return _send(data, port=port)
 
 
-def bd_to_cq(objs):
-    w = Workplane()
-    w.objects = objs
-    return w
-
-
 def reset_show():
     global OBJECTS
 
@@ -264,11 +258,3 @@ def show_object(
         port=port,
         **kwargs,
     )
-
-
-if __name__ == "__main__":
-    import cadquery as cq
-
-    box = cq.Workplane().box(1, 1, 1)
-    result = show(box)
-    print(result)
