@@ -21,7 +21,9 @@ import { CadqueryViewer } from "./viewer";
 import { createLibraryManager, Library, installLib } from "./libraryManager";
 import { createStatusManager } from "./statusManager";
 
-export function activate(context: vscode.ExtensionContext) {
+
+
+export async function activate(context: vscode.ExtensionContext) {
     let controller: CadqueryController;
 
     let statusManager = createStatusManager();
@@ -212,12 +214,21 @@ export function activate(context: vscode.ExtensionContext) {
         if (affected) {
             let pythonPath =
                 vscode.workspace.getConfiguration("python")[
-                    "defaultInterpreterPath"
+                "defaultInterpreterPath"
                 ];
             libraryManager.refresh(pythonPath);
             controller.dispose();
             CadqueryViewer.currentPanel?.dispose();
         }
+    });
+
+    const extension = vscode.extensions.getExtension('ms-python.python')!;
+    await extension.activate();
+    extension?.exports.settings.onDidChangeExecutionDetails((event: any) => {
+        let pythonPath = extension.exports.settings.getExecutionDetails().execCommand[0];
+        libraryManager.refresh(pythonPath);
+        controller.dispose();
+        CadqueryViewer.currentPanel?.dispose();
     });
 }
 

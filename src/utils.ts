@@ -73,7 +73,7 @@ class PythonPath {
             } else {
                 return (
                     this.getConfiguration("python", document).get<string>(
-                        "pythonPath"
+                        "defaultInterpreterPath"
                     ) || ""
                 );
             }
