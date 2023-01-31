@@ -195,7 +195,7 @@ export async function activate(context: vscode.ExtensionContext) {
                     }
                 });
 
-                if (ipythonExtensionInstalled()) {
+                if (!statusManager.hasIpythonExtension) {
                     vscode.window.showErrorMessage(
                         "Extension 'HoangKimLai.ipython' not installed"
                     );
