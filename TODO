@@ -5,3 +5,4 @@ Extension
 - Test poetry
 - Understand Walkthroughs
 - How to install private git repo with pip
+- do not show paste snippet if cadquery viewer doesn't run
