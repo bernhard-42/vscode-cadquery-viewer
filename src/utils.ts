@@ -50,6 +50,10 @@ export async function inquiry(placeholder: string, options: string[]) {
     return answer || "";
 }
 
+export function ipythonExtensionInstalled() {
+    return vscode.extensions.getExtension("HoangKimLai.ipython") !== undefined;
+}
+
 class PythonPath {
     public static async getPythonPath(
         document?: vscode.TextDocument

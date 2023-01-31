@@ -62,6 +62,14 @@
                 }
             },
             {
+                "command": "cadquery-viewer.installIPythonExtension",
+                "title": "Install IPython extension 'HoangKimLai.ipython'",
+                "icon": {
+                    "light": "resources/install.png",
+                    "dark": "resources/install.png"
+                }
+            },
+            {
                 "command": "cadquery-viewer.pasteSnippet",
                 "title": "Paste code snippet",
                 "icon": {
@@ -117,6 +125,11 @@
                 {
                     "command": "cadquery-viewer.installLibrary",
                     "when": "view == cadquerySetup && viewItem == library",
+                    "group": "inline@0"
+                },
+                {
+                    "command": "cadquery-viewer.installIPythonExtension",
+                    "when": "view == cadqueryStatus && viewItem == ipythonExtMissing",
                     "group": "inline@0"
                 },
                 {

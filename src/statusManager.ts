@@ -17,6 +17,7 @@
 import * as vscode from "vscode";
 import { version as cq_vscode_version } from "./version";
 import * as output from "./output";
+import { ipythonExtensionInstalled } from "./utils";
 
 const URL =
     "https://github.com/bernhard-42/vscode-cadquery-viewer/releases/download";
@@ -25,11 +26,13 @@ export class StatusManagerProvider implements vscode.TreeDataProvider<Status> {
     installed: boolean = false;
     libraries: string[] = [];
     running: boolean = false;
-    port: string = "3939";
+    port: string = "";
     version: string = "";
+    hasIpythonExtension: boolean = false;
 
     constructor() {
         this.version = cq_vscode_version;
+        this.hasIpythonExtension = ipythonExtensionInstalled();
     }
 
     private _onDidChangeTreeData: vscode.EventEmitter<
@@ -61,14 +64,29 @@ export class StatusManagerProvider implements vscode.TreeDataProvider<Status> {
     getChildren(element?: Status): Thenable<Status[]> {
         if (element) {
             let status: Status[] = [];
-            status.push(
-                new Status(
-                    "port",
-                    "",
-                    this.port,
-                    vscode.TreeItemCollapsibleState.None
-                )
-            );
+            if (element.label === "cq_vscode") {
+                status.push(
+                    new Status(
+                        "port",
+                        "",
+                        this.port,
+                        "",
+                        false,
+                        vscode.TreeItemCollapsibleState.None
+                    )
+                );
+            } else if (element.label === "ipython") {
+                status.push(
+                    new Status(
+                        "extension",
+                        "",
+                        "",
+                        (this.hasIpythonExtension) ? "installed" : "not installed",
+                        this.hasIpythonExtension,
+                        vscode.TreeItemCollapsibleState.None
+                    )
+                );
+            }
             return Promise.resolve(status);
         } else {
             let status: Status[] = [];
@@ -81,6 +99,8 @@ export class StatusManagerProvider implements vscode.TreeDataProvider<Status> {
                         "cq_vscode",
                         this.running ? "RUNNING" : "STOPPED",
                         "",
+                        "",
+                        false,
                         state
                     )
                 );
@@ -91,7 +111,11 @@ export class StatusManagerProvider implements vscode.TreeDataProvider<Status> {
                                 lib,
                                 "",
                                 "",
-                                vscode.TreeItemCollapsibleState.None
+                                "",
+                                this.hasIpythonExtension,
+                                (lib === "ipython")
+                                    ? vscode.TreeItemCollapsibleState.Expanded
+                                    : vscode.TreeItemCollapsibleState.None
                             )
                         );
                     }
@@ -111,26 +135,37 @@ export class Status extends vscode.TreeItem {
         public readonly label: string,
         private running: string,
         private port: string,
+        private extension: string,
+        private ipython: boolean,
         public readonly collapsibleState: vscode.TreeItemCollapsibleState
     ) {
         super(label, collapsibleState);
         if (label === "cq_vscode") {
             this.contextValue = "status";
+
         } else if (label === "ipython") {
-            this.contextValue = "open";
+            this.contextValue = this.ipython ? "open" : "missing";
+
         } else {
             this.contextValue = "library";
         }
+
         if (running !== "") {
             this.description = this.running;
             this.tooltip =
                 this.running === "RUNNING"
                     ? "CadQuery Viewer is running"
                     : "CadQuery Viewer is stopped";
+
         } else if (port !== "") {
             this.contextValue = "port";
-            this.tooltip = this.port;
             this.description = this.port;
+            this.tooltip = `CadQuery viewer is listening on port ${this.port}`;
+
+        } else if (extension !== "") {
+            this.contextValue = ipython ? "ipythonExtInstalled" : "ipythonExtMissing";
+            this.description = this.extension;
+            this.tooltip = `IPython extension is ${this.extension}`;
         }
     }
 }

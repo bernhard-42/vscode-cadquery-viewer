@@ -20,6 +20,7 @@ import { CadqueryController } from "./controller";
 import { CadqueryViewer } from "./viewer";
 import { createLibraryManager, Library, installLib } from "./libraryManager";
 import { createStatusManager } from "./statusManager";
+import { ipythonExtensionInstalled } from "./utils";
 
 
 
@@ -113,6 +114,32 @@ export async function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(
         vscode.commands.registerCommand(
+            "cadquery-viewer.installIPythonExtension",
+            async (library) => {
+                let reply =
+                    (await vscode.window.showQuickPick(["yes", "no"], {
+                        placeHolder: `Install the IPython extension "HoangKimLai.ipython"?`
+                    })) || "";
+                if (reply === "" || reply === "no") {
+                    return;
+                }
+
+                await vscode.commands.executeCommand(
+                    "workbench.extensions.installExtension",
+                    "HoangKimLai.ipython"
+                );
+
+                vscode.window.showInformationMessage(
+                    "Extension 'HoangKimLai.ipython' installed"
+                );
+                statusManager.hasIpythonExtension = true;
+                statusManager.refresh(statusManager.port);
+            }
+        )
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
             "cadquery-viewer.installPythonModule",
             async () => {
                 await installLib(libraryManager, "cq_vscode");
@@ -168,26 +195,9 @@ export async function activate(context: vscode.ExtensionContext) {
                     }
                 });
 
-                let commands = await vscode.commands.getCommands(true);
-                if (!commands.includes("ipython.createTerminal")) {
+                if (ipythonExtensionInstalled()) {
                     vscode.window.showErrorMessage(
                         "Extension 'HoangKimLai.ipython' not installed"
-                    );
-                    let reply =
-                        (await vscode.window.showQuickPick(["yes", "no"], {
-                            placeHolder: `Install the IPython extension "HoangKimLai.ipython"?`
-                        })) || "";
-                    if (reply === "" || reply === "no") {
-                        return;
-                    }
-
-                    await vscode.commands.executeCommand(
-                        "workbench.extensions.installExtension",
-                        "HoangKimLai.ipython"
-                    );
-
-                    vscode.window.showInformationMessage(
-                        "Extension 'HoangKimLai.ipython' installed"
                     );
                 } else {
                     vscode.commands.executeCommand("ipython.createTerminal");
