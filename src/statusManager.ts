@@ -68,10 +68,7 @@ export class StatusManagerProvider implements vscode.TreeDataProvider<Status> {
                 status.push(
                     new Status(
                         "port",
-                        "",
-                        this.port,
-                        "",
-                        false,
+                        { "port": this.port },
                         vscode.TreeItemCollapsibleState.None
                     )
                 );
@@ -79,10 +76,10 @@ export class StatusManagerProvider implements vscode.TreeDataProvider<Status> {
                 status.push(
                     new Status(
                         "extension",
-                        "",
-                        "",
-                        (this.hasIpythonExtension) ? "installed" : "not installed",
-                        this.hasIpythonExtension,
+                        {
+                            "extension": (this.hasIpythonExtension) ? "installed" : "not installed",
+                            "ipython": this.hasIpythonExtension
+                        },
                         vscode.TreeItemCollapsibleState.None
                     )
                 );
@@ -97,10 +94,7 @@ export class StatusManagerProvider implements vscode.TreeDataProvider<Status> {
                 status.push(
                     new Status(
                         "cq_vscode",
-                        this.running ? "RUNNING" : "STOPPED",
-                        "",
-                        "",
-                        false,
+                        { "running": this.running ? "RUNNING" : "STOPPED" },
                         state
                     )
                 );
@@ -109,10 +103,7 @@ export class StatusManagerProvider implements vscode.TreeDataProvider<Status> {
                         status.push(
                             new Status(
                                 lib,
-                                "",
-                                "",
-                                "",
-                                this.hasIpythonExtension,
+                                { "ipython": this.hasIpythonExtension },
                                 (lib === "ipython")
                                     ? vscode.TreeItemCollapsibleState.Expanded
                                     : vscode.TreeItemCollapsibleState.None
@@ -133,10 +124,7 @@ export class StatusManagerProvider implements vscode.TreeDataProvider<Status> {
 export class Status extends vscode.TreeItem {
     constructor(
         public readonly label: string,
-        private running: string,
-        private port: string,
-        private extension: string,
-        private ipython: boolean,
+        private options: Record<string, string | boolean>,
         public readonly collapsibleState: vscode.TreeItemCollapsibleState
     ) {
         super(label, collapsibleState);
@@ -144,28 +132,28 @@ export class Status extends vscode.TreeItem {
             this.contextValue = "status";
 
         } else if (label === "ipython") {
-            this.contextValue = this.ipython ? "open" : "missing";
+            this.contextValue = options.ipython ? "open" : "missing";
 
         } else {
             this.contextValue = "library";
         }
 
-        if (running !== "") {
-            this.description = this.running;
+        if (options.running !== undefined) {
+            this.description = options.running;
             this.tooltip =
-                this.running === "RUNNING"
+                options.running === "RUNNING"
                     ? "CadQuery Viewer is running"
                     : "CadQuery Viewer is stopped";
 
-        } else if (port !== "") {
+        } else if (options.port !== undefined) {
             this.contextValue = "port";
-            this.description = this.port;
-            this.tooltip = `CadQuery viewer is listening on port ${this.port}`;
+            this.description = options.port;
+            this.tooltip = `CadQuery viewer is listening on port ${options.port}`;
 
-        } else if (extension !== "") {
-            this.contextValue = ipython ? "ipythonExtInstalled" : "ipythonExtMissing";
-            this.description = this.extension;
-            this.tooltip = `IPython extension is ${this.extension}`;
+        } else if (options.extension !== undefined) {
+            this.contextValue = options.ipython ? "ipythonExtInstalled" : "ipythonExtMissing";
+            this.description = options.extension;
+            this.tooltip = `IPython extension is ${options.extension}`;
         }
     }
 }
