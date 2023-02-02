@@ -234,33 +234,21 @@ export class LibraryManagerProvider
                 libs.push(
                     new Library(
                         "installer",
-                        "",
-                        manager,
-                        "",
-                        "",
-                        "",
+                        { "installer": manager },
                         vscode.TreeItemCollapsibleState.None
                     )
                 );
                 libs.push(
                     new Library(
                         "environment",
-                        "",
-                        "",
-                        location,
-                        env,
-                        "",
+                        { "location": location, "env": env },
                         vscode.TreeItemCollapsibleState.None
                     )
                 );
                 libs.push(
                     new Library(
                         "editable",
-                        "",
-                        "",
-                        "",
-                        "",
-                        editable,
+                        { "editable": editable },
                         vscode.TreeItemCollapsibleState.None
                     )
                 );
@@ -278,7 +266,7 @@ export class LibraryManagerProvider
                 let state = installed
                     ? vscode.TreeItemCollapsibleState.Expanded
                     : vscode.TreeItemCollapsibleState.None;
-                libs.push(new Library(lib, version, "", "", "", "", state));
+                libs.push(new Library(lib, { "version": version }, state));
                 if (lib === "cq_vscode") {
                     this.statusManager.installed = version !== "n/a";
                     this.statusManager.setLibraries(
@@ -296,28 +284,24 @@ export class LibraryManagerProvider
 export class Library extends vscode.TreeItem {
     constructor(
         public readonly label: string,
-        private version: string,
-        private installer: string,
-        private location: string,
-        private env: string,
-        private editable: string,
+        private options: Record<string, string>,
         public readonly collapsibleState: vscode.TreeItemCollapsibleState
     ) {
         super(label, collapsibleState);
 
-        if (version !== "") {
-            this.tooltip = `${this.label}-${this.version}`;
-            this.description = this.version;
+        if (options.version !== "") {
+            this.tooltip = `${this.label}-${options.version}`;
+            this.description = options.version;
             this.contextValue = "library";
-        } else if (installer !== "") {
-            this.tooltip = this.installer;
-            this.description = this.installer;
-        } else if (location !== "") {
-            this.tooltip = this.location;
-            this.description = env;
-        } else if (editable !== "") {
-            this.tooltip = editable ? "editable" : "non-editable";
-            this.description = this.editable.toString();
+        } else if (options.installer !== "") {
+            this.tooltip = options.installer;
+            this.description = options.installer;
+        } else if (options.location !== "") {
+            this.tooltip = options.location;
+            this.description = options.env;
+        } else if (options.editable !== "") {
+            this.tooltip = options.editable ? "editable" : "non-editable";
+            this.description = options.editable.toString();
         }
     }
 }
