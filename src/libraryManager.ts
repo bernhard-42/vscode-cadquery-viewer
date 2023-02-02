@@ -200,12 +200,16 @@ export class LibraryManagerProvider
     pasteImport(library: string) {
         const editor = getEditor();
         if (editor !== undefined) {
-            let importCmd = Object.assign([], this.codeSnippets[library]);
-            if (library === "cq_vscode") {
-                importCmd.push(`set_port(${this.statusManager.port})`);
+            if (this.statusManager.getPort() === "") {
+                vscode.window.showErrorMessage("Cadquery viewer not running");
+            } else {
+                let importCmd = Object.assign([], this.codeSnippets[library]);
+                if (library === "cq_vscode") {
+                    importCmd.push(`set_port(${this.statusManager.getPort()})`);
+                }
+                let snippet = new vscode.SnippetString(importCmd.join("\n") + "\n");
+                editor?.insertSnippet(snippet);
             }
-            let snippet = new vscode.SnippetString(importCmd.join("\n") + "\n");
-            editor?.insertSnippet(snippet);
         } else {
             vscode.window.showErrorMessage("No editor open");
         }
