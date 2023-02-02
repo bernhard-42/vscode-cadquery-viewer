@@ -110,7 +110,7 @@
         "viewsWelcome": [
             {
                 "view": "cadqueryStatus",
-                "contents": "In order to use CadQuery viewer, the Python library cq_vscode needs to be installed.\n[Install cq_vscode from pypi](command:cadquery-viewer.installPythonModule)\n\nFurther libraries can be installed with the Library Manager below\n"
+                "contents": "In order to use CadQuery viewer, the Python library cq_vscode needs to be installed.\n[Install cq_vscode from pypi](command:cadquery-viewer.installPythonModule)\nFurther libraries can be installed or re-installed in the Library Manager below.\n\nAvailable libraries and their install (and import) commands can be found in the 'CadQuery Viewer' preferences of VS Code.\n[Open CadQuery Viewer Preferences](command:workbench.action.openSettings?%5B%22CadQuery%20Viewer%22%5D)\n"
             }
         ],
         "menus": {
@@ -231,7 +231,7 @@
                 },
                 "CadQueryViewer.installCommands": {
                     "type": "object",
-                    "description": "Values {python}, {conda_env}, {cq_vscode_version} will be replaced accordingly during execution",
+                    "description": "Shell commands to install Python libraries. The values for placeholders {python}, {conda_env}, {cq_vscode_version} will be replaced accordingly during execution",
                     "default": {
                         "cadquery": {
                             "pip": [
@@ -289,6 +289,7 @@
                 },
                 "CadQueryViewer.codeSnippets": {
                     "type": "object",
+                    "description": "Python snippets to import the Python libraries",
                     "default": {
                         "cadquery": [
                             "import cadquery as cq"
