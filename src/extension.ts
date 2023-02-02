@@ -108,6 +108,9 @@ export async function activate(context: vscode.ExtensionContext) {
             "cadquery-viewer.installLibrary",
             async (library) => {
                 await installLib(libraryManager, library.label);
+                if (["cadquery", "build123d"].includes(library.label)) {
+                    vscode.window.showInformationMessage(`Depending on your os, the first import of ${library.label} can take several seconds`);
+                }
             }
         )
     );
@@ -118,11 +121,15 @@ export async function activate(context: vscode.ExtensionContext) {
             async (library) => {
                 let reply =
                     (await vscode.window.showQuickPick(["yes", "no"], {
-                        placeHolder: `Install the IPython extension "HoangKimLai.ipython"?`
+                        placeHolder: `Install the VS Code extension "HoangKimLai.ipython"?`
                     })) || "";
                 if (reply === "" || reply === "no") {
                     return;
                 }
+
+                vscode.window.showInformationMessage(
+                    "Installing VS Code extension 'HoangKimLai.ipython' ..."
+                );
 
                 await vscode.commands.executeCommand(
                     "workbench.extensions.installExtension",
@@ -130,7 +137,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 );
 
                 vscode.window.showInformationMessage(
-                    "Extension 'HoangKimLai.ipython' installed"
+                    "VS Code extension 'HoangKimLai.ipython' installed"
                 );
                 statusManager.hasIpythonExtension = true;
                 statusManager.refresh(statusManager.port);
