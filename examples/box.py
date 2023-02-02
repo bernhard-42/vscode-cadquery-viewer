@@ -16,7 +16,7 @@ set_defaults(
     collapse=1,
     grid=(True, True, True),
 )
-
+# %%
 box = cq.Workplane().box(1, 2, 1).edges().chamfer(0.4)
 
 reset_show()
