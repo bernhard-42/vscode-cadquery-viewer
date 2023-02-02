@@ -54,11 +54,13 @@ export async function installLib(
         (await vscode.window.showQuickPick(["yes", "no"], {
             placeHolder: `Use python interpreter "${python}"?`
         })) || "";
-    if (reply === "") {
+    if (reply === "" || reply === "no") {
         return;
     }
 
-    if (python === "python" || reply === "no") {
+    python = await getPythonPath();
+
+    if (python === "python") {
         vscode.window.showErrorMessage("Select Python Interpreter first!");
         return;
     }
