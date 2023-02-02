@@ -49,8 +49,13 @@ export class StatusManagerProvider implements vscode.TreeDataProvider<Status> {
             this.running = true;
         } else {
             this.running = false;
+            this.port = "";
         }
         this._onDidChangeTreeData.fire();
+    }
+
+    getPort() {
+        return this.port;
     }
 
     setLibraries(libraries: string[]) {
