@@ -72,11 +72,20 @@ export class StatusManagerProvider implements vscode.TreeDataProvider<Status> {
             if (element.label === "cq_vscode") {
                 status.push(
                     new Status(
-                        "port",
-                        { "port": this.port },
+                        "version",
+                        { "version": cq_vscode_version },
                         vscode.TreeItemCollapsibleState.None
                     )
                 );
+                if (this.running) {
+                    status.push(
+                        new Status(
+                            "port",
+                            { "port": this.port },
+                            vscode.TreeItemCollapsibleState.None
+                        )
+                    );
+                }
             } else if (element.label === "ipython") {
                 status.push(
                     new Status(
@@ -93,9 +102,7 @@ export class StatusManagerProvider implements vscode.TreeDataProvider<Status> {
         } else {
             let status: Status[] = [];
             if (this.installed) {
-                let state = this.running
-                    ? vscode.TreeItemCollapsibleState.Expanded
-                    : vscode.TreeItemCollapsibleState.None;
+                let state = vscode.TreeItemCollapsibleState.Expanded;
                 status.push(
                     new Status(
                         "cq_vscode",
@@ -159,6 +166,11 @@ export class Status extends vscode.TreeItem {
             this.contextValue = options.ipython ? "ipythonExtInstalled" : "ipythonExtMissing";
             this.description = options.extension;
             this.tooltip = `IPython extension is ${options.extension}`;
+
+        } else if (options.version !== undefined) {
+            this.contextValue = "version";
+            this.description = options.version;
+            this.tooltip = `cq_vscode extension ${options.version}`;
         }
     }
 }
