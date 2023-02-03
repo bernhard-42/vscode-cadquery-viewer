@@ -289,17 +289,17 @@ export class Library extends vscode.TreeItem {
     ) {
         super(label, collapsibleState);
 
-        if (options.version !== "") {
+        if (options.version !== undefined) {
             this.tooltip = `${this.label}-${options.version}`;
             this.description = options.version;
             this.contextValue = "library";
-        } else if (options.installer !== "") {
+        } else if (options.installer !== undefined) {
             this.tooltip = options.installer;
             this.description = options.installer;
-        } else if (options.location !== "") {
+        } else if (options.location !== undefined) {
             this.tooltip = options.location;
             this.description = options.env;
-        } else if (options.editable !== "") {
+        } else if (options.editable !== undefined) {
             this.tooltip = options.editable ? "editable" : "non-editable";
             this.description = options.editable.toString();
         }
