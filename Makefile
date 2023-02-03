@@ -32,8 +32,15 @@ endif
 dist:
 	@echo Version: $(CURRENT_VERSION)
 	@python setup.py sdist bdist_wheel
-	vsce package && mv cadquery-viewer-$(CURRENT_VERSION).vsix dist/
+	vsce package
 	@ls -l dist/
+	@mv 
+
+
+vsix:
+	@echo Version: $(CURRENT_VERSION)
+	vsce package
+	@ls -l *.vsix
 
 release:
 	git add .
