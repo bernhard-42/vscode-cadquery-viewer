@@ -4,38 +4,32 @@ _CadQuery Viewer for VS Code_ is an extension to show CadQuery objects in VS Cod
 
 ## Installation
 
--   Download [cadquery-viewer-0.19.0.vsix](https://github.com/bernhard-42/vscode-cadquery-viewer/releases/download/v0.19.0/cadquery-viewer-0.19.0.vsix)
+-   Download [cadquery-viewer-0.20.0.vsix](https://github.com/bernhard-42/vscode-cadquery-viewer/releases/download/v0.20.0/cadquery-viewer-0.20.0.vsix)
 -   Install it locally in VS Code (_Extensions -> "..." menu -> Install from VSIX..._)
+-   Use the Cadquery sidebar to manage both CadQuery Viewer and python libraries
+    -   Install cq_vscode via the blue button in the welcome screen of the "Viewer Manager" or by pressing the green down-arrow in the "Library Manager" section of the Cadquery Viewer sidebar
+    -   Install needed CAD libraries by pressing the green down-arrow behind the library name in the "Library Manager" section of the Cadquery Viewer sidebar
+
+![Installation](screenshots/cq_vscode-install.gif)
 
 ## Usage
 
--   Select the correct Python environment in VS Code (conda, mamba, ...)
--   Open your Python CadQuery file and activate _CadQuery Viewer_ via **cmd-k v** / **ctrl-k v** (or via the VS Code command `Open CadQuery Viewer`)
+### Using with VS Code Run menu
 
-    -   When port 3939 is free, the viewer starts and in Python one would use
+-   Start the CadQuery Viewer by pressing the green box-arrow button in the "Viewer Manager" section of the Cadquery Viewer sidebar
+-   Paste the import code by using the paste button behing the library names in the "Viewer Manager" section
+-   Use the usual Run menu to run the code
 
-        ```python
-        from cq_vscode import show, show_object
-        # ...
-        show_object(box)
-        ```
+![Use with run](screenshots/cq_vscode-work.gif)
 
-    -   When the port is not free (e.g. blocked by the first viewer or another app), it opens an input box to ask for another port. In this case, in Python one needs to call `set_port` first, e.g. when entering 3940 in VS Code, call:
-        `python
-    from cq_vscode import show, show_object, set_port
-    set_port(3940)
-    # ...
-    show_object(box)
-    `
-        All following `show` and `show_object` calls should the use this port in this VS Code Window.
+### Using with IPython extension
 
-    There can be one Viewer per VS Code window.
+-   Install ipython by pressing the green down-arrow behind the "ipython" entry in the "Library Manager" section of the Cadquery Viewer sidebar
+-   Install the IPython extension by pressing the green button behing the "ipython" entry in the "Viewer Manager"
+-   Paste the IPyython delimiters by using the paste button behing the "ipython" entry" in the "Viewer Manager" section
+-   Use the green run button to run an IPython section
 
--   Use **cmd-shift-P** / **ctrl-shift-P** and run the command `Install CadQuery Viewer Python module 'cq-vscode'` (if not already installed)
-
--   Use `show_object` as in [CQ-Editor](https://github.com/CadQuery/CQ-editor)
-
--   Global settings can be set in VS Code under "CadQuery Viewer"
+![Use with run](screenshots/cq_vscode-ipython.gif)
 
 ## show_object
 
