@@ -154,6 +154,8 @@ export class LibraryManagerProvider
                 substCmds.push(
                     command.replace("{conda_env}", env)
                 );
+            } else {
+                substCmds.push(command);
             }
         });
         return substCmds;
