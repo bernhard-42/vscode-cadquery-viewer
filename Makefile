@@ -34,7 +34,6 @@ dist:
 	@python setup.py sdist bdist_wheel
 	vsce package
 	@ls -l dist/
-	@mv 
 
 
 vsix:
