@@ -260,13 +260,17 @@ export class LibraryManagerProvider
             let libs: Library[] = [];
             this.getInstallLibs().forEach((lib: string) => {
                 let installed = Object.keys(this.installed).includes(lib);
+
                 let version = installed
                     ? this.installed[sanitize(lib)][0]
                     : "n/a";
+
                 let state = installed
                     ? vscode.TreeItemCollapsibleState.Expanded
                     : vscode.TreeItemCollapsibleState.None;
+
                 libs.push(new Library(lib, { "version": version }, state));
+
                 if (lib === "cq_vscode") {
                     this.statusManager.installed = version !== "n/a";
                     this.statusManager.setLibraries(
