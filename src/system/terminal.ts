@@ -5,10 +5,12 @@ import { getWorkspaceRoot } from "../utils";
 
 export class TerminalExecute {
     writeEmitter = new vscode.EventEmitter<string>();
-    terminal: vscode.Terminal;
+    terminal: vscode.Terminal | undefined;
     workspaceFolder: string | undefined;
     errorMsg: string = "";
     stdout: string = "";
+    terminalName = "CadQuery Viewer Terminal";
+    child: any = undefined;
 
     constructor(msg: string) {
         let pty = {
@@ -17,9 +19,9 @@ export class TerminalExecute {
             close: () => {
                 /* noop*/
             },
-            handleInput: (data: string) => {
+            handleInput: async (data: string) => {
                 let charCode = data.charCodeAt(0);
-                
+
                 if (data === "\r") {
                     this.writeEmitter.fire("\r\n\r\n");
                 } else if (charCode < 32) {
@@ -27,7 +29,8 @@ export class TerminalExecute {
                         `^${String.fromCharCode(charCode + 64)}`
                     );
                     if (charCode === 3) {
-                        // this.killProcess();
+                        await this.killProcess();
+                        this.writeEmitter.fire("\r\n");
                     }
                 } else {
                     data = data.replace("\r", "\r\n");
@@ -36,43 +39,65 @@ export class TerminalExecute {
             }
         };
         this.terminal = vscode.window.createTerminal({
-            name: "CadQuery Viewer Terminal",
+            name: this.terminalName,
             pty
         });
         this.workspaceFolder = getWorkspaceRoot() || ".";
+
+        vscode.window.onDidCloseTerminal(async t => {
+
+            if (t.name === this.terminalName) {
+                await this.killProcess();
+                this.terminal = undefined;
+                this.child = undefined;
+            }
+        });
+    }
+
+    async killProcess() {
+        if (this.child && !this.child.killed) {
+            this.child.kill();
+            vscode.window.showInformationMessage("Process killed");
+            output.info("Process killed");
+            this.child = undefined;
+        }
     }
 
     async execute(commands: string[]): Promise<string> {
-        this.terminal.show();
+        this.terminal?.show();
         this.stdout = "";
         return new Promise((resolve, reject) => {
             let command = commands.join("; ");
-            const child = spawn(command, {
+            this.child = spawn(command, {
                 stdio: "pipe",
                 shell: true,
                 cwd: this.workspaceFolder
             });
-            child.stderr.setEncoding("utf8");
-            child.stdout?.on("data", (data) => {
+            output.info(`Running ${command}`)
+            this.child.stderr.setEncoding("utf8");
+            this.child.stdout?.on("data", (data: string) => {
                 this.stdout += data.toString();
                 this.print(data.toString());
             });
-            child.stderr?.on("data", (data) => {
+            this.child.stderr?.on("data", (data: string) => {
                 this.errorMsg = data.toString();
                 this.print(this.errorMsg);
             });
-            child.on("exit", (code, signal) => {
+            this.child.on("exit", (code: number, signal: any) => {
                 if (code === 0) {
                     this.print(`Successfully executed '${command}`);
                     vscode.window.showInformationMessage(
                         `Successfully executed '${command}'`
                     );
+                    output.info(`Successfully executed '${command}'`);
                     resolve(this.stdout);
                 } else {
                     vscode.window.showErrorMessage(
                         `Failed to execute '${command}(${code})'`
                     );
-                    // vscode.window.showErrorMessage(this.errorMsg);
+                    output.error(`Failed to execute '${command}(${code})'`);
+                    output.error(this.errorMsg);
+
                     reject(new Error(code?.toString()));
                 }
             });

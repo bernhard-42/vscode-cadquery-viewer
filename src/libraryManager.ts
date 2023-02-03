@@ -67,7 +67,7 @@ export async function installLib(
 
     let commands = await libraryManager.getInstallLibCmds(library, manager);
 
-    if (libraryManager.terminal === undefined) {
+    if (libraryManager.terminal?.terminal === undefined) {
         libraryManager.terminal = new TerminalExecute(
             `Installing ${commands.join(";")} ... `
         );
