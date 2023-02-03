@@ -255,14 +255,6 @@
                                 "poetry add git+https://github.com/gumyr/build123d.git"
                             ]
                         },
-                        "alg123d": {
-                            "pip": [
-                                "{python} -m pip install git+https://github.com/bernhard-42/alg123d.git"
-                            ],
-                            "poetry": [
-                                "poetry add git+https://github.com/bernhard-42/alg123d.git"
-                            ]
-                        },
                         "cq_vscode": {
                             "pip": [
                                 "{python} -m pip install cq_vscode=={cq_vscode_version}"
@@ -296,9 +288,6 @@
                         ],
                         "build123d": [
                             "from build123d import *"
-                        ],
-                        "alg123d": [
-                            "from alg123d import *"
                         ],
                         "cq_vscode": [
                             "from cq_vscode import show, show_object, reset_show, set_port, set_defaults, get_defaults"

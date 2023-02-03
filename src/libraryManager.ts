@@ -67,10 +67,12 @@ export async function installLib(
 
     let commands = await libraryManager.getInstallLibCmds(library, manager);
 
-    let terminal = new TerminalExecute(
-        `Installing ${commands.join(";")} ... `
-    );
-    await terminal.execute(commands);
+    if (libraryManager.terminal === undefined) {
+        libraryManager.terminal = new TerminalExecute(
+            `Installing ${commands.join(";")} ... `
+        );
+    }
+    await libraryManager.terminal.execute(commands);
     libraryManager.refresh();
 }
 
@@ -81,6 +83,7 @@ export class LibraryManagerProvider
     installCommands: any = {};
     codeSnippets: any = {};
     installed: Record<string, string[]> = {};
+    terminal: TerminalExecute | undefined;
 
     constructor(statusManger: StatusManagerProvider) {
         this.statusManager = statusManger;
