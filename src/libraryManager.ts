@@ -203,7 +203,7 @@ export class LibraryManagerProvider
     pasteImport(library: string) {
         const editor = getEditor();
         if (editor !== undefined) {
-            if (this.statusManager.getPort() === "") {
+            if ((library === "cq_vscode") && (this.statusManager.getPort() === "")) {
                 vscode.window.showErrorMessage("Cadquery viewer not running");
             } else {
                 let importCmd = Object.assign([], this.codeSnippets[library]);
