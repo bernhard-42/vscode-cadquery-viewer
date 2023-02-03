@@ -43,11 +43,11 @@ export class StatusManagerProvider implements vscode.TreeDataProvider<Status> {
         Status | undefined | null | void
     > = this._onDidChangeTreeData.event;
 
-    async refresh(port: string) {
-        if (port !== "") {
+    async refresh(port: string = "") {
+        if ((port !== "<none>") && (port !== "")) {
             this.port = port;
             this.running = true;
-        } else {
+        } else if (port === "<none>") {
             this.running = false;
             this.port = "";
         }

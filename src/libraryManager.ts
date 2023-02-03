@@ -276,7 +276,7 @@ export class LibraryManagerProvider
                     this.statusManager.setLibraries(
                         Object.keys(this.installed)
                     );
-                    this.statusManager.refresh("");
+                    this.statusManager.refresh(this.statusManager.getPort());
                 }
             });
 

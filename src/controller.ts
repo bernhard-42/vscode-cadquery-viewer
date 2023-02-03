@@ -114,6 +114,6 @@ export class CadqueryController {
         this.server?.close();
         serverStarted = false;
         output.info("Server is shut down");
-        this.statusController.refresh("");
+        this.statusController.refresh("<none>");
     }
 }
