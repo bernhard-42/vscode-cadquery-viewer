@@ -160,8 +160,16 @@ def _convert(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
 
 def show(*cad_objs, names=None, colors=None, alphas=None, port=None, **kwargs):
     """Show CAD objects in Visual Studio Code
+    Parameters
+    - cad_objs:          All cad objects that should be shown as positional parameters
 
-    Valid keywords:
+    Keywords for show:
+    - names:             List of names for the cad_objs. Needs to have the same length as cad_objs
+    - colors:            List of colors for the cad_objs. Needs to have the same length as cad_objs
+    - alphas:            List of alpha values for the cad_objs. Needs to have the same length as cad_objs
+    - port:              The port the viewer listens to. Typically use 'set_port(port)' instead
+
+    Valid keywords to configure the viewer (**kwargs):
     - axes:              Show axes (default=False)
     - axes0:             Show axes at (0,0,0) (default=False)
     - grid:              Show grid (default=False)
@@ -197,15 +205,26 @@ def show_object(
     obj,
     name=None,
     options=None,
-    mates=None,
     parent=None,
     clear=False,
     port=None,
     **kwargs,
 ):
-    """Incrementally how CAD objects in Visual Studio Code
+    """Incrementally show CAD objects in Visual Studio Code
 
-    Valid keywords:
+    Parameters:
+    - obj:              The CAD object to be shown
+
+    Keywords for show_object:
+    - name:             The name of the CAD object
+    - options:          A dict of color and alpha value: {"alpha":0.5, "color": (64, 164, 223)}
+                        0 <= alpha <= 1.0 and color is a 3-tuple of values between 0 and 255
+    - parent:           Add another object, usually the parent of e.g. edges or vertices with alpha=0.25
+    - clear:            In interactice mode, clear the stack of objects to be shown
+                        (typically used for the first object)
+    - port:             The port the viewer listens to. Typically use 'set_port(port)' instead
+
+    Valid keywords to configure the viewer (**kwargs):
     - axes:              Show axes (default=False)
     - axes0:             Show axes at (0,0,0) (default=False)
     - grid:              Show grid (default=False)
