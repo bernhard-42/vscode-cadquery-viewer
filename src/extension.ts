@@ -20,8 +20,8 @@ import { CadqueryController } from "./controller";
 import { CadqueryViewer } from "./viewer";
 import { createLibraryManager, installLib } from "./libraryManager";
 import { createStatusManager } from "./statusManager";
-
-
+import { download } from "./examples";
+import { getCurrentFolder } from "./utils";
 
 export async function activate(context: vscode.ExtensionContext) {
     let controller: CadqueryController;
@@ -110,6 +110,20 @@ export async function activate(context: vscode.ExtensionContext) {
                 if (["cadquery", "build123d"].includes(library.label)) {
                     vscode.window.showInformationMessage(`Depending on your os, the first import of ${library.label} can take several seconds`);
                 }
+            }
+        )
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            "cadquery-viewer.downloadExamples",
+            async (library) => {
+                let root = getCurrentFolder();
+                const input = await vscode.window.showInputBox({"prompt": "Select target folder", "value":root});
+                if (input === undefined) {
+                    return;
+                }
+                await download(library.options.parent, input);
             }
         )
     );

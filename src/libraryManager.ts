@@ -81,6 +81,7 @@ export class LibraryManagerProvider
 {
     statusManager: StatusManagerProvider;
     installCommands: any = {};
+    exampleDownloads: any = {};
     codeSnippets: any = {};
     installed: Record<string, string[]> = {};
     terminal: TerminalExecute | undefined;
@@ -98,6 +99,10 @@ export class LibraryManagerProvider
         this.codeSnippets =
             vscode.workspace.getConfiguration("CadQueryViewer")[
             "codeSnippets"
+            ];
+        this.exampleDownloads =
+            vscode.workspace.getConfiguration("CadQueryViewer")[
+                "exampleDownloads"
             ];
     }
 
@@ -261,7 +266,16 @@ export class LibraryManagerProvider
                         { "editable": editable },
                         vscode.TreeItemCollapsibleState.None
                     )
-                );
+                    );
+                if (this.exampleDownloads[element.label]) {
+                    libs.push(
+                        new Library(
+                            "examples",
+                            { "examples": "" , "parent": element.label},
+                            vscode.TreeItemCollapsibleState.None
+                        )
+                    );                      
+                }
                 return Promise.resolve(libs);
             } else {
                 return Promise.resolve([]);
@@ -316,6 +330,10 @@ export class Library extends vscode.TreeItem {
         } else if (options.editable !== undefined) {
             this.tooltip = options.editable ? "editable" : "non-editable";
             this.description = options.editable.toString();
+        } else if (options.examples !== undefined) {
+            this.tooltip = "Download examples from github";
+            this.description = "(download only))";
+            this.contextValue = "examples";
         }
     }
 }

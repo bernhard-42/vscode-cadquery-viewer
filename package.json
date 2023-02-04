@@ -71,6 +71,14 @@
                 }
             },
             {
+                "command": "cadquery-viewer.downloadExamples",
+                "title": "Download examples for a specific library",
+                "icon": {
+                    "light": "resources/install.png",
+                    "dark": "resources/install.png"
+                }
+            },
+            {
                 "command": "cadquery-viewer.pasteSnippet",
                 "title": "Paste code snippet",
                 "icon": {
@@ -144,6 +152,11 @@
                 {
                     "command": "cadquery-viewer.installIPythonExtension",
                     "when": "view == cadqueryStatus && viewItem == ipythonExtMissing",
+                    "group": "inline@0"
+                },
+                {
+                    "command": "cadquery-viewer.downloadExamples",
+                    "when": "view == cadquerySetup && viewItem == examples",
                     "group": "inline@0"
                 },
                 {
@@ -310,6 +323,20 @@
                             "\n# %%\n"
                         ]
                     }
+                },
+                "CadQueryViewer.exampleDownloads": {
+                    "type": "object",
+                    "description": "Github download path for repository zip archives",
+                    "default": {
+                        "cadquery": {
+                            "zip": "https://github.com/CadQuery/cadquery/archive/refs/heads/master.zip",
+                            "example_path": "cadquery-master/examples"
+                        },
+                        "build123d": {
+                            "zip": "https://github.com/gumyr/build123d/archive/refs/heads/dev.zip",
+                            "example_path": "build123d-dev/examples"
+                        }
+                    }
                 }
             }
         }
@@ -336,6 +363,10 @@
         "typescript": "^4.7.4"
     },
     "dependencies": {
+        "@types/adm-zip": "^0.5.0",
+        "@types/follow-redirects": "^1.14.1",
+        "adm-zip": "^0.5.10",
+        "follow-redirects": "^1.15.2",
         "three-cad-viewer": "^1.7.0",
         "vsce": "^2.11.0"
     }
