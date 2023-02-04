@@ -4,7 +4,7 @@ _CadQuery Viewer for VS Code_ is an extension to show CadQuery objects in VS Cod
 
 ## Installation
 
--   Download [cadquery-viewer-0.20.0.vsix](https://github.com/bernhard-42/vscode-cadquery-viewer/releases/download/v0.20.0/cadquery-viewer-0.20.0.vsix)
+-   Download [cadquery-viewer-0.22.0.vsix](https://github.com/bernhard-42/vscode-cadquery-viewer/releases/download/v0.22.0/cadquery-viewer-0.22.0.vsix)
 -   Install it locally in VS Code (_Extensions -> "..." menu -> Install from VSIX..._)
 -   Use the Cadquery sidebar to manage both CadQuery Viewer and python libraries
     -   Install cq_vscode via the blue button in the welcome screen of the "Viewer Manager" or by pressing the green down-arrow in the "Library Manager" section of the Cadquery Viewer sidebar
@@ -30,6 +30,14 @@ _CadQuery Viewer for VS Code_ is an extension to show CadQuery objects in VS Cod
 -   Use the green run button to run an IPython section
 
 ![Use with run](screenshots/cq_vscode-ipython.gif)
+
+### Downloading examples
+
+-   Go to the Library Manager and find "examples (download)" under an installed library. Note, not all libraries have examples!. Press the green download button
+-   Check and modify (if needed) the target download path. Note, a file needs to be open so that the extension can get the working folder
+-   The examples will be stored in a folder <library>\_examples, e.g. cadquery_examples
+
+![Use with run](screenshots/cq_vscode-examples.gif)
 
 ## show_object
 
