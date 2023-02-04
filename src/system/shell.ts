@@ -1,7 +1,6 @@
-import { executionAsyncResource } from 'async_hooks';
 import { execSync } from 'child_process';
 import * as output from '../output';
-import { getWorkspaceRoot } from '../utils';
+import { getCurrentFolder } from '../utils';
 
 function parsePipLibs(jsonData: string) {
     var data = JSON.parse(jsonData);
@@ -13,7 +12,7 @@ function parsePipLibs(jsonData: string) {
 }
 
 export function pipList(python: string): Map<string, string> {
-    let workspaceFolder = getWorkspaceRoot() || ".";
+    let workspaceFolder = getCurrentFolder();
     try {
         let result = execSync(`${python} -m pip list --format json`, { cwd: workspaceFolder }).toString();
         return parsePipLibs(result);
@@ -24,7 +23,7 @@ export function pipList(python: string): Map<string, string> {
 }
 
 export function execute(cmd: string) {
-    let workspaceFolder = getWorkspaceRoot() || ".";
+    let workspaceFolder = getCurrentFolder();
     try {
         let result = execSync(cmd, { cwd: workspaceFolder }).toString();
         return result;

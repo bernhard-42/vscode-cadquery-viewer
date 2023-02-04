@@ -19,7 +19,7 @@ import * as path from "path";
 import * as vscode from "vscode";
 import { version as cq_vscode_version } from "./version";
 import * as output from "./output";
-import { getPythonPath, getEditor, inquiry, getWorkspaceRoot } from "./utils";
+import { getPythonPath, getEditor, inquiry, getCurrentFolder } from "./utils";
 import { execute } from "./system/shell";
 import { StatusManagerProvider } from "./statusManager";
 import { TerminalExecute } from "./system/terminal";
@@ -94,11 +94,11 @@ export class LibraryManagerProvider
     readConfig() {        
         this.installCommands =
             vscode.workspace.getConfiguration("CadQueryViewer")[
-            "installCommands"
+                "installCommands"
             ];
         this.codeSnippets =
             vscode.workspace.getConfiguration("CadQueryViewer")[
-            "codeSnippets"
+                "codeSnippets"
             ];
         this.exampleDownloads =
             vscode.workspace.getConfiguration("CadQueryViewer")[
@@ -133,7 +133,7 @@ export class LibraryManagerProvider
         let filteredManagers: string[] = [];
 
         managers.forEach((manager: string) => {
-            const cwd = getWorkspaceRoot() || ".";
+            const cwd = getCurrentFolder();
             const poetryLock = fs.existsSync(path.join(cwd, "poetry.lock"));
             if (manager === "poetry" && !poetryLock) {
                 // ignore

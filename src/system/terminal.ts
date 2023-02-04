@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { spawn } from "child_process";
 import * as output from "../output";
-import { getWorkspaceRoot } from "../utils";
+import { getCurrentFolder } from "../utils";
 
 export class TerminalExecute {
     writeEmitter = new vscode.EventEmitter<string>();
@@ -42,7 +42,7 @@ export class TerminalExecute {
             name: this.terminalName,
             pty
         });
-        this.workspaceFolder = getWorkspaceRoot() || ".";
+        this.workspaceFolder = getCurrentFolder();
 
         vscode.window.onDidCloseTerminal(async t => {
 
@@ -73,7 +73,7 @@ export class TerminalExecute {
                 shell: true,
                 cwd: this.workspaceFolder
             });
-            output.info(`Running ${command}`)
+            output.info(`Running ${command}`);
             this.child.stderr.setEncoding("utf8");
             this.child.stdout?.on("data", (data: string) => {
                 this.stdout += data.toString();

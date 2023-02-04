@@ -34,13 +34,13 @@ export function getCurrentFilename() {
     return;
 }
 
-export function getWorkspaceRoot() {
+export function getCurrentFolder(): string {
     let filename = getCurrentFilename();
-    if (filename) {
-        return vscode.workspace.getWorkspaceFolder(vscode.Uri.file(filename))
-            ?.uri.fsPath;
+    if (filename !== undefined){
+        return path.dirname(filename);
+    } else{
+        return ".";
     }
-    return;
 }
 
 export async function inquiry(placeholder: string, options: string[]) {
@@ -104,6 +104,6 @@ export function getPythonPath() {
 }
 
 export function getPackageManager() {
-    let cwd = getWorkspaceRoot() || ".";
+    let cwd = getCurrentFolder();
     return fs.existsSync(path.join(cwd, "poetry.lock")) ? "poetry" : "pip";
 }
