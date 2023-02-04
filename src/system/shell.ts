@@ -23,9 +23,12 @@ export function pipList(python: string): Map<string, string> {
 }
 
 export function execute(cmd: string) {
-    let workspaceFolder = getCurrentFolder();
+    let currentFolder = getCurrentFolder();
+    if(currentFolder === "") {
+        currentFolder = ".";
+    }
     try {
-        let result = execSync(cmd, { cwd: workspaceFolder }).toString();
+        let result = execSync(cmd, { cwd: currentFolder }).toString();
         return result;
     } catch (error: any) {
         output.error(error.stderr.toString());
