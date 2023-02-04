@@ -87,6 +87,10 @@ export class LibraryManagerProvider
 
     constructor(statusManger: StatusManagerProvider) {
         this.statusManager = statusManger;
+        this.readConfig();
+    }
+    
+    readConfig() {        
         this.installCommands =
             vscode.workspace.getConfiguration("CadQueryViewer")[
             "installCommands"
@@ -106,6 +110,7 @@ export class LibraryManagerProvider
     > = this._onDidChangeTreeData.event;
 
     async refresh(pythonPath: string | undefined = undefined) {
+        this.readConfig();
         await this.findInstalledLibraries(pythonPath);
         this._onDidChangeTreeData.fire();
     }
