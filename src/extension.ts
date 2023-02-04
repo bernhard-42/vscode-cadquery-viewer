@@ -119,6 +119,10 @@ export async function activate(context: vscode.ExtensionContext) {
             "cadquery-viewer.downloadExamples",
             async (library) => {
                 let root = getCurrentFolder();
+                if (root === "") {
+                    vscode.window.showInformationMessage("First open a file in your project");
+                    return;
+                }
                 const input = await vscode.window.showInputBox({"prompt": "Select target folder", "value":root});
                 if (input === undefined) {
                     return;

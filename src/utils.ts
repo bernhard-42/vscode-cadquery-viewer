@@ -39,7 +39,7 @@ export function getCurrentFolder(): string {
     if (filename !== undefined){
         return path.dirname(filename);
     } else{
-        return ".";
+        return "";
     }
 }
 
