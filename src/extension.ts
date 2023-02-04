@@ -180,6 +180,13 @@ export async function activate(context: vscode.ExtensionContext) {
     );
 
     context.subscriptions.push(
+        vscode.commands.registerCommand(
+            "cadquery-viewer.preferences",
+            () => vscode.commands.executeCommand("workbench.action.openSettings", "CadQuery Viewer")
+        )
+    );
+
+    context.subscriptions.push(
         vscode.commands.registerCommand("cadquery-viewer.refreshStatus", () =>
             statusManager.refresh("")
         )

@@ -85,6 +85,14 @@
                     "light": "resources/light/refresh.svg",
                     "dark": "resources/dark/refresh.svg"
                 }
+            },
+            {
+                "command": "cadquery-viewer.preferences",
+                "title": "Open CadQuery Viewer preferences",
+                "icon": {
+                    "light": "resources/settings.png",
+                    "dark": "resources/settings.png"
+                }
             }
         ],
         "viewsContainers": {
@@ -119,6 +127,11 @@
                 {
                     "command": "cadquery-viewer.refreshLibraries",
                     "when": "view == cadquerySetup",
+                    "group": "navigation@1"
+                },
+                {
+                    "command": "cadquery-viewer.preferences",
+                    "when": "view == cadqueryStatus",
                     "group": "navigation@1"
                 }
             ],
