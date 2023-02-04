@@ -332,7 +332,7 @@ export class Library extends vscode.TreeItem {
             this.description = options.editable.toString();
         } else if (options.examples !== undefined) {
             this.tooltip = "Download examples from github";
-            this.description = "(download only))";
+            this.description = "(download only)";
             this.contextValue = "examples";
         }
     }
