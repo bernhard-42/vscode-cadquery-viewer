@@ -18,9 +18,8 @@ import * as vscode from "vscode";
 import * as output from "./output";
 import { CadqueryController } from "./controller";
 import { CadqueryViewer } from "./viewer";
-import { createLibraryManager, Library, installLib } from "./libraryManager";
+import { createLibraryManager, installLib } from "./libraryManager";
 import { createStatusManager } from "./statusManager";
-import { ipythonExtensionInstalled } from "./utils";
 
 
 

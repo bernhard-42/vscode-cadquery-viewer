@@ -9,3 +9,4 @@ cq_vscode.egg-info
 cq_vscode/__pycache__
 build
 dist
+.DS_Store
