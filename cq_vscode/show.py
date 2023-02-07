@@ -49,14 +49,6 @@ def _send(data, port=None):
         print("Error", r.text)
 
 
-class Progress:
-    def __init__(self, length=None):
-        self.length = length  # ignored
-
-    def update(self):
-        print(".", end="", flush=True)
-
-
 def _convert(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
     part_group = to_assembly(
         *cad_objs,
@@ -96,7 +88,6 @@ def _convert(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
 
     for k, v in kwargs.items():
         if k in ["cad_width", "height"]:
-
             print(
                 f"Setting {k} cannot be set, it is determined by the VSCode panel size"
             )
@@ -112,7 +103,6 @@ def _convert(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
             print(f"Setting {k} can only be set in VSCode config")
 
         elif v is not None:
-
             config[k] = v
 
     parallel = preset("parallel", config.get("parallel"))
@@ -121,9 +111,7 @@ def _convert(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
         print("Warning: parallel currently not supported!")
         parallel = False
 
-    num_shapes = part_group.count_shapes()
-    progress_len = 2 * num_shapes if parallel else num_shapes
-    progress = None if num_shapes < 2 else Progress(progress_len)
+    progress = "with_cache"
 
     if parallel:
         init_pool()
