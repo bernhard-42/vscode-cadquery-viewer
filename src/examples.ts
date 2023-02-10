@@ -68,7 +68,7 @@ export async function download(library: string, destination: string) {
         request.destroy();
     });
 
-    request.on("error", function (e) {
+    request.on("error", function (e: any) {
         vscode.window.showErrorMessage(
             `Cannot download ${archiveUrl}`
         );
