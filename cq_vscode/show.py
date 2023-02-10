@@ -16,6 +16,7 @@
 
 import json
 import requests
+import numpy as np
 
 from ocp_tessellate import PartGroup
 from ocp_tessellate.convert import (
@@ -26,7 +27,7 @@ from ocp_tessellate.convert import (
     mp_get_results,
 )
 from ocp_tessellate.defaults import get_default, get_defaults, preset
-from ocp_tessellate.utils import numpy_to_json
+from ocp_tessellate.utils import numpy_to_buffer_json, Timer
 from ocp_tessellate.mp_tessellator import init_pool, keymap, close_pool
 
 
@@ -49,20 +50,24 @@ def _send(data, port=None):
         print("Error", r.text)
 
 
-def _convert(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
-    part_group = to_assembly(
-        *cad_objs,
-        names=names,
-        colors=colors,
-        alphas=alphas,
-        render_mates=kwargs.get("render_mates", get_default("render_mates")),
-        mate_scale=kwargs.get("mate_scale", get_default("mate_scale")),
-        default_color=kwargs.get("default_color", get_default("default_color")),
-        show_parent=kwargs.get("show_parent", get_default("show_parent")),
-    )
+def _tessellate(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
+    timeit = preset("timeit", kwargs.get("timeit"))
+    with Timer(timeit, "", "to_assembly", 1):
+        part_group = to_assembly(
+            *cad_objs,
+            names=names,
+            colors=colors,
+            alphas=alphas,
+            render_mates=kwargs.get("render_mates", get_default("render_mates")),
+            mate_scale=kwargs.get("mate_scale", get_default("mate_scale")),
+            default_color=kwargs.get("default_color", get_default("default_color")),
+            show_parent=kwargs.get("show_parent", get_default("show_parent")),
+        )
 
-    if len(part_group.objects) == 1 and isinstance(part_group.objects[0], PartGroup):
-        part_group = part_group.objects[0]
+        if len(part_group.objects) == 1 and isinstance(
+            part_group.objects[0], PartGroup
+        ):
+            part_group = part_group.objects[0]
 
     # Do not send defaults for postion, rotation and zoom unless they are set in kwargs
     config = {
@@ -113,17 +118,18 @@ def _convert(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
 
     progress = "with_cache"
 
-    if parallel:
-        init_pool()
-        keymap.reset()
+    with Timer(timeit, "", "tessellate", 1):
+        if parallel:
+            init_pool()
+            keymap.reset()
 
-    shapes, states = tessellate_group(
-        part_group, kwargs, progress, config.get("timeit")
-    )
+        instances, shapes, states = tessellate_group(
+            part_group, kwargs, progress, config.get("timeit")
+        )
 
-    if parallel:
-        mp_get_results(shapes, progress)
-        close_pool()
+        if parallel:
+            mp_get_results(shapes, progress)
+            close_pool()
 
     config["normal_len"] = get_normal_len(
         preset("render_normals", config.get("render_normals")),
@@ -131,18 +137,28 @@ def _convert(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
         preset("deviation", config.get("deviation")),
     )
 
-    bb = combined_bb(shapes).to_dict()
+    with Timer(timeit, "", "bb", 1):
+        bb = combined_bb(shapes).to_dict()
+
     # add global bounding box
     shapes["bb"] = bb
+    return instances, shapes, states, config, part_group.count_shapes()
 
-    data = {
-        "data": json.loads(
-            numpy_to_json(dict(shapes=shapes, states=states))
-        ),  # improve de-numpying
-        "type": "data",
-        "config": config,
-        "count": part_group.count_shapes(),
-    }
+
+def _convert(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
+    timeit = preset("timeit", kwargs.get("timeit"))
+    instances, shapes, states, config, count_shapes = _tessellate(
+        *cad_objs, names=names, colors=colors, alphas=alphas, **kwargs
+    )
+    with Timer(timeit, "", "create data obj", 1):
+        data = {
+            "data": numpy_to_buffer_json(
+                dict(instances=instances, shapes=shapes, states=states)
+            ),
+            "type": "data",
+            "config": config,
+            "count": count_shapes,
+        }
     return data
 
 
@@ -179,8 +195,12 @@ def show(*cad_objs, names=None, colors=None, alphas=None, port=None, **kwargs):
     - direct_intensity   Intensity of direct lights (default=0.12)
     """
 
-    data = _convert(*cad_objs, names=names, colors=colors, alphas=alphas, **kwargs)
-    return _send(data, port=port)
+    timeit = preset("timeit", kwargs.get("timeit"))
+    with Timer(timeit, "", "overall"):
+        data = _convert(*cad_objs, names=names, colors=colors, alphas=alphas, **kwargs)
+
+    with Timer(timeit, "", "send"):
+        return _send(data, port=port)
 
 
 def reset_show():

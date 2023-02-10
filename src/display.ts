@@ -164,6 +164,33 @@ export function template() {
             );
         }
 
+        function decode(data) {
+            function walk(obj) {
+                var type = null;
+                for (var attr in obj) {
+                    if (attr === "parts") {
+                        for (var i in obj.parts) {
+                            walk(obj.parts[i]);
+                        }
+        
+                    } else if (attr === "type") {
+                        type = obj.type;
+        
+                    } else if (attr === "shape") {
+                        if (type === "shapes") {
+                            const ind = obj.shape.ref;
+                            if (ind !== undefined) {
+                                obj.shape = instances[ind];
+                            }
+                        } 
+                    }
+                }
+            }
+            const instances = data.data.instances;
+            walk(data.data.shapes);
+            data.data.instances = [];
+        }
+
         showViewer();
         
         window.addEventListener('resize', function(event) {
@@ -180,8 +207,10 @@ export function template() {
         console.log("resize listener registered");
 
         window.addEventListener('message', event => {
-            const data = JSON.parse(event.data);
+            var data = event.data;
+
             if (data.type === "data") {
+                decode(data)
 
                 let meshData = data.data;
                 let config = data.config;

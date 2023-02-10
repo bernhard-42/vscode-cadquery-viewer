@@ -25,6 +25,46 @@ import { StatusManagerProvider } from "./statusManager";
 
 var serverStarted = false;
 
+function decode(data: any) {
+    function convert(obj: any) {
+        return new Float32Array(Uint8Array.from(Buffer.from(obj.buffer, 'hex')).buffer);
+    }
+
+    function walk(obj: any) {
+        var type = null;
+        for (var attr in obj) {
+            if (attr === "parts") {
+                for (var i in obj.parts) {
+                    walk(obj.parts[i]);
+                }
+
+            } else if (attr === "type") {
+                type = obj.type;
+
+            } else if (attr === "shape") {
+                if (type === "shapes") {
+                    if (obj.shape.ref === undefined) {
+                        obj.shape.vertices = convert(obj.shape.vertices);
+                        obj.shape.normals = convert(obj.shape.normals);
+                        obj.shape.edges = convert(obj.shape.edges);
+                        obj.shape.triangles = Uint32Array.from(obj.shape.triangles);
+                    }
+                } else {
+                    obj.shape = convert(obj.shape);
+                }
+            }
+        }
+    }
+    data.data.instances.forEach((instance:any) => {
+        instance.vertices = convert(instance.vertices);
+        instance.normals = convert(instance.normals);
+        instance.edges = convert(instance.edges);    
+        instance.triangles = Uint32Array.from(instance.triangles);    
+    });
+    walk(data.data.shapes);
+}
+
+
 export class CadqueryController {
     server: Server | undefined;
     statusController: StatusManagerProvider;
@@ -57,7 +97,8 @@ export class CadqueryController {
     }
 
     public logo() {
-        this.view?.postMessage(logo);
+        var data = JSON.parse(logo);
+        this.view?.postMessage(data);
     }
 
     public startCommandServer(port: number): boolean {
@@ -72,16 +113,18 @@ export class CadqueryController {
                     });
                     res.end(response);
                 } else if (req.method === "POST") {
-                    var data = "";
-                    req.on("data", (chunk) => {
-                        data += chunk;
+                    var json = "";
+                    req.on("data", (chunk: string) => {
+                        json += chunk;
                     });
 
                     req.on("end", () => {
                         output.debug("Received a new model");
+                        var data = JSON.parse(json);
+                        decode(data);
                         this.view?.postMessage(data);
                         output.debug("Posted model to view");
-                        response = data.length.toString();
+                        response = "done";
 
                         res.writeHead(201, { "Content-Type": "text/plain" });
                         res.end(response);
