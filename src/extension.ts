@@ -18,7 +18,7 @@ import * as vscode from "vscode";
 import * as output from "./output";
 import { CadqueryController } from "./controller";
 import { CadqueryViewer } from "./viewer";
-import { createLibraryManager, installLib } from "./libraryManager";
+import { createLibraryManager, installLib, Library } from "./libraryManager";
 import { createStatusManager } from "./statusManager";
 import { download } from "./examples";
 import { getCurrentFolder } from "./utils";
@@ -47,7 +47,7 @@ export async function activate(context: vscode.ExtensionContext) {
                         let value = await vscode.window.showInputBox({
                             prompt: `Port ${port} in use, select another port`,
                             placeHolder: "1024 .. 49152",
-                            validateInput: (text) => {
+                            validateInput: (text:string) => {
                                 let port = Number(text);
                                 if (Number.isNaN(port)) {
                                     return "Not a valid number";
@@ -105,7 +105,7 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand(
             "cadquery-viewer.installLibrary",
-            async (library) => {
+            async (library: Library) => {
                 await installLib(libraryManager, library.label);
                 if (["cadquery", "build123d"].includes(library.label)) {
                     vscode.window.showInformationMessage(`Depending on your os, the first import of ${library.label} can take several seconds`);
@@ -117,7 +117,7 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand(
             "cadquery-viewer.downloadExamples",
-            async (library) => {
+            async (library: Library) => {
                 let root = getCurrentFolder();
                 if (root === "") {
                     vscode.window.showInformationMessage("First open a file in your project");
@@ -127,7 +127,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 if (input === undefined) {
                     return;
                 }
-                await download(library.options.parent, input);
+                await download(library.getParent(), input);
             }
         )
     );
@@ -135,7 +135,7 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand(
             "cadquery-viewer.installIPythonExtension",
-            async (library) => {
+            async (library: Library) => {
                 let reply =
                     (await vscode.window.showQuickPick(["yes", "no"], {
                         placeHolder: `Install the VS Code extension "HoangKimLai.ipython"?`
@@ -174,7 +174,7 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand(
             "cadquery-viewer.pasteSnippet",
-            (library) => {
+            (library: Library) => {
                 libraryManager.pasteImport(library.label);
             }
         )
@@ -220,7 +220,7 @@ export async function activate(context: vscode.ExtensionContext) {
             "cadquery-viewer.restartIpython",
             async () => {
                 let terminals = vscode.window.terminals;
-                terminals.forEach((terminal) => {
+                terminals.forEach((terminal:any) => {
                     if (terminal.name === "IPython") {
                         terminal.dispose();
                     }
@@ -248,7 +248,7 @@ export async function activate(context: vscode.ExtensionContext) {
         }
     });
 
-    vscode.workspace.onDidChangeConfiguration((event) => {
+    vscode.workspace.onDidChangeConfiguration((event:any) => {
         let affected = event.affectsConfiguration(
             "python.defaultInterpreterPath"
         );

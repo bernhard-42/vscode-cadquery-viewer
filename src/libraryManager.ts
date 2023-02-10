@@ -336,6 +336,9 @@ export class Library extends vscode.TreeItem {
             this.contextValue = "examples";
         }
     }
+    getParent() {
+        return this.options.parent;
+    }
 }
 
 export function createLibraryManager(statusManager: StatusManagerProvider) {
