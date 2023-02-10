@@ -15,9 +15,9 @@ export async function download(library: string, destination: string) {
     const examplePath = exampleDownloads[library]["example_path"];
     const filename = path.basename(archiveUrl);
     const targetPath = path.join(destination, `${library}_examples`);
-    
+
     let request = https.get(archiveUrl, (response: IncomingMessage) => {
-        
+
         if (response.statusCode === 200) {
             const tempFolder = path.join(os.tmpdir(), "cadquery-viewer");
             fs.mkdtemp(tempFolder, (err, folder) => {
@@ -31,12 +31,12 @@ export async function download(library: string, destination: string) {
                 var stream = fs.createWriteStream(downloadPath);
                 response.pipe(stream);
 
-                stream.on("finish",  () => {
+                stream.on("finish", () => {
                     stream.close();
                     vscode.window.showInformationMessage(
                         `File "${archiveUrl}" downloaded successfully.`
                     );
-                    
+
                     const zip = new AdmZip(downloadPath);
                     try {
                         zip.extractAllTo(folder, true);
@@ -47,7 +47,7 @@ export async function download(library: string, destination: string) {
                         return;
                     }
                     fs.rename(path.join(folder, examplePath), targetPath, (err) => {
-                        if(err) {
+                        if (err) {
                             vscode.window.showErrorMessage(
                                 `Moving examples to "${targetPath}" failed.`
                             );
