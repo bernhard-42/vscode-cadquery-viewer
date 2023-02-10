@@ -45,7 +45,12 @@ def set_port(port):
 def _send(data, port=None):
     if port is None:
         port = CMD_PORT
-    r = requests.post(f"http://127.0.0.1:{port}", json=data)
+    try:
+        r = requests.post(f"http://127.0.0.1:{port}", json=data)
+    except Exception as ex:
+        print("Cannot connect to viewer, is it running and the right port provided?")
+        return
+
     if r.status_code != 201:
         print("Error", r.text)
 
