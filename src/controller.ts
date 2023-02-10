@@ -55,11 +55,11 @@ function decode(data: any) {
             }
         }
     }
-    data.data.instances.forEach((instance:any) => {
+    data.data.instances.forEach((instance: any) => {
         instance.vertices = convert(instance.vertices);
         instance.normals = convert(instance.normals);
-        instance.edges = convert(instance.edges);    
-        instance.triangles = Uint32Array.from(instance.triangles);    
+        instance.edges = convert(instance.edges);
+        instance.triangles = Uint32Array.from(instance.triangles);
     });
     walk(data.data.shapes);
 }
