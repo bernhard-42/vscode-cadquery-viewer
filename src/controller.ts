@@ -121,7 +121,9 @@ export class CadqueryController {
                     req.on("end", () => {
                         output.debug("Received a new model");
                         var data = JSON.parse(json);
-                        decode(data);
+                        if (data.type === "data") {
+                            decode(data);
+                        }
                         this.view?.postMessage(data);
                         output.debug("Posted model to view");
                         response = "done";
