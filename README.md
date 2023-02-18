@@ -4,9 +4,17 @@ _CadQuery Viewer for VS Code_ is an extension to show CadQuery objects in VS Cod
 
 ## Installation
 
+**Prerequisites**
+
+-   A fairly recent version of VS Code, e.g. 1.75.1 or newer
+-   [Python extension](https://marketplace.visualstudio.com/items?itemName=ms-python.python) installed in VS Code
+-   `pip` available in the Python enviroment that will be used for CAD development
+
+**Steps**:
+
 -   Download [cadquery-viewer-0.25.0.vsix](https://github.com/bernhard-42/vscode-cadquery-viewer/releases/download/v0.25.0/cadquery-viewer-0.25.0.vsix)
 -   Install it locally in VS Code (_Extensions -> "..." menu -> Install from VSIX..._)
--   Use the Cadquery sidebar to manage both CadQuery Viewer and python libraries
+-   Use the Cadquery sidebar to manage both CadQuery Viewer and python libraries:
     -   Install cq_vscode via the blue button in the welcome screen of the "Viewer Manager" or by pressing the green down-arrow in the "Library Manager" section of the Cadquery Viewer sidebar
     -   Install needed CAD libraries by pressing the green down-arrow behind the library name in the "Library Manager" section of the Cadquery Viewer sidebar
 
@@ -38,6 +46,15 @@ _CadQuery Viewer for VS Code_ is an extension to show CadQuery objects in VS Cod
 -   The examples will be stored in a folder <library>\_examples, e.g. cadquery_examples
 
 ![Use with run](screenshots/cq_vscode-examples.gif)
+
+### (Experimental) Install build123d snippets
+
+_CadQuery Viewer for VS Code_ allows to install a _code-snippets_ file for build123d:
+
+-   Use `Ctrl-Shift-P / Cmd-Shift-P` and select _CadQuery Viewer: Install CAD snippets into <project>/.vscode/_
+-   After typing `b:` a list of snippets appears that guide the user through creation of some basic build123d patterns
+
+![Use snippets](screenshots/cq_vscode-snippets.gif)
 
 ## show_object
 
