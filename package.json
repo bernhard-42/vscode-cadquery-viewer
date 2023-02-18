@@ -266,7 +266,7 @@
                     "default": {
                         "cadquery": {
                             "pip": [
-                                "env -u CONDA_PREFIX_1 {python} -m pip install git+https://github.com/cadquery/cadquery.git"
+                                "{unset_conda} {python} -m pip install git+https://github.com/cadquery/cadquery.git"
                             ],
                             "conda": [
                                 "conda install -y -n {conda_env} -c conda-forge -c cadquery cadquery=master"

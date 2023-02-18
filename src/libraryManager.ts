@@ -15,6 +15,7 @@
 */
 
 import * as fs from "fs";
+import * as process from "process";
 import * as path from "path";
 import * as vscode from "vscode";
 import { version as cq_vscode_version } from "./version";
@@ -152,11 +153,21 @@ export class LibraryManagerProvider
             if (lib === "cq_vscode") {
                 command = command.replace("{cq_vscode_version}", cq_vscode_version);
             };
+            command = command.replace("{python}", python);
 
-            if (manager === "pip") {
-                substCmds.push(
-                    command.replace("{python}", python)
-                );
+            if (manager === "pip" && command.indexOf("{unset_conda}") >= 0) {
+                command = command.replace("{unset_conda}", "");
+
+                if(process.platform === "win32") {
+                    let code = "set CONDA_PREFIX_1=\n";
+                    code = code + command;
+                    command = "__inst_with_pip__.cmd";
+                    fs.writeFileSync(command, code);
+
+                } else {
+                    command = "env -u CONDA_PREFIX_1 " + command;
+                }
+                substCmds.push(command);
 
             } else if (manager === "conda" || manager === "mamba") {
                 let paths = python.split(path.sep);
