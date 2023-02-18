@@ -20,11 +20,11 @@
         "commands": [
             {
                 "command": "cadquery-viewer.cadqueryViewer",
-                "title": "Open CadQuery Viewer"
+                "title": "CadQuery Viewer: Open viewer"
             },
             {
                 "command": "cadquery-viewer.openViewer",
-                "title": "Open CadQuery Viewer",
+                "title": "CadQuery Viewer: Open viewer (button)",
                 "icon": {
                     "light": "resources/open.png",
                     "dark": "resources/open.png"
@@ -32,7 +32,7 @@
             },
             {
                 "command": "cadquery-viewer.restartIpython",
-                "title": "Restart IPython terminal",
+                "title": "CadQuery Viewer: Restart IPython terminal",
                 "icon": {
                     "light": "resources/restart.png",
                     "dark": "resources/restart.png"
@@ -40,7 +40,7 @@
             },
             {
                 "command": "cadquery-viewer.ipythonRunCell",
-                "title": "Run IPython cell (delimited by '# %%')",
+                "title": "CadQuery Viewer: Run IPython cell (delimited by '# %%')",
                 "icon": {
                     "light": "resources/start.png",
                     "dark": "resources/start.png"
@@ -48,7 +48,7 @@
             },
             {
                 "command": "cadquery-viewer.installLibrary",
-                "title": "Install library",
+                "title": "CadQuery Viewer: Install library",
                 "icon": {
                     "light": "resources/install.png",
                     "dark": "resources/install.png"
@@ -56,7 +56,7 @@
             },
             {
                 "command": "cadquery-viewer.installPythonModule",
-                "title": "Install cq_vscode library",
+                "title": "CadQuery Viewer: Install cq_vscode library",
                 "icon": {
                     "light": "resources/install.png",
                     "dark": "resources/install.png"
@@ -64,7 +64,7 @@
             },
             {
                 "command": "cadquery-viewer.installIPythonExtension",
-                "title": "Install IPython extension 'HoangKimLai.ipython'",
+                "title": "CadQuery Viewer: Install IPython extension 'HoangKimLai.ipython'",
                 "icon": {
                     "light": "resources/install.png",
                     "dark": "resources/install.png"
@@ -76,7 +76,7 @@
             },
             {
                 "command": "cadquery-viewer.downloadExamples",
-                "title": "Download examples for a specific library",
+                "title": "CadQuery Viewer: Download examples for a specific library",
                 "icon": {
                     "light": "resources/install.png",
                     "dark": "resources/install.png"
@@ -84,7 +84,7 @@
             },
             {
                 "command": "cadquery-viewer.pasteSnippet",
-                "title": "Paste code snippet",
+                "title": "CadQuery Viewer: Paste code snippet",
                 "icon": {
                     "light": "resources/light/paste.png",
                     "dark": "resources/dark/paste.png"
@@ -92,7 +92,7 @@
             },
             {
                 "command": "cadquery-viewer.refreshLibraries",
-                "title": "Refresh libraries list",
+                "title": "CadQuery Viewer: Refresh libraries list",
                 "icon": {
                     "light": "resources/light/refresh.svg",
                     "dark": "resources/dark/refresh.svg"
@@ -100,7 +100,7 @@
             },
             {
                 "command": "cadquery-viewer.preferences",
-                "title": "Open CadQuery Viewer preferences",
+                "title": "CadQuery Viewer: Open preferences",
                 "icon": {
                     "light": "resources/settings.png",
                     "dark": "resources/settings.png"
