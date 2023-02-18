@@ -56,6 +56,50 @@ _CadQuery Viewer for VS Code_ allows to install a _code-snippets_ file for build
 
 ![Use snippets](screenshots/cq_vscode-snippets.gif)
 
+## show
+
+The command support the CQ-Editor parameters `obj`, `name` and `options` plus additional viewer specific args:
+
+```python
+show(*cad_objs, names=None, colors=None, alphas=None, port=None, **kwargs):
+```
+
+Parameters:
+
+```text
+Show CAD objects in Visual Studio Code
+
+Parameters
+- cad_objs:          All cad objects that should be shown as positional parameters
+
+Keywords for show:
+- names:             List of names for the cad_objs. Needs to have the same length as cad_objs
+- colors:            List of colors for the cad_objs. Needs to have the same length as cad_objs
+- alphas:            List of alpha values for the cad_objs. Needs to have the same length as cad_objs
+- port:              The port the viewer listens to. Typically use 'set_port(port)' instead
+
+Valid keywords to configure the viewer (**kwargs):
+- axes:              Show axes (default=False)
+- axes0:             Show axes at (0,0,0) (default=False)
+- grid:              Show grid (default=False)
+- ticks:             Hint for the number of ticks in both directions (default=10)
+- ortho:             Use orthographic projections (default=True)
+- transparent:       Show objects transparent (default=False)
+- default_color:     Default mesh color (default=(232, 176, 36))
+- reset_camera:      Reset camera position, rotation and zoom to default (default=True)
+- zoom:              Zoom factor of view (default=1.0)
+- default_edgecolor: Default mesh color (default=(128, 128, 128))
+- render_edges:      Render edges  (default=True)
+- render_normals:    Render normals (default=False)
+- render_mates:      Render mates (for MAssemblies)
+- mate_scale:        Scale of rendered mates (for MAssemblies)
+- deviation:         Shapes: Deviation from linear deflection value (default=0.1)
+- angular_tolerance: Shapes: Angular deflection in radians for tessellation (default=0.2)
+- edge_accuracy:     Edges: Precision of edge discretization (default: mesh quality / 100)
+- ambient_intensity  Intensity of ambient ligth (default=1.0)
+- direct_intensity   Intensity of direct lights (default=0.12)
+```
+
 ## show_object
 
 The command support the CQ-Editor parameters `obj`, `name` and `options` plus additional viewer specific args:
@@ -64,10 +108,24 @@ The command support the CQ-Editor parameters `obj`, `name` and `options` plus ad
 show_object(obj, name=None, options=None, port=None, **kwargs)
 ```
 
-Valid keywords `kwargs` are:
+Parameters:
 
 ```text
-- port:              To overwrite the global port setting for the viewer
+Incrementally show CAD objects in Visual Studio Code
+
+Parameters:
+- obj:              The CAD object to be shown
+
+Keywords for show_object:
+- name:             The name of the CAD object
+- options:          A dict of color and alpha value: {"alpha":0.5, "color": (64, 164, 223)}
+                    0 <= alpha <= 1.0 and color is a 3-tuple of values between 0 and 255
+- parent:           Add another object, usually the parent of e.g. edges or vertices with alpha=0.25
+- clear:            In interactice mode, clear the stack of objects to be shown
+                    (typically used for the first object)
+- port:             The port the viewer listens to. Typically use 'set_port(port)' instead
+
+Valid keywords to configure the viewer (**kwargs):
 - axes:              Show axes (default=False)
 - axes0:             Show axes at (0,0,0) (default=False)
 - grid:              Show grid (default=False)
