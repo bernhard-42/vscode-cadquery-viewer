@@ -159,7 +159,7 @@ export class LibraryManagerProvider
                 command = command.replace("{unset_conda}", "");
 
                 if (process.platform === "win32") {
-                    let tempPath = process.env["TEMP"] || "";
+                    let tempPath = process.env["TEMP"] || ".";
                     let code = "set CONDA_PREFIX_1=\n";
                     code = code + command;
                     command = path.join(tempPath, "__inst_with_pip__.cmd");
