@@ -71,6 +71,10 @@
                 }
             },
             {
+                "command": "cadquery-viewer.installVscodeSnippets",
+                "title": "CadQuery Viewer: Install CAD snippets into <project>/.vscode/"
+            },
+            {
                 "command": "cadquery-viewer.downloadExamples",
                 "title": "Download examples for a specific library",
                 "icon": {
@@ -322,6 +326,122 @@
                         "ipython": [
                             "\n# %%\n"
                         ]
+                    }
+                },
+                "CadQueryViewer.dotVscodeSnippets": {
+                    "type": "object",
+                    "description": "Python snippets to help writing CAD code",
+                    "default":{
+                        "build123d": {
+                            "BuildPart": {
+                                "scope": "python",
+                                "prefix": ":bd_p",
+                                "body": [
+                                    "with {prefix}BuildPart() as ${1:partname}:",
+                                    "    $0"
+                                ]
+                            },
+                            "BuildSketch": {
+                                "scope": "python",
+                                "prefix": ":bd_s",
+                                "body": [
+                                    "with {prefix}BuildSketch() as ${1:sketchname}:",
+                                    "    $0"
+                                ]
+                            },
+                            "BuildLine": {
+                                "scope": "python",
+                                "prefix": ":bd_l",
+                                "body": [
+                                    "with {prefix}BuildLine() as ${1:linename}:",
+                                    "    $0"
+                                ]
+                            },
+                            "Part": {
+                                "scope": "python",
+                                "prefix": ":bd_bp",
+                                "body": [
+                                    "with {prefix}BuildPart() as ${1:partname}:",
+                                    "    {prefix}${2:class}(${3:params}, align=({prefix}Align.CENTER, {prefix}Align.CENTER, {prefix}Align.CENTER))",
+                                    "    $0"
+                                ]
+                            },
+                            "Sketch": {
+                                "scope": "python",
+                                "prefix": ":bd_bs",
+                                "body": [
+                                    "with {prefix}BuildSketch() as ${1:sketchname}:",
+                                    "    {prefix}${2:class}(${3:params}, align=({prefix}Align.CENTER, {prefix}Align.CENTER))",
+                                    "    $0"
+                                ]
+                            },
+                            "Line": {
+                                "scope": "python",
+                                "prefix": ":bd_bl",
+                                "body": [
+                                    "with {prefix}BuildLine() as ${1:linename}:",
+                                    "    {prefix}${2:class}(${3:params})",
+                                    "    $0"
+                                ]
+                            },
+                            "LineChain": {
+                                "scope": "python",
+                                "prefix": ":bd_lchain",
+                                "body": [
+                                    "with {prefix}BuildLine() as ${1:linename}:",
+                                    "    ${2:l1} = {prefix}Line((${3:start}), (${4:end}))",
+                                    "    ${5:l2} = {prefix}Line(${2:l1} @ 0, (${6:end}))",
+                                    "    ${7:l3} = {prefix}Line(${5:l2} @ 0, (${8:end}))",
+                                    "    $0"
+                                ]
+                            },
+                            "PartSketch": {
+                                "scope": "python",
+                                "prefix": ":bd_pask",
+                                "body": [
+                                    "with {prefix}BuildPart() as ${1:partname}:",
+                                    "    with {prefix}BuildSketch() as ${2:sketchname}:",
+                                    "        {prefix}${3:class}(${4:params}, align=({prefix}Align.CENTER, {prefix}Align.CENTER))",
+                                    "        ${1:partname}.edges()",
+                                    "    $0"
+                                ]
+                            },	
+                            "SketchLine": {
+                                "scope": "python",
+                                "prefix": ":bd_skli",
+                                "body": [
+                                    "with {prefix}BuildSketch() as ${1:sketchname}:",
+                                    "    with {prefix}BuildLine() as ${2:linename}:",
+                                    "        {prefix}${3:class}(${4:params})",
+                                    "    MakeFace()",
+                                    "    $0"
+                                ]
+                            },	
+                            "ExtrudeLine": {
+                                "scope": "python",
+                                "prefix": ":bd_exli",
+                                "body": [
+                                    "with {prefix}BuildPart() as ${1:partname}:",
+                                    "    with {prefix}BuildSketch() as ${2:sketchname}:",
+                                    "        with {prefix}BuildLine() as ${3:linename}:",
+                                    "            {prefix}${4:class}(${5:params})",
+                                    "        {prefix}MakeFace()",
+                                    "    {prefix}Extrude(amount=${6:amount})",
+                                    "    $0"
+                                ]
+                            },	
+                            "ExtrudeSketch": {
+                                "scope": "python",
+                                "prefix": ":bd_exsk",
+                                "body": [
+                                    "with {prefix}BuildPart() as ${1:partname}:",
+                                    "    with {prefix}BuildSketch() as ${2:sketchname}:",
+                                    "        {prefix}${3:class}(${4:params}, align=({prefix}Align.CENTER, {prefix}Align.CENTER))",
+                                    "    {prefix}Extrude(amount=${5:amount})",
+                                    "    $0"
+                                ]
+                            }	
+                        }
                     }
                 },
                 "CadQueryViewer.exampleDownloads": {

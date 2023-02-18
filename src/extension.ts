@@ -16,6 +16,8 @@
 
 import * as vscode from "vscode";
 import * as output from "./output";
+import * as path from "path";
+import * as fs from "fs";
 import { CadqueryController } from "./controller";
 import { CadqueryViewer } from "./viewer";
 import { createLibraryManager, installLib, Library } from "./libraryManager";
@@ -110,6 +112,50 @@ export async function activate(context: vscode.ExtensionContext) {
                 if (["cadquery", "build123d"].includes(library.label)) {
                     vscode.window.showInformationMessage(`Depending on your os, the first import of ${library.label} can take several seconds`);
                 }
+            }
+        )
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            "cadquery-viewer.installVscodeSnippets",
+            async () => {
+                let snippets = vscode.workspace.getConfiguration("CadQueryViewer")[
+                    "dotVscodeSnippets"
+                ];
+                let libs = Object.keys(snippets);
+                let lib = (await vscode.window.showQuickPick(libs, {
+                    placeHolder: `Select CAD library"?`
+                }));
+                if (lib === undefined) {
+                    return;
+                }
+                
+                let dotVscode = await vscode.window.showInputBox({
+                    prompt: "Location of the .vscode folder",
+                    value: `${getCurrentFolder()}/.vscode`
+                });
+                
+                let prefix = await vscode.window.showInputBox({
+                    prompt: "Do you use a import alias, just press return if not?",
+                    placeHolder: `xy.`
+                }) || "";
+                if (prefix !== "" && prefix[prefix.length-1] !== ".") {
+                    prefix = prefix + ".";
+                }
+
+                if (dotVscode === undefined) {
+                    return;
+                }
+                let filename = path.join(dotVscode, `${lib}.code-snippets`);
+                if (!fs.existsSync(dotVscode)) {
+                    fs.mkdirSync(dotVscode, {recursive:true});
+                }
+
+                let snippetCode = JSON.stringify(snippets[lib], null, 2);
+                snippetCode = snippetCode.replace(/\{prefix\}/g, prefix);
+                fs.writeFileSync(filename, snippetCode);
+                vscode.window.showInformationMessage(`Installed snippets for ${lib} into ${dotVscode}`);
             }
         )
     );
