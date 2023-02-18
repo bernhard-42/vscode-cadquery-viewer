@@ -91,19 +91,19 @@ export class LibraryManagerProvider
         this.statusManager = statusManger;
         this.readConfig();
     }
-    
-    readConfig() {        
+
+    readConfig() {
         this.installCommands =
             vscode.workspace.getConfiguration("CadQueryViewer")[
-                "installCommands"
+            "installCommands"
             ];
         this.codeSnippets =
             vscode.workspace.getConfiguration("CadQueryViewer")[
-                "codeSnippets"
+            "codeSnippets"
             ];
         this.exampleDownloads =
             vscode.workspace.getConfiguration("CadQueryViewer")[
-                "exampleDownloads"
+            "exampleDownloads"
             ];
     }
 
@@ -158,10 +158,11 @@ export class LibraryManagerProvider
             if (manager === "pip" && command.indexOf("{unset_conda}") >= 0) {
                 command = command.replace("{unset_conda}", "");
 
-                if(process.platform === "win32") {
+                if (process.platform === "win32") {
+                    let tempPath = process.env["TEMP"] || "";
                     let code = "set CONDA_PREFIX_1=\n";
                     code = code + command;
-                    command = "__inst_with_pip__.cmd";
+                    command = path.join(tempPath, "__inst_with_pip__.cmd");
                     fs.writeFileSync(command, code);
 
                 } else {
@@ -277,15 +278,15 @@ export class LibraryManagerProvider
                         { "editable": editable },
                         vscode.TreeItemCollapsibleState.None
                     )
-                    );
+                );
                 if (this.exampleDownloads[element.label]) {
                     libs.push(
                         new Library(
                             "examples",
-                            { "examples": "" , "parent": element.label},
+                            { "examples": "", "parent": element.label },
                             vscode.TreeItemCollapsibleState.None
                         )
-                    );                      
+                    );
                 }
                 return Promise.resolve(libs);
             } else {
