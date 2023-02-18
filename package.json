@@ -2,7 +2,7 @@
     "name": "cadquery-viewer",
     "displayName": "CadQuery Viewer",
     "description": "An integrated CadQuery viewer",
-    "version": "0.25.0",
+    "version": "0.26.0",
     "icon": "resources/cq-vscode.png",
     "license": "Apache-2.0",
     "repository": "https://github.com/bernhard-42/vscode-cadquery-viewer",
