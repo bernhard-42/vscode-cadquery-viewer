@@ -58,8 +58,6 @@ _CadQuery Viewer for VS Code_ allows to install a _code-snippets_ file for build
 
 ## show
 
-The command support the CQ-Editor parameters `obj`, `name` and `options` plus additional viewer specific args:
-
 ```python
 show(*cad_objs, names=None, colors=None, alphas=None, port=None, **kwargs):
 ```
