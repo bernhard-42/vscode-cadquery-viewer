@@ -27,7 +27,7 @@ from ocp_tessellate.convert import (
     mp_get_results,
 )
 from ocp_tessellate.defaults import get_default, get_defaults, preset
-from ocp_tessellate.utils import numpy_to_buffer_json, Timer
+from ocp_tessellate.utils import numpy_to_buffer_json, Timer, Color
 from ocp_tessellate.mp_tessellator import init_pool, keymap, close_pool
 
 
@@ -201,6 +201,10 @@ def show(*cad_objs, names=None, colors=None, alphas=None, port=None, **kwargs):
     """
 
     timeit = preset("timeit", kwargs.get("timeit"))
+
+    if kwargs.get("default_edgecolor") is not None:
+        kwargs["default_edgecolor"] = Color(kwargs["default_edgecolor"]).web_color
+
     with Timer(timeit, "", "overall"):
         data = _convert(*cad_objs, names=names, colors=colors, alphas=alphas, **kwargs)
 

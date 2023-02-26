@@ -107,7 +107,7 @@ export function template() {
             const tessellationOptions = {
                 ambientIntensity: preset(config.ambient_intensity, 0.75),
                 directIntensity: preset(config.direct_intensity, 0.15),
-                edgeColor: preset(config.edge_color, 0x707070),
+                edgeColor: preset(config.default_edgecolor, 0x707070),
                 defaultOpacity: preset(config.default_opacity, 0.5),
                 normalLen: preset(config.normal_len, 0),
             };
