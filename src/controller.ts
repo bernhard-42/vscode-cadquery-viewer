@@ -27,7 +27,8 @@ var serverStarted = false;
 
 function decode(data: any) {
     function convert(obj: any) {
-        return new Float32Array(Uint8Array.from(Buffer.from(obj.buffer, 'hex')).buffer);
+        let fa = new Float32Array(Uint8Array.from(Buffer.from(obj.buffer, 'hex')).buffer);
+        return Array.from(fa);
     }
 
     function walk(obj: any) {
@@ -47,7 +48,6 @@ function decode(data: any) {
                         obj.shape.vertices = convert(obj.shape.vertices);
                         obj.shape.normals = convert(obj.shape.normals);
                         obj.shape.edges = convert(obj.shape.edges);
-                        obj.shape.triangles = Uint32Array.from(obj.shape.triangles);
                     }
                 } else {
                     obj.shape = convert(obj.shape);
