@@ -200,6 +200,16 @@ def show(*cad_objs, names=None, colors=None, alphas=None, port=None, **kwargs):
 
     timeit = preset("timeit", kwargs.get("timeit"))
 
+    if names is not None:
+        if len(names) != len(set(names)):
+            raise ValueError("All names need to be unique")
+
+        if colors is not None and len(colors) != len(names):
+            raise ValueError("Length of names and colors need to be the same")
+
+        if alphas is not None and len(alphas) != len(names):
+            raise ValueError("Length of names and alphas need to be the same")
+
     if kwargs.get("default_edgecolor") is not None:
         kwargs["default_edgecolor"] = Color(kwargs["default_edgecolor"]).web_color
 
