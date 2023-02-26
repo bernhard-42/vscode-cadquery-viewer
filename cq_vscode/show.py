@@ -14,9 +14,7 @@
 # limitations under the License.
 #
 
-import json
 import requests
-import numpy as np
 
 from ocp_tessellate import PartGroup
 from ocp_tessellate.convert import (
