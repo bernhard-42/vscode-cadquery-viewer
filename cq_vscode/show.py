@@ -27,12 +27,18 @@ from ocp_tessellate.convert import (
 from ocp_tessellate.defaults import get_default, get_defaults, preset
 from ocp_tessellate.utils import numpy_to_buffer_json, Timer, Color
 from ocp_tessellate.mp_tessellator import init_pool, keymap, close_pool
+from ocp_tessellate.cad_objects import OCP_PartGroup
 
 
 CMD_PORT = 3939
 REQUEST_TIMEOUT = 2000
 
 OBJECTS = {"objs": [], "names": [], "colors": [], "alphas": []}
+
+
+class Progress:
+    def update(self):
+        print(".", end="", flush=True)
 
 
 def set_port(port):
@@ -114,12 +120,17 @@ def _tessellate(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
             config[k] = v
 
     parallel = preset("parallel", config.get("parallel"))
+    if parallel and not any(
+        [isinstance(obj, OCP_PartGroup) for obj in part_group.objects]
+    ):
+        print("parallel only works for assemblies, setting it to False")
+        parallel = False
+        kwargs["parallel"] = False
 
     if parallel:
-        print("Warning: parallel currently not supported!")
-        parallel = False
-
-    progress = "with_cache"
+        progress = Progress()
+    else:
+        progress = "with_cache"
 
     with Timer(timeit, "", "tessellate", 1):
         if parallel:
@@ -131,7 +142,8 @@ def _tessellate(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
         )
 
         if parallel:
-            mp_get_results(shapes, progress)
+            print("|", end="")
+            instances, shapes = mp_get_results(instances, shapes, progress)
             close_pool()
 
     config["normal_len"] = get_normal_len(
