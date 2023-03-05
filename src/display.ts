@@ -47,6 +47,68 @@ export function template() {
         var _position = null;
         var _quaternion = null;
         var _target = null;
+        
+        const MAP_HEX = {
+            0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6,
+            7: 7, 8: 8, 9: 9, a: 10, b: 11, c: 12, d: 13,
+            e: 14, f: 15, A: 10, B: 11, C: 12, D: 13,
+            E: 14, F: 15
+        };
+
+        function fromHex(hexString) {
+            const bytes = new Uint8Array(Math.floor((hexString || "").length / 2));
+            let i;
+            for (i = 0; i < bytes.length; i++) {
+              const a = MAP_HEX[hexString[i * 2]];
+              const b = MAP_HEX[hexString[i * 2 + 1]];
+              if (a === undefined || b === undefined) {
+                break;
+              }
+              bytes[i] = (a << 4) | b;
+            }
+            return i === bytes.length ? bytes : bytes.slice(0, i);
+        }
+
+        function convertFloatArrays(data) {
+            function convert(obj) {
+                let buffer = fromHex(obj.buffer);
+                return new Float32Array(buffer.buffer);
+            }
+        
+            function walk(obj) {
+                var type = null;
+                for (var attr in obj) {
+                    if (attr === "parts") {
+                        for (var i in obj.parts) {
+                            walk(obj.parts[i]);
+                        }
+        
+                    } else if (attr === "type") {
+                        type = obj.type;
+        
+                    } else if (attr === "shape") {
+                        if (type === "shapes") {
+                            if (obj.shape.ref === undefined) {
+                                obj.shape.vertices = convert(obj.shape.vertices);
+                                obj.shape.normals = convert(obj.shape.normals);
+                                obj.shape.edges = convert(obj.shape.edges);
+                            }
+                        } else {
+                            obj.shape = convert(obj.shape);
+                        }
+                    }
+                }
+            }
+            if (data.data.instances !== undefined) {
+                data.data.instances.forEach((instance) => {
+                    instance.vertices = convert(instance.vertices);
+                    instance.normals = convert(instance.normals);
+                    instance.edges = convert(instance.edges);
+                    instance.triangles = Uint32Array.from(instance.triangles);
+                });
+            }
+            walk(data.data.shapes);
+        }
 
         function nc(change) {
             console.debug("Viewer:", JSON.stringify(change, null, 2));
@@ -210,10 +272,11 @@ export function template() {
         console.log("resize listener registered");
 
         window.addEventListener('message', event => {
-            var data = event.data;
+            var data = JSON.parse(event.data);
 
             if (data.type === "data") {
-                decode(data)
+                convertFloatArrays(data);
+                decode(data);
 
                 let meshData = data.data;
                 let config = data.config;

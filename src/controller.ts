@@ -25,46 +25,6 @@ import { StatusManagerProvider } from "./statusManager";
 
 var serverStarted = false;
 
-function decode(data: any) {
-    function convert(obj: any) {
-        let fa = new Float32Array(Uint8Array.from(Buffer.from(obj.buffer, 'hex')).buffer);
-        return Array.from(fa);
-    }
-
-    function walk(obj: any) {
-        var type = null;
-        for (var attr in obj) {
-            if (attr === "parts") {
-                for (var i in obj.parts) {
-                    walk(obj.parts[i]);
-                }
-
-            } else if (attr === "type") {
-                type = obj.type;
-
-            } else if (attr === "shape") {
-                if (type === "shapes") {
-                    if (obj.shape.ref === undefined) {
-                        obj.shape.vertices = convert(obj.shape.vertices);
-                        obj.shape.normals = convert(obj.shape.normals);
-                        obj.shape.edges = convert(obj.shape.edges);
-                    }
-                } else {
-                    obj.shape = convert(obj.shape);
-                }
-            }
-        }
-    }
-    data.data.instances.forEach((instance: any) => {
-        instance.vertices = convert(instance.vertices);
-        instance.normals = convert(instance.normals);
-        instance.edges = convert(instance.edges);
-        instance.triangles = Uint32Array.from(instance.triangles);
-    });
-    walk(data.data.shapes);
-}
-
-
 export class CadqueryController {
     server: Server | undefined;
     statusController: StatusManagerProvider;
@@ -97,8 +57,7 @@ export class CadqueryController {
     }
 
     public logo() {
-        var data = JSON.parse(logo);
-        this.view?.postMessage(data);
+        this.view?.postMessage(logo);
     }
 
     public startCommandServer(port: number): boolean {
@@ -120,14 +79,9 @@ export class CadqueryController {
 
                     req.on("end", () => {
                         output.debug("Received a new model");
-                        var data = JSON.parse(json);
-                        if (data.type === "data") {
-                            decode(data);
-                        }
-                        this.view?.postMessage(data);
+                        this.view?.postMessage(json);
                         output.debug("Posted model to view");
                         response = "done";
-
                         res.writeHead(201, { "Content-Type": "text/plain" });
                         res.end(response);
                     });
