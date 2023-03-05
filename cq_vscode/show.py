@@ -15,6 +15,7 @@
 #
 
 import requests
+import orjson as json
 
 from ocp_tessellate import PartGroup
 from ocp_tessellate.convert import (
@@ -46,11 +47,16 @@ def set_port(port):
     CMD_PORT = port
 
 
-def _send(data, port=None):
+def _send(data, port=None, timeit=False):
     if port is None:
         port = CMD_PORT
     try:
-        r = requests.post(f"http://127.0.0.1:{port}", json=data)
+        with Timer(timeit, "", "json dumps", 1):
+            j = json.dumps(data)
+
+        with Timer(timeit, "", "http send", 1):
+            r = requests.post(f"http://127.0.0.1:{port}", data=j)
+
     except Exception as ex:
         print("Cannot connect to viewer, is it running and the right port provided?")
         return
@@ -229,7 +235,7 @@ def show(*cad_objs, names=None, colors=None, alphas=None, port=None, **kwargs):
         data = _convert(*cad_objs, names=names, colors=colors, alphas=alphas, **kwargs)
 
     with Timer(timeit, "", "send"):
-        return _send(data, port=port)
+        return _send(data, port=port, timeit=timeit)
 
 
 def reset_show():
