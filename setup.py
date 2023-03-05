@@ -7,7 +7,7 @@ setup_args = {
     "long_description": "An extension to show cadquery objects in VSCode via pythreejs",
     "include_package_data": True,
     "python_requires": ">=3.9",
-    "install_requires": ["ocp-tessellate>=1.0.0rc7", "requests"],
+    "install_requires": ["ocp-tessellate>=1.0.0rc7", "requests", "orjson"],
     "packages": find_packages(),
     "zip_safe": False,
     "author": "Bernhard Walter",
