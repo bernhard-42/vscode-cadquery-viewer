@@ -3,7 +3,7 @@
     "displayName": "CadQuery Viewer",
     "description": "An integrated CadQuery viewer",
     "version": "0.30.0",
-    "icon": "resources/cq-vscode.png",
+    "icon": "resources/ocp-logo.png",
     "license": "Apache-2.0",
     "repository": "https://github.com/bernhard-42/vscode-cadquery-viewer",
     "engines": {
@@ -112,7 +112,7 @@
                 {
                     "id": "cadqueryHome",
                     "title": "CadQuery",
-                    "icon": "resources/cq-vscode.svg"
+                    "icon": "resources/ocp-icon.svg"
                 }
             ]
         },
