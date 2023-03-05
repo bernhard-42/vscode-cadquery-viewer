@@ -40,11 +40,11 @@ OBJECTS = {"objs": [], "names": [], "colors": [], "alphas": []}
 class Progress:
     def __init__(self, levels=None):
         if levels is None:
-            self.levels = [".", "c"]
+            self.levels = ["+", "c", "-"]
         else:
             self.levels = levels
 
-    def update(self, mark="."):
+    def update(self, mark="+"):
         if mark in self.levels:
             print(mark, end="", flush=True)
 
@@ -72,8 +72,14 @@ def _send(data, port=None, timeit=False):
         print("Error", r.text)
 
 
-def _tessellate(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
+def _tessellate(
+    *cad_objs, names=None, colors=None, alphas=None, progress=None, **kwargs
+):
     timeit = preset("timeit", kwargs.get("timeit"))
+
+    if progress is None:
+        progress = Progress([c for c in "-+c"])
+
     with Timer(timeit, "", "to_assembly", 1):
         part_group = to_assembly(
             *cad_objs,
@@ -84,6 +90,7 @@ def _tessellate(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
             mate_scale=kwargs.get("mate_scale", get_default("mate_scale")),
             default_color=kwargs.get("default_color", get_default("default_color")),
             show_parent=kwargs.get("show_parent", get_default("show_parent")),
+            progress=progress,
         )
 
         if len(part_group.objects) == 1 and isinstance(
@@ -138,8 +145,6 @@ def _tessellate(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
         parallel = False
         kwargs["parallel"] = False
 
-    progress = Progress()
-
     with Timer(timeit, "", "tessellate", 1):
         if parallel:
             init_pool()
@@ -167,10 +172,19 @@ def _tessellate(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
     return instances, shapes, states, config, part_group.count_shapes()
 
 
-def _convert(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
+def _convert(*cad_objs, names=None, colors=None, alphas=None, progress=None, **kwargs):
     timeit = preset("timeit", kwargs.get("timeit"))
+
+    if progress is None:
+        progress = Progress([c for c in "-+c"])
+
     instances, shapes, states, config, count_shapes = _tessellate(
-        *cad_objs, names=names, colors=colors, alphas=alphas, **kwargs
+        *cad_objs,
+        names=names,
+        colors=colors,
+        alphas=alphas,
+        progress=progress,
+        **kwargs,
     )
     with Timer(timeit, "", "create data obj", 1):
         data = {
@@ -184,7 +198,9 @@ def _convert(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
     return data
 
 
-def show(*cad_objs, names=None, colors=None, alphas=None, port=None, **kwargs):
+def show(
+    *cad_objs, names=None, colors=None, alphas=None, port=None, progress="-+c", **kwargs
+):
     """Show CAD objects in Visual Studio Code
     Parameters
     - cad_objs:          All cad objects that should be shown as positional parameters
@@ -194,6 +210,8 @@ def show(*cad_objs, names=None, colors=None, alphas=None, port=None, **kwargs):
     - colors:            List of colors for the cad_objs. Needs to have the same length as cad_objs
     - alphas:            List of alpha values for the cad_objs. Needs to have the same length as cad_objs
     - port:              The port the viewer listens to. Typically use 'set_port(port)' instead
+    - progress:          Show progress of tessellation with None is no progress indicator. (default="-+c")
+                         for object: "-": is reference, "+": gets tessellated, "c": from cache
 
     Valid keywords to configure the viewer (**kwargs):
     - axes:              Show axes (default=False)
@@ -233,8 +251,17 @@ def show(*cad_objs, names=None, colors=None, alphas=None, port=None, **kwargs):
     if kwargs.get("default_edgecolor") is not None:
         kwargs["default_edgecolor"] = Color(kwargs["default_edgecolor"]).web_color
 
+    progress = Progress([] if progress is None else [c for c in progress])
+
     with Timer(timeit, "", "overall"):
-        data = _convert(*cad_objs, names=names, colors=colors, alphas=alphas, **kwargs)
+        data = _convert(
+            *cad_objs,
+            names=names,
+            colors=colors,
+            alphas=alphas,
+            progress=progress,
+            **kwargs,
+        )
 
     with Timer(timeit, "", "send"):
         return _send(data, port=port, timeit=timeit)
@@ -253,6 +280,7 @@ def show_object(
     parent=None,
     clear=False,
     port=None,
+    progress="-+c",
     **kwargs,
 ):
     """Incrementally show CAD objects in Visual Studio Code
@@ -268,6 +296,8 @@ def show_object(
     - clear:            In interactice mode, clear the stack of objects to be shown
                         (typically used for the first object)
     - port:             The port the viewer listens to. Typically use 'set_port(port)' instead
+    - progress:          Show progress of tessellation with None is no progress indicator. (default="-+c")
+                         for object: "-": is reference, "+": gets tessellated, "c": from cache
 
     Valid keywords to configure the viewer (**kwargs):
     - axes:              Show axes (default=False)
@@ -315,11 +345,15 @@ def show_object(
     OBJECTS["colors"].append(color)
     OBJECTS["alphas"].append(alpha)
 
+    prefix = f"{name} " if name is not None else ""
+
+    print(f"\nshow_object {prefix}<{obj}>")
     show(
         *OBJECTS["objs"],
         names=OBJECTS["names"],
         colors=OBJECTS["colors"],
         alphas=OBJECTS["alphas"],
         port=port,
+        progress=progress,
         **kwargs,
     )
