@@ -40,7 +40,7 @@ OBJECTS = {"objs": [], "names": [], "colors": [], "alphas": []}
 class Progress:
     def __init__(self, levels=None):
         if levels is None:
-            self.levels = ["."]
+            self.levels = [".", "c"]
         else:
             self.levels = levels
 
