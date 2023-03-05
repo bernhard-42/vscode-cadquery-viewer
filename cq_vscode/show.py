@@ -100,7 +100,6 @@ def _tessellate(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
             "tree_width",
             "theme",
             "control",
-            "up",
             "glass",
             "tools",
         )
@@ -116,7 +115,6 @@ def _tessellate(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
             "tree_width",
             "theme",
             "control",
-            "up",
             "glass",
             "tools",
         ]:
@@ -200,6 +198,7 @@ def show(*cad_objs, names=None, colors=None, alphas=None, port=None, **kwargs):
     - grid:              Show grid (default=False)
     - ticks:             Hint for the number of ticks in both directions (default=10)
     - ortho:             Use orthographic projections (default=True)
+    - up:                Use z-axis ('Z') or y-axis ('Y') as up direction for the camera
     - transparent:       Show objects transparent (default=False)
     - default_color:     Default mesh color (default=(232, 176, 36))
     - reset_camera:      Reset camera position, rotation and zoom to default (default=True)
@@ -273,6 +272,7 @@ def show_object(
     - grid:              Show grid (default=False)
     - ticks:             Hint for the number of ticks in both directions (default=10)
     - ortho:             Use orthographic projections (default=True)
+    - up:                Use z-axis ('Z') or y-axis ('Y') as up direction for the camera
     - transparent:       Show objects transparent (default=False)
     - default_color:     Default mesh color (default=(232, 176, 36))
     - reset_camera:      Reset camera position, rotation and zoom to default (default=True)
