@@ -69,7 +69,7 @@ export function template() {
             return i === bytes.length ? bytes : bytes.slice(0, i);
         }
 
-        function convertFloatArrays(data) {
+        function decode(data) {
             function convert(obj) {
                 let buffer = fromHex(obj.buffer);
                 return new Float32Array(buffer.buffer);
@@ -92,6 +92,11 @@ export function template() {
                                 obj.shape.vertices = convert(obj.shape.vertices);
                                 obj.shape.normals = convert(obj.shape.normals);
                                 obj.shape.edges = convert(obj.shape.edges);
+                            } else {
+                                const ind = obj.shape.ref;
+                                if (ind !== undefined) {
+                                    obj.shape = instances[ind];
+                                }
                             }
                         } else {
                             obj.shape = convert(obj.shape);
@@ -99,15 +104,19 @@ export function template() {
                     }
                 }
             }
-            if (data.data.instances !== undefined) {
-                data.data.instances.forEach((instance) => {
-                    instance.vertices = convert(instance.vertices);
-                    instance.normals = convert(instance.normals);
-                    instance.edges = convert(instance.edges);
-                    instance.triangles = Uint32Array.from(instance.triangles);
-                });
-            }
+
+            const instances = data.data.instances;
+            
+            data.data.instances.forEach((instance) => {
+                instance.vertices = convert(instance.vertices);
+                instance.normals = convert(instance.normals);
+                instance.edges = convert(instance.edges);
+                instance.triangles = Uint32Array.from(instance.triangles);
+            });
+
             walk(data.data.shapes);
+            
+            data.data.instances = []
         }
 
         function nc(change) {
@@ -229,33 +238,6 @@ export function template() {
             );
         }
 
-        function decode(data) {
-            function walk(obj) {
-                var type = null;
-                for (var attr in obj) {
-                    if (attr === "parts") {
-                        for (var i in obj.parts) {
-                            walk(obj.parts[i]);
-                        }
-        
-                    } else if (attr === "type") {
-                        type = obj.type;
-        
-                    } else if (attr === "shape") {
-                        if (type === "shapes") {
-                            const ind = obj.shape.ref;
-                            if (ind !== undefined) {
-                                obj.shape = instances[ind];
-                            }
-                        } 
-                    }
-                }
-            }
-            const instances = data.data.instances;
-            walk(data.data.shapes);
-            data.data.instances = [];
-        }
-
         showViewer();
         
         window.addEventListener('resize', function(event) {
@@ -275,7 +257,6 @@ export function template() {
             var data = JSON.parse(event.data);
 
             if (data.type === "data") {
-                convertFloatArrays(data);
                 decode(data);
 
                 let meshData = data.data;
