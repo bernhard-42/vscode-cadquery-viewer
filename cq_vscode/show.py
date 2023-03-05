@@ -38,8 +38,15 @@ OBJECTS = {"objs": [], "names": [], "colors": [], "alphas": []}
 
 
 class Progress:
-    def update(self):
-        print(".", end="", flush=True)
+    def __init__(self, levels=None):
+        if levels is None:
+            self.levels = ["."]
+        else:
+            self.levels = levels
+
+    def update(self, mark="."):
+        if mark in self.levels:
+            print(mark, end="", flush=True)
 
 
 def set_port(port):
@@ -131,10 +138,7 @@ def _tessellate(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
         parallel = False
         kwargs["parallel"] = False
 
-    if parallel:
-        progress = Progress()
-    else:
-        progress = "with_cache"
+    progress = Progress()
 
     with Timer(timeit, "", "tessellate", 1):
         if parallel:
@@ -146,7 +150,6 @@ def _tessellate(*cad_objs, names=None, colors=None, alphas=None, **kwargs):
         )
 
         if parallel:
-            print("|", end="")
             instances, shapes = mp_get_results(instances, shapes, progress)
             close_pool()
 
