@@ -167,6 +167,8 @@ export class LibraryManagerProvider
                     code = code + command;
                     command = path.join(tempPath, "__inst_with_pip__.cmd");
                     fs.writeFileSync(command, code);
+                    output.info(`created batch file ${command} with commands:`);
+                    output.info("\n" + code);
 
                 } else {
                     command = "env -u CONDA_PREFIX_1 " + command;
