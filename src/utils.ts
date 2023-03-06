@@ -20,9 +20,9 @@ import * as path from "path";
 
 export function getEditor() {
     const editor = vscode.window.activeTextEditor;
-    if (editor === undefined) {
-        vscode.window.showErrorMessage("No editor window open or in focus");
-    }
+    // if (editor === undefined) {
+    //     vscode.window.showWarningMessage("No editor window open or in focus");
+    // }
     return editor;
 }
 
@@ -36,9 +36,9 @@ export function getCurrentFilename() {
 
 export function getCurrentFolder(): string {
     let filename = getCurrentFilename();
-    if (filename !== undefined){
+    if (filename !== undefined) {
         return path.dirname(filename);
-    } else{
+    } else {
         return "";
     }
 }
