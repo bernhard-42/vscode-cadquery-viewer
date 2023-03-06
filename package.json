@@ -1,5 +1,5 @@
 {
-    "name": "ocp-viewer",
+    "name": "ocp-cad-viewer",
     "displayName": "OCP CAD Viewer",
     "description": "An integrated OCP CAD viewer for CadQuery and build123d",
     "version": "0.30.0",
