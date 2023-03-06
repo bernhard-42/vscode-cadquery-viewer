@@ -109,9 +109,6 @@ export async function activate(context: vscode.ExtensionContext) {
             "ocpCadViewer.installLibrary",
             async (library: Library) => {
                 await installLib(libraryManager, library.label);
-                if (["cadquery", "build123d"].includes(library.label)) {
-                    vscode.window.showInformationMessage(`Depending on your os, the first import of ${library.label} can take several seconds`);
-                }
             }
         )
     );

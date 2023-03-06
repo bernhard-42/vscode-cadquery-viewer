@@ -75,6 +75,9 @@ export async function installLib(
     }
     await libraryManager.terminal.execute(commands);
     libraryManager.refresh();
+    if (["cadquery", "build123d"].includes(library)) {
+        vscode.window.showInformationMessage(`Depending on your os, the first import of ${library} can take several seconds`);
+    }
 }
 
 export class LibraryManagerProvider
