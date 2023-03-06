@@ -32,13 +32,13 @@ endif
 dist:
 	@echo Version: $(CURRENT_VERSION)
 	@python setup.py sdist bdist_wheel
-	vsce package
+	vsce package --yarn
 	@ls -l dist/
 
 
 vsix:
 	@echo Version: $(CURRENT_VERSION)
-	vsce package
+	vsce package --yarn
 	@ls -l *.vsix
 
 release:
