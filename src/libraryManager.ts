@@ -177,7 +177,12 @@ export class LibraryManagerProvider
 
             } else if (manager === "conda" || manager === "mamba") {
                 let paths = python.split(path.sep);
-                let env = paths[paths.length - 3];
+                let env = "";
+                if (process.platform === "win32") {
+                    env = paths[paths.length - 2];
+                } else {
+                    env = paths[paths.length - 3];
+                }
                 substCmds.push(
                     command.replace("{conda_env}", env)
                 );
