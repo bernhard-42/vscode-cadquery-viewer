@@ -1,5 +1,5 @@
-Python
-- Fix parallel mode of ocp_tessellate
+- Re-create all screenshots and gifs
+- fix mamba install on Windows
 
 Extension
 - Test poetry

@@ -5,8 +5,8 @@ node_modules
 *.vsix
 vsc-extension-quickstart.md
 ipc
-cq_vscode.egg-info
-cq_vscode/__pycache__
+ocp_vscode.egg-info
+ocp_vscode/__pycache__
 build
 dist
 .DS_Store

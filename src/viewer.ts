@@ -51,7 +51,7 @@ export class CadqueryViewer {
 
             const panel = vscode.window.createWebviewPanel(
                 CadqueryViewer.viewType,
-                "CadQuery Viewer",
+                "OCP CAD Viewer",
                 vscode.ViewColumn.Two,
                 {
                     enableScripts: true,
@@ -123,7 +123,7 @@ export class CadqueryViewer {
         if (div !== "") {
             output.debug("Updateing webview");
             const webview = this._panel.webview;
-            this._panel.title = "CadQuery Viewer";
+            this._panel.title = "OCP CAD Viewer";
             webview.html = div;
         }
     }

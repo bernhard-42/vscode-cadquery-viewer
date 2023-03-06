@@ -23,8 +23,8 @@ node_modules/three-cad-viewer/dist/three-cad-viewer.min.css
 node_modules/three-cad-viewer/dist/three-cad-viewer.min.js
 
 build
-cq_vscode
-cq_vscode.egg-info
+ocp_vscode
+ocp_vscode.egg-info
 examples
 setup.py
 test.sh

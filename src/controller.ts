@@ -100,7 +100,7 @@ export class CadqueryController {
         });
         this.server.on("listening", () => {
             output.info(
-                `CadQuery Viewer is initialized, command server is running on port ${this.port}`
+                `OCP CAD Viewer is initialized, command server is running on port ${this.port}`
             );
         });
         this.server.listen(port);

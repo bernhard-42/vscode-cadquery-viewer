@@ -15,7 +15,7 @@
 */
 
 import * as vscode from "vscode";
-import { version as cq_vscode_version } from "./version";
+import { version as ocp_vscode_version } from "./version";
 import * as output from "./output";
 import { ipythonExtensionInstalled } from "./utils";
 
@@ -31,7 +31,7 @@ export class StatusManagerProvider implements vscode.TreeDataProvider<Status> {
     hasIpythonExtension: boolean = false;
 
     constructor() {
-        this.version = cq_vscode_version;
+        this.version = ocp_vscode_version;
         this.hasIpythonExtension = ipythonExtensionInstalled();
     }
 
@@ -69,11 +69,11 @@ export class StatusManagerProvider implements vscode.TreeDataProvider<Status> {
     getChildren(element?: Status): Thenable<Status[]> {
         if (element) {
             let status: Status[] = [];
-            if (element.label === "cq_vscode") {
+            if (element.label === "ocp_vscode") {
                 status.push(
                     new Status(
                         "version",
-                        { "version": cq_vscode_version },
+                        { "version": ocp_vscode_version },
                         vscode.TreeItemCollapsibleState.None
                     )
                 );
@@ -105,13 +105,13 @@ export class StatusManagerProvider implements vscode.TreeDataProvider<Status> {
                 let state = vscode.TreeItemCollapsibleState.Expanded;
                 status.push(
                     new Status(
-                        "cq_vscode",
+                        "ocp_vscode",
                         { "running": this.running ? "RUNNING" : "STOPPED" },
                         state
                     )
                 );
                 this.libraries.sort().forEach((lib) => {
-                    if (lib !== "cq_vscode") {
+                    if (lib !== "ocp_vscode") {
                         status.push(
                             new Status(
                                 lib,
@@ -129,7 +129,7 @@ export class StatusManagerProvider implements vscode.TreeDataProvider<Status> {
     }
 
     async openViewer() {
-        await vscode.commands.executeCommand("cadquery-viewer.cadqueryViewer");
+        await vscode.commands.executeCommand("ocpCadViewer.ocpCadViewer");
     }
 }
 
@@ -140,7 +140,7 @@ export class Status extends vscode.TreeItem {
         public readonly collapsibleState: vscode.TreeItemCollapsibleState
     ) {
         super(label, collapsibleState);
-        if (label === "cq_vscode") {
+        if (label === "ocp_vscode") {
             this.contextValue = "status";
 
         } else if (label === "ipython") {
@@ -154,13 +154,13 @@ export class Status extends vscode.TreeItem {
             this.description = options.running;
             this.tooltip =
                 options.running === "RUNNING"
-                    ? "CadQuery Viewer is running"
-                    : "CadQuery Viewer is stopped";
+                    ? "OCP CAD Viewer is running"
+                    : "OCP CAD Viewer is stopped";
 
         } else if (options.port !== undefined) {
             this.contextValue = "port";
             this.description = options.port;
-            this.tooltip = `CadQuery viewer is listening on port ${options.port}`;
+            this.tooltip = `OCP CAD Viewer is listening on port ${options.port}`;
 
         } else if (options.extension !== undefined) {
             this.contextValue = options.ipython ? "ipythonExtInstalled" : "ipythonExtMissing";
@@ -170,15 +170,15 @@ export class Status extends vscode.TreeItem {
         } else if (options.version !== undefined) {
             this.contextValue = "version";
             this.description = options.version;
-            this.tooltip = `cq_vscode extension ${options.version}`;
+            this.tooltip = `ocp_vscode extension ${options.version}`;
         }
     }
 }
 
 export function createStatusManager() {
     const statusManager = new StatusManagerProvider();
-    vscode.window.registerTreeDataProvider("cadqueryStatus", statusManager);
-    vscode.window.createTreeView("cadqueryStatus", {
+    vscode.window.registerTreeDataProvider("ocpCadStatus", statusManager);
+    vscode.window.createTreeView("ocpCadStatus", {
         treeDataProvider: statusManager
     });
 

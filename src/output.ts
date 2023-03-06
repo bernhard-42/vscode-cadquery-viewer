@@ -16,7 +16,7 @@
 
 import * as vscode from "vscode";
 
-const log = vscode.window.createOutputChannel("CadQuery Viewer Log");
+const log = vscode.window.createOutputChannel("OCP CAD Viewer Log");
 
 function getPrefix(logLevel?: string) {
     let timestamp = "";

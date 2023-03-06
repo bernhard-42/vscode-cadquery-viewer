@@ -37,7 +37,7 @@ export async function activate(context: vscode.ExtensionContext) {
     //	Commands
     context.subscriptions.push(
         vscode.commands.registerCommand(
-            "cadquery-viewer.cadqueryViewer",
+            "ocpCadViewer.ocpCadViewer",
             async () => {
                 output.show();
 
@@ -49,7 +49,7 @@ export async function activate(context: vscode.ExtensionContext) {
                         let value = await vscode.window.showInputBox({
                             prompt: `Port ${port} in use, select another port`,
                             placeHolder: "1024 .. 49152",
-                            validateInput: (text:string) => {
+                            validateInput: (text: string) => {
                                 let port = Number(text);
                                 if (Number.isNaN(port)) {
                                     return "Not a valid number";
@@ -86,7 +86,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
                         if (port !== 3939) {
                             vscode.window.showWarningMessage(
-                                `In Python first call cq_vscode's "set_port(${port})"`
+                                `In Python first call ocp_vscode's "set_port(${port})"`
                             );
                         }
                         statusManager.refresh(port.toString());
@@ -106,7 +106,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(
         vscode.commands.registerCommand(
-            "cadquery-viewer.installLibrary",
+            "ocpCadViewer.installLibrary",
             async (library: Library) => {
                 await installLib(libraryManager, library.label);
                 if (["cadquery", "build123d"].includes(library.label)) {
@@ -118,9 +118,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(
         vscode.commands.registerCommand(
-            "cadquery-viewer.installVscodeSnippets",
+            "ocpCadViewer.installVscodeSnippets",
             async () => {
-                let snippets = vscode.workspace.getConfiguration("CadQueryViewer")[
+                let snippets = vscode.workspace.getConfiguration("OcpCadViewer")[
                     "dotVscodeSnippets"
                 ];
                 let libs = Object.keys(snippets);
@@ -130,17 +130,17 @@ export async function activate(context: vscode.ExtensionContext) {
                 if (lib === undefined) {
                     return;
                 }
-                
+
                 let dotVscode = await vscode.window.showInputBox({
                     prompt: "Location of the .vscode folder",
                     value: `${getCurrentFolder()}/.vscode`
                 });
-                
+
                 let prefix = await vscode.window.showInputBox({
                     prompt: "Do you use a import alias, just press return if not?",
                     placeHolder: `xy.`
                 }) || "";
-                if (prefix !== "" && prefix[prefix.length-1] !== ".") {
+                if (prefix !== "" && prefix[prefix.length - 1] !== ".") {
                     prefix = prefix + ".";
                 }
 
@@ -149,7 +149,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 }
                 let filename = path.join(dotVscode, `${lib}.code-snippets`);
                 if (!fs.existsSync(dotVscode)) {
-                    fs.mkdirSync(dotVscode, {recursive:true});
+                    fs.mkdirSync(dotVscode, { recursive: true });
                 }
 
                 let snippetCode = JSON.stringify(snippets[lib], null, 2);
@@ -162,14 +162,14 @@ export async function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(
         vscode.commands.registerCommand(
-            "cadquery-viewer.downloadExamples",
+            "ocpCadViewer.downloadExamples",
             async (library: Library) => {
                 let root = getCurrentFolder();
                 if (root === "") {
                     vscode.window.showInformationMessage("First open a file in your project");
                     return;
                 }
-                const input = await vscode.window.showInputBox({"prompt": "Select target folder", "value":root});
+                const input = await vscode.window.showInputBox({ "prompt": "Select target folder", "value": root });
                 if (input === undefined) {
                     return;
                 }
@@ -180,7 +180,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(
         vscode.commands.registerCommand(
-            "cadquery-viewer.installIPythonExtension",
+            "ocpCadViewer.installIPythonExtension",
             async (library: Library) => {
                 let reply =
                     (await vscode.window.showQuickPick(["yes", "no"], {
@@ -210,16 +210,16 @@ export async function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(
         vscode.commands.registerCommand(
-            "cadquery-viewer.installPythonModule",
+            "ocpCadViewer.installPythonModule",
             async () => {
-                await installLib(libraryManager, "cq_vscode");
+                await installLib(libraryManager, "ocp_vscode");
             }
         )
     );
 
     context.subscriptions.push(
         vscode.commands.registerCommand(
-            "cadquery-viewer.pasteSnippet",
+            "ocpCadViewer.pasteSnippet",
             (library: Library) => {
                 libraryManager.pasteImport(library.label);
             }
@@ -228,7 +228,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(
         vscode.commands.registerCommand(
-            "cadquery-viewer.ipythonRunCell",
+            "ocpCadViewer.ipythonRunCell",
             () => {
                 vscode.commands.executeCommand("ipython.runCellAndMoveToNext");
             }
@@ -237,36 +237,36 @@ export async function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(
         vscode.commands.registerCommand(
-            "cadquery-viewer.refreshLibraries",
+            "ocpCadViewer.refreshLibraries",
             () => libraryManager.refresh()
         )
     );
 
     context.subscriptions.push(
         vscode.commands.registerCommand(
-            "cadquery-viewer.preferences",
-            () => vscode.commands.executeCommand("workbench.action.openSettings", "CadQuery Viewer")
+            "ocpCadViewer.preferences",
+            () => vscode.commands.executeCommand("workbench.action.openSettings", "OCP CAD Viewer")
         )
     );
 
     context.subscriptions.push(
-        vscode.commands.registerCommand("cadquery-viewer.refreshStatus", () =>
+        vscode.commands.registerCommand("ocpCadViewer.refreshStatus", () =>
             statusManager.refresh("")
         )
     );
 
     context.subscriptions.push(
-        vscode.commands.registerCommand("cadquery-viewer.openViewer", async () => {
+        vscode.commands.registerCommand("ocpCadViewer.openViewer", async () => {
             statusManager.openViewer();
         })
     );
 
     context.subscriptions.push(
         vscode.commands.registerCommand(
-            "cadquery-viewer.restartIpython",
+            "ocpCadViewer.restartIpython",
             async () => {
                 let terminals = vscode.window.terminals;
-                terminals.forEach((terminal:any) => {
+                terminals.forEach((terminal: any) => {
                     if (terminal.name === "IPython") {
                         terminal.dispose();
                     }
@@ -294,7 +294,7 @@ export async function activate(context: vscode.ExtensionContext) {
         }
     });
 
-    vscode.workspace.onDidChangeConfiguration((event:any) => {
+    vscode.workspace.onDidChangeConfiguration((event: any) => {
         let affected = event.affectsConfiguration(
             "python.defaultInterpreterPath"
         );
@@ -320,6 +320,6 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() {
-    output.debug("CadQuery Viewer extension deactivated");
+    output.debug("OCP CAD Viewer extension deactivated");
     CadqueryViewer.currentPanel?.dispose();
 }

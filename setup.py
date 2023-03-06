@@ -1,13 +1,13 @@
 from setuptools import setup, find_packages
 
 setup_args = {
-    "name": "cq_vscode",
+    "name": "ocp_vscode",
     "version": "0.30.0",
-    "description": "CadQuery Viewer for VSCode",
-    "long_description": "An extension to show cadquery objects in VSCode via pythreejs",
+    "description": "OCP CAD Viewer for VSCode",
+    "long_description": "An extension to show CadQuery and build123d objects in VSCode via pythreejs",
     "include_package_data": True,
     "python_requires": ">=3.9",
-    "install_requires": ["ocp-tessellate>=1.0.0rc7", "requests", "orjson"],
+    "install_requires": ["ocp-tessellate>=1.0.0rc9", "requests", "orjson"],
     "packages": find_packages(),
     "zip_safe": False,
     "author": "Bernhard Walter",

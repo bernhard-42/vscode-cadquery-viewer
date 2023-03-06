@@ -9,7 +9,7 @@ export class TerminalExecute {
     workspaceFolder: string | undefined;
     errorMsg: string = "";
     stdout: string = "";
-    terminalName = "CadQuery Viewer Terminal";
+    terminalName = "OCP CAD Viewer Terminal";
     child: any = undefined;
 
     constructor(msg: string) {

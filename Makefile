@@ -53,8 +53,8 @@ create-release:
 	@github-release release -u bernhard-42 -r vscode-cadquery-viewer -t v$(CURRENT_VERSION) -n vscode-cadquery-viewer-$(CURRENT_VERSION)
 	@sleep 2
 	@github-release upload  -u bernhard-42 -r vscode-cadquery-viewer -t v$(CURRENT_VERSION) -n cadquery-viewer-$(CURRENT_VERSION).vsix -f cadquery-viewer-$(CURRENT_VERSION).vsix
-	@github-release upload  -u bernhard-42 -r vscode-cadquery-viewer -t v$(CURRENT_VERSION) -n cq_vscode-$(CURRENT_VERSION)-py3-none-any.whl -f dist/cq_vscode-$(CURRENT_VERSION)-py3-none-any.whl 
-	@github-release upload  -u bernhard-42 -r vscode-cadquery-viewer -t v$(CURRENT_VERSION) -n cq_vscode-$(CURRENT_VERSION).tar.gz -f dist/cq_vscode-$(CURRENT_VERSION).tar.gz 
+	@github-release upload  -u bernhard-42 -r vscode-cadquery-viewer -t v$(CURRENT_VERSION) -n ocp_vscode-$(CURRENT_VERSION)-py3-none-any.whl -f dist/ocp_vscode-$(CURRENT_VERSION)-py3-none-any.whl 
+	@github-release upload  -u bernhard-42 -r vscode-cadquery-viewer -t v$(CURRENT_VERSION) -n ocp_vscode-$(CURRENT_VERSION).tar.gz -f dist/ocp_vscode-$(CURRENT_VERSION).tar.gz 
 
 # install: dist
 # 	@echo "=> Installing jupyter_cadquery"

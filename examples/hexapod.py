@@ -5,7 +5,7 @@ import cadquery as cq
 from cadquery_massembly import MAssembly, relocate
 from jupyter_cadquery import web_color
 from jupyter_cadquery.animation import Animation
-from cq_vscode import show
+from ocp_vscode import show
 
 # Parts
 

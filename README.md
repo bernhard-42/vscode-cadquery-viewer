@@ -1,43 +1,43 @@
-# CadQuery Viewer for VS Code
+# OCP CAD Viewer for VS Code
 
-_CadQuery Viewer for VS Code_ is an extension to show CadQuery objects in VS Code via [three-cad-viewer](https://github.com/bernhard-42/three-cad-viewer)
+_OCP CAD Viewer for VS Code_ is an extension to show [CadQuery](https://github.com/cadquery/cadquery) and [build123d](https://github.com/gumyr/build123d) objects in VS Code via [three-cad-viewer](https://github.com/bernhard-42/three-cad-viewer)
 
 ## Installation
 
 **Prerequisites**
 
--   A fairly recent version of VS Code, e.g. 1.75.1 or newer
+-   A fairly recent version of VS Code, e.g. 1.76.0 or newer
 -   [Python extension](https://marketplace.visualstudio.com/items?itemName=ms-python.python) installed in VS Code
 -   `pip` available in the Python enviroment that will be used for CAD development
 
 **Steps**:
 
--   Download [cadquery-viewer-0.30.0.vsix](https://github.com/bernhard-42/vscode-cadquery-viewer/releases/download/v0.30.0/cadquery-viewer-0.30.0.vsix)
+-   Download [ocp-viewer-0.30.0.vsix](https://github.com/bernhard-42/vscode-cadquery-viewer/releases/download/v0.30.0/ocp-viewer-0.30.0.vsix)
 -   Install it locally in VS Code (_Extensions -> "..." menu -> Install from VSIX..._)
--   Use the Cadquery sidebar to manage both CadQuery Viewer and python libraries:
-    -   Install cq_vscode via the blue button in the welcome screen of the "Viewer Manager" or by pressing the green down-arrow in the "Library Manager" section of the Cadquery Viewer sidebar
-    -   Install needed CAD libraries by pressing the green down-arrow behind the library name in the "Library Manager" section of the Cadquery Viewer sidebar
+-   Use the OCP CAD Viewer sidebar to manage both OCP CAD Viewer and python libraries:
+    -   Install ocp_vscode via the blue button in the welcome screen of the "Viewer Manager" or by pressing the green down-arrow in the "Library Manager" section of the OCP CAD Viewer sidebar
+    -   Install needed CAD libraries by pressing the green down-arrow behind the library name in the "Library Manager" section of the OCP CAD Viewer sidebar
 
-![Installation](screenshots/cq_vscode-install.gif)
+![Installation](screenshots/ocp_vscode-install.gif)
 
 ## Usage
 
 ### Using with VS Code Run menu
 
--   Start the CadQuery Viewer by pressing the green box-arrow button in the "Viewer Manager" section of the Cadquery Viewer sidebar
+-   Start the OCP CAD Viewer by pressing the green box-arrow button in the "Viewer Manager" section of the OCP CAD Viewer sidebar
 -   Paste the import code by using the paste button behing the library names in the "Viewer Manager" section
 -   Use the usual Run menu to run the code
 
-![Use with run](screenshots/cq_vscode-work.gif)
+![Use with run](screenshots/ocp_vscode-work.gif)
 
 ### Using with IPython extension
 
--   Install ipython by pressing the green down-arrow behind the "ipython" entry in the "Library Manager" section of the Cadquery Viewer sidebar
+-   Install ipython by pressing the green down-arrow behind the "ipython" entry in the "Library Manager" section of the OCP CAD Viewer sidebar
 -   Install the IPython extension by pressing the green button behing the "ipython" entry in the "Viewer Manager"
 -   Paste the IPyython delimiters by using the paste button behing the "ipython" entry" in the "Viewer Manager" section
 -   Use the green run button to run an IPython section
 
-![Use with run](screenshots/cq_vscode-ipython.gif)
+![Use with run](screenshots/ocp_vscode-ipython.gif)
 
 ### Downloading examples
 
@@ -45,16 +45,16 @@ _CadQuery Viewer for VS Code_ is an extension to show CadQuery objects in VS Cod
 -   Check and modify (if needed) the target download path. Note, a file needs to be open so that the extension can get the working folder
 -   The examples will be stored in a folder <library>\_examples, e.g. cadquery_examples
 
-![Use with run](screenshots/cq_vscode-examples.gif)
+![Use with run](screenshots/ocp_vscode-examples.gif)
 
 ### (Experimental) Install build123d snippets
 
-_CadQuery Viewer for VS Code_ allows to install a _code-snippets_ file for build123d:
+_OCP CAD Viewer for VS Code_ allows to install a _code-snippets_ file for build123d:
 
--   Use `Ctrl-Shift-P / Cmd-Shift-P` and select _CadQuery Viewer: Install CAD snippets into <project>/.vscode/_
+-   Use `Ctrl-Shift-P / Cmd-Shift-P` and select _OCP CAD Viewer: Install CAD snippets into <project>/.vscode/_
 -   After typing `b:` a list of snippets appears that guide the user through creation of some basic build123d patterns
 
-![Use snippets](screenshots/cq_vscode-snippets.gif)
+![Use snippets](screenshots/ocp_vscode-snippets.gif)
 
 ## show
 
@@ -149,7 +149,7 @@ Valid keywords to configure the viewer (**kwargs):
 
 ```python
 import cadquery as cq
-from cq_vscode import show_object, reset_show, set_defaults
+from ocp_vscode import show_object, reset_show, set_defaults
 
 reset_show() # use for reapeated shift-enter execution to clean object buffer
 set_defaults(axes=True, transparent=False, collapse=1, grid=(True, True, True))

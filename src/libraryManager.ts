@@ -18,7 +18,7 @@ import * as fs from "fs";
 import * as process from "process";
 import * as path from "path";
 import * as vscode from "vscode";
-import { version as cq_vscode_version } from "./version";
+import { version as ocp_vscode_version } from "./version";
 import * as output from "./output";
 import { getPythonPath, getEditor, inquiry, getCurrentFolder } from "./utils";
 import { execute } from "./system/shell";
@@ -94,15 +94,15 @@ export class LibraryManagerProvider
 
     readConfig() {
         this.installCommands =
-            vscode.workspace.getConfiguration("CadQueryViewer")[
+            vscode.workspace.getConfiguration("OcpCadViewer")[
             "installCommands"
             ];
         this.codeSnippets =
-            vscode.workspace.getConfiguration("CadQueryViewer")[
+            vscode.workspace.getConfiguration("OcpCadViewer")[
             "codeSnippets"
             ];
         this.exampleDownloads =
-            vscode.workspace.getConfiguration("CadQueryViewer")[
+            vscode.workspace.getConfiguration("OcpCadViewer")[
             "exampleDownloads"
             ];
     }
@@ -150,8 +150,8 @@ export class LibraryManagerProvider
         let python = await getPythonPath();
         let substCmds: string[] = [];
         commands.forEach((command: string) => {
-            if (lib === "cq_vscode") {
-                command = command.replace("{cq_vscode_version}", cq_vscode_version);
+            if (lib === "ocp_vscode") {
+                command = command.replace("{ocp_vscode_version}", ocp_vscode_version);
             };
             command = command.replace("{python}", python);
 
@@ -227,11 +227,11 @@ export class LibraryManagerProvider
     pasteImport(library: string) {
         const editor = getEditor();
         if (editor !== undefined) {
-            if ((library === "cq_vscode") && (this.statusManager.getPort() === "")) {
-                vscode.window.showErrorMessage("Cadquery viewer not running");
+            if ((library === "ocp_vscode") && (this.statusManager.getPort() === "")) {
+                vscode.window.showErrorMessage("OCP CAD Viewer not running");
             } else {
                 let importCmd = Object.assign([], this.codeSnippets[library]);
-                if (library === "cq_vscode") {
+                if (library === "ocp_vscode") {
                     importCmd.push(`set_port(${this.statusManager.getPort()})`);
                 }
                 let snippet = new vscode.SnippetString(importCmd.join("\n") + "\n");
@@ -307,7 +307,7 @@ export class LibraryManagerProvider
 
                 libs.push(new Library(lib, { "version": version }, state));
 
-                if (lib === "cq_vscode") {
+                if (lib === "ocp_vscode") {
                     this.statusManager.installed = version !== "n/a";
                     this.statusManager.setLibraries(
                         Object.keys(this.installed)
@@ -355,8 +355,8 @@ export class Library extends vscode.TreeItem {
 
 export function createLibraryManager(statusManager: StatusManagerProvider) {
     const libraryManager = new LibraryManagerProvider(statusManager);
-    vscode.window.registerTreeDataProvider("cadquerySetup", libraryManager);
-    vscode.window.createTreeView("cadquerySetup", {
+    vscode.window.registerTreeDataProvider("ocpCadSetup", libraryManager);
+    vscode.window.createTreeView("ocpCadSetup", {
         treeDataProvider: libraryManager
     });
 

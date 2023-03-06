@@ -1,6 +1,6 @@
 from alg123d import *
-from cq_vscode import show, set_port
-from cq_vscode.show import _convert
+from ocp_vscode import show, set_port
+from ocp_vscode.show import _convert
 import json
 
 set_port(3940)

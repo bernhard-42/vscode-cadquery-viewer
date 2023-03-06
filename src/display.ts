@@ -17,7 +17,7 @@
 import * as vscode from "vscode";
 
 export function template() {
-    let options = vscode.workspace.getConfiguration("CadQueryViewer");
+    let options = vscode.workspace.getConfiguration("OcpCadViewer");
     let theme = options.get("dark") ? "dark" : "light";
     let treeWidth = options.get("treeWidth");
     let control = options.get("orbitControl") ? "orbit" : "trackball";
@@ -34,7 +34,7 @@ export function template() {
 
 <head>
     <meta charset="utf-8" />
-    <title>CadQuery Viewer</title>
+    <title>OCP CAD Viewer</title>
     <link rel="stylesheet" href="https://unpkg.com/three-cad-viewer@1.7.0/dist/three-cad-viewer.css" /> <!-- 1.7.0 -->
 
     <script type="module">
