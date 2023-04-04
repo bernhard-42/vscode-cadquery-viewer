@@ -1,11 +1,9 @@
 # OCP CAD Viewer for VS Code
 
-> 
->
->    The viewer has been migrated to [OCP CAD Viewer for VS Code](https://github.com/bernhard-42/vscode-ocp-cad-viewer)
->    To make clear that it is not only for cadquery, but all OCP based code CADs, e.g. build123d
->
->
+# The viewer has been migrated to [OCP CAD Viewer for VS Code](https://github.com/bernhard-42/vscode-ocp-cad-viewer)
+# To make clear that it is not only for cadquery, but all OCP based code CADs, e.g. build123d
+
+
 
 
 _OCP CAD Viewer for VS Code_ is an extension to show [CadQuery](https://github.com/cadquery/cadquery) and [build123d](https://github.com/gumyr/build123d) objects in VS Code via [three-cad-viewer](https://github.com/bernhard-42/three-cad-viewer)
